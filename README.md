@@ -33,3 +33,7 @@
 
 ### - Descargar todo lo que hay en Github en el repositorio local
 - git pull
+
+### - Como ejecutar el docker
+- En windows, descargar docker desktop y ejecutar "docker-compose up -d"
+- En linux, "docker-compose up -d"
