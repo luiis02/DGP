@@ -1,19 +1,18 @@
-import { View, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Layaout = ({children}) => {
   return (
-    <SafeAreaView>
-        <View style={styles.container}>
-            {children}
-        </View>
+    <SafeAreaView style={styles.safeArea}>
+        {children}
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-    container: {
+    safeArea: {
+        flex: 1,
         backgroundColor: '#F8F8F8',
     },
 });

@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import Home from './views/Home/Home';
+import LoginProfesores from './views/LoginProfesores/LoginProfesores';
 
 const Stack = createStackNavigator(); // Nos va a poder definir las distintas pantallas de la app
 
@@ -10,11 +11,8 @@ const App = () => {
   return ( 
     <NavigationContainer > 
       <Stack.Navigator>
-        <Stack.Screen 
-          name="Home" 
-          component={Home} 
-          options={{headerShown: false}} // Le damos un título a la pantalla Home y le quitamos el header
-          /> 
+        <Stack.Screen name="Home" component={Home} options={{headerShown: false}} /> 
+        <Stack.Screen name= "LoginProfesor" component={LoginProfesores} options={{headerShown: false}} />
       </Stack.Navigator>
     </NavigationContainer>
   )
