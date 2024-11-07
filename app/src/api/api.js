@@ -1,5 +1,5 @@
 import NetInfo from "@react-native-community/netinfo";
-const ipAddress = '192.168.18.44'; // Coloca una IP predeterminada aquí si deseas
+const ipAddress = '192.168.0.23';//'192.168.18.44'; // Coloca una IP predeterminada aquí si deseas
 export const getStudents = async () => {
   /*
     // Obtener la dirección IP de la máquina

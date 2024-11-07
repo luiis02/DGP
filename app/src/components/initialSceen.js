@@ -14,9 +14,12 @@ const InitialScreen = ({students}) => {
                         color='#000'
                         onPress={() => navigation.navigate('LoginProfesor')}/>
             </View>
-            <Image source={{
-                uri: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOrodGYJkapE34C-3kqWoDe_vz15Qof4hpRw&s`}} 
-                style={styles.logo}/>
+            <View style={styles.logo}>
+                <Image source={{
+                    uri: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOrodGYJkapE34C-3kqWoDe_vz15Qof4hpRw&s`}} 
+                    style={styles.image}/>
+            </View>
+            
         </View>
         <View>
             <Text style={styles.title}>INICIO</Text>
@@ -52,26 +55,33 @@ const styles = StyleSheet.create({
         marginEnd: 10,
     },
     buttonLogo:{
-        paddingVertical: 20,
-        paddingHorizontal: 20,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
+        paddingVertical: 20,
+        paddingHorizontal: 20,
     },
     button:{
-        backgroundColor: 'rgb(255, 255, 255, 0.5)', 
+        backgroundColor: '#FFF', 
         padding: 2,
         borderRadius: 2,
-        width: 120,
-        alignContent: 'flex-start',
+        width: 110,
+        height: 40,
         borderWidth: 1,
         borderColor: '#000',
+        alignItems: 'flex-start',
     },
     logo: {
         flex: 1,
         width: 60,
         height: 60, 
         resizeMode: 'contain',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    image: {
+        width: 60,
+        height: 60,
     },
     title: {
         fontSize: 24,

@@ -1,10 +1,20 @@
 import { Text, View, StyleSheet } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Layaout from '../../components/Layaout'
 import { Button, Icon, Input } from "@rneui/themed"
 import { useNavigation } from '@react-navigation/native';
 
 const LoginProfesores = () => {
+    
+    /*const [profesor, setProfesor] = useState([]) // Estado para almacenar el nombre del profesor
+    useEffect(() => {
+    }, []) // Este useEffect se ejecuta una vez cuando se carga la pantalla
+    
+    const loadProfesor = async () => {
+        const data = await getProfesor(); // Por ejemplo, se establece el nombre del profesor en el estado
+        setProfesor(data); // Se almacena el nombre del profesor en el estado
+    }
+*/
     const navigation = useNavigation(); // Importamos la función useNavigation para navegar entre pantallas
   return (
     <Layaout>
