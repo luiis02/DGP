@@ -1,0 +1,3 @@
+# .gitignore
+.expo/
+node_modules/
