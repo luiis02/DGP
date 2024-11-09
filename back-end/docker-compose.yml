@@ -6,7 +6,7 @@ services:
     container_name: mysql
     restart: always
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: mysecretpassword  # Cambia la contraseña aquí
       MYSQL_DATABASE: mydatabase  # Cambia el nombre de la base de datos aquí
