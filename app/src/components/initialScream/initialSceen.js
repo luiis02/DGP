@@ -1,11 +1,11 @@
 //components/initialScreen.js
 import { View, Text, FlatList, StyleSheet, Image, Button, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
 const InitialScreen = ({ students }) => {
   const ITEMS_PER_PAGE = 8; // Cantidad de estudiantes por página
-  const [currentPage, setCurrentPage] = React.useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
   const navigation = useNavigation();
 
   // Calcular el índice de inicio y fin para la página actual
@@ -52,7 +52,7 @@ const InitialScreen = ({ students }) => {
         </View>
         <View style={styles.logo}>
           <Image
-            source={{ uri: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOrodGYJkapE34C-3kqWoDe_vz15Qof4hpRw&s` }}
+            source={{ uri: `https://static.wixstatic.com/media/0e9b68_8c37acf90ff04033ba94d8ac591c2aeb.png/v1/fill/w_404,h_122,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/0e9b68_8c37acf90ff04033ba94d8ac591c2aeb.png` }}
             style={styles.image}
           />
         </View>
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   image: {
-    width: 60,
+    width: 200,
     height: 60,
   },
   title: {
