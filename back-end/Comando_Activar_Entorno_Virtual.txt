@@ -1,0 +1,10 @@
+Este es el comando para crear un entorno virtual python3 -m venv venv. No es necesario usarlo todas las veces solamente se realiza la primera vez.
+
+Con esto, se creará la carpeta env. Hay que poner el comando
+1.   >source venv/bin/activate
+para activar el entorno virtual python3 (en Linux o en Mac ).
+
+Si se usa Windows hay dos opciones:
+
+1.  >venv\Scripts\activate (En CMD)
+2.  >.\venv\Scripts\Activate.ps1(En PowerShell)
