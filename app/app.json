@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "DGP",
-    "slug": "DGP",
+    "name": "GranadAccess",
+    "slug": "granadaccess",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

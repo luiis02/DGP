@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         paddingHorizontal: 20,
-        marginTop: 20,
+        marginTop: 40,
     },
     usuarioContainer: {
         borderWidth: 1,
@@ -95,6 +95,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginBottom: 10,
         backgroundColor: '#F8F8F8',
+    },
+    passwordContainer: {
+        borderWidth: 1,
+        borderColor: '#F8F8F8',
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        marginBottom: 10,
     },
     input: {
         padding: 10,
