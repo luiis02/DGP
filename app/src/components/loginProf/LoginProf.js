@@ -1,14 +1,29 @@
-import { Text, View, StyleSheet, Alert } from 'react-native';
-import React, { useState } from 'react';
-import { Button, Icon, Input } from "@rneui/themed";
+import { Text, View, StyleSheet, Alert, TouchableOpacity, Image, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Button, Input } from "@rneui/themed";
 import { useNavigation } from '@react-navigation/native';
+import { obtenerPictograma } from "../../api/apiArasaac";
 
 const LoginProf = ({ profesores, admin }) => {
+    const pictograma = {
+        atras: "38249/38249_2500.png",
+    }
+    const navigation = useNavigation();
+    const [urlAtras, setUrlAtras] = useState(null);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     
-    const navigation = useNavigation();
-    
+    const fetchPictograma = async () => {
+        const respuesta = await obtenerPictograma(pictograma.atras); 
+        if (respuesta) {
+            setUrlAtras(respuesta);
+        }else {
+            Alert.alert('Error', 'No se pudo obtener el pictograma.');
+        }
+    };
+    useEffect(()=>{
+        fetchPictograma();
+    })
     // Función para validar el usuario
     const handleLogin = () => {
         const profesorEncontrado = profesores.find(
@@ -32,11 +47,13 @@ const LoginProf = ({ profesores, admin }) => {
     return (
         <View>
             <View style={styles.container}>
-                <Button
-                    icon={<Icon name="arrow-back" size={20} color="black" />}
-                    color="#F8F8F8"
-                    onPress={() => navigation.goBack()}
-                />
+                {Platform.OS !== 'android' &&
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    {urlAtras && 
+                        <Image source={{uri : urlAtras}} style={{width:50, height:50}}/>
+                    }
+                </TouchableOpacity>
+                }
                 <Text style={styles.title}>Inicio de Sesión</Text>
             </View>
             <View style={styles.inputContainer}>

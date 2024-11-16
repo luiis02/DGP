@@ -6,7 +6,7 @@ class DatabaseController:
         """Inicializa la conexión a la base de datos"""
         try:
             self.connection = mysql.connector.connect(
-                host='localhost',
+                host='127.0.0.1',
                 port=3307,
                 user='user',  # El usuario definido en docker-compose
                 password='password',  # La contraseña definida en docker-compose

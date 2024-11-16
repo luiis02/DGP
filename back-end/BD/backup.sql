@@ -64,7 +64,8 @@ CREATE TABLE `GENERA` (
 CREATE TABLE `MULTIMEDIA` (
   `id` int NOT NULL,
   `tipo` enum('VIDEO','FOTO') DEFAULT NULL,
-  `archivo` longblob
+  `archivo` longblob,
+  `username` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
