@@ -1,4 +1,4 @@
-const ipAddress = 'localhost'; // Coloca una IP predeterminada aquí si deseas
+const ipAddress = '192.168.1.26'; // Coloca una IP predeterminada aquí si deseas
 
 export const getEstudiantes = async () => {
   const resp = await fetch(`http://${ipAddress}:5000/estudiantes`);
