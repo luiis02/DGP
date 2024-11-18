@@ -44,10 +44,28 @@ export const postImagen = async ({ fotoUri, nombre }) => {
   }
 }
 
+export const deleteImage = async (fotoId) => {
+  try {
+    const response = await fetch(`http://${ipAddress}:5000/imagenes/${fotoId}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      console.log(`Foto con ID ${fotoId} eliminada correctamente.`);
+      return await response.json();  // Retorna la respuesta si es exitosa
+    } else {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al eliminar la foto');
+    }
+  } catch (error) {
+    console.error("Error al eliminar la foto:", error.message);
+    throw error;
+  }
+};
+
 
 export const postEstudiante = async (datosAlumno) => {
   try {
-    console.log(datosAlumno)
     const response = await fetch(`http://${ipAddress}:5000/estudiantes`, {
       method: 'POST',
       headers: {
@@ -66,3 +84,36 @@ export const postEstudiante = async (datosAlumno) => {
     throw new Error('Error al crear el estudiante: ' + error.message);
   }
 }
+
+export const putEstudiante = async (datosAlumno) => {
+  try {
+    const response = await fetch(`http://${ipAddress}:5000/estudiantes/${datosAlumno.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(datosAlumno), // Enviamos los datos del estudiante
+    });
+  }catch(error){
+    console.error("Error al actualizar el estudiante:", error.message);
+  }
+}
+
+export const deleteEstudiante = async (idEstudiante) => {
+  try {
+    const response = await fetch(`http://${ipAddress}:5000/estudiantes/${idEstudiante}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      console.log(`Estudiante con ID ${idEstudiante} eliminado correctamente.`);
+      return await response.json();  // Retorna la respuesta si es exitosa
+    } else {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al eliminar el estudiante');
+    }
+  } catch (error) {
+    console.error("Error al eliminar el estudiante:", error.message);
+    throw error;
+  }
+};

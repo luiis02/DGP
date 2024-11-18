@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from db_controller import DatabaseController
 from usuarios import userBP
 from imagenes import imagenesBP
 app = Flask(__name__)
+CORS(app)
 app.register_blueprint(userBP)
 app.register_blueprint(imagenesBP)
 # Instanciar el controlador de la base de datos
