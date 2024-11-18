@@ -62,7 +62,7 @@ const AgregarAlumno = () => {
         }
     }
 
-    const seleccionarImagen = async () => {
+    const handleSeleccionarImagenPress = async () => {
         // Solicitar permisos para acceder a la galería
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
@@ -128,7 +128,6 @@ const AgregarAlumno = () => {
             "rol": "estudiante",
             "foto_perfil": urlFotoPerfil,
         };
-        console.log(datosAlumno);
         const resp = await postEstudiante(datosAlumno);
         if (resp) {
             Alert.alert("Alumno añadido correctamente.");
@@ -165,7 +164,7 @@ const AgregarAlumno = () => {
                     value={nombreUsuario}
                     onChangeText={setNombreUsuario}
                 />
-                <Button title="Seleccionar Foto de Perfil" buttonStyle={styles.button} onPress={seleccionarImagen} />
+                <Button title="Seleccionar Foto de Perfil" buttonStyle={styles.button} onPress={handleSeleccionarImagenPress} />
                 {fotoPerfil &&
                 <View>
                     <Image source={{uri: fotoPerfil}} style={{width:100, height: 100}}/>
