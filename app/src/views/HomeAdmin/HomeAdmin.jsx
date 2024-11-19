@@ -5,7 +5,9 @@ import { Button, Icon } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 import { obtenerPictograma } from "../../api/apiArasaac";
 
-const HomeAdmin = () => {
+const HomeAdmin = ({route}) => {
+    const { idAdmin } = route.params || {};
+
     const pictogramas = { 
         compañero: "7062/7062_2500.png",
         almacen: "24683/24683_2500.png",
@@ -60,11 +62,11 @@ const HomeAdmin = () => {
         }
     };
     const buttons = [ 
-        {title: 'GestionAlumnos', icon: urlCompañeros, screen: 'GestionAlumnos'}, 
-        {title: 'GestionInventario', icon: urlAlmacen, screen: 'GestionInventario'},
-        {title: 'GestionTareas', icon: urlTareas, screen: 'GestionTareas'},
-        {title: 'GestionInformación', icon: urlGestionInformaes, screen: 'GestionInformacion'},
-        {title: 'GestionComedor', icon: urlGestionComedor, screen: 'GestionComedor'},
+        {title: 'Gestion de Alumnos', icon: urlCompañeros, screen: 'GestionAlumnos'}, 
+        {title: 'Gestion de Inventario', icon: urlAlmacen, screen: 'GestionInventario'},
+        {title: 'Gestion de Tareas', icon: urlTareas, screen: 'GestionTareas'},
+        {title: 'Gestion de Información', icon: urlGestionInformaes, screen: 'GestionInformacion'},
+        {title: 'Gestion de Comedor', icon: urlGestionComedor, screen: 'GestionComedor'},
         {title: 'Chat', icon: urlChat, screen: 'Chat'},
     ]
       useEffect(() => {
@@ -92,7 +94,7 @@ const HomeAdmin = () => {
             <View style={styles.body}>
                 <View style={styles.elements}> 
                         {buttons.map((button, index) => (
-                            <TouchableOpacity key={index} style={styles.touchableButton} onPress={() => navigation.navigate(button.screen)}>
+                            <TouchableOpacity key={index} style={styles.touchableButton} onPress={() => navigation.navigate(button.screen, {idAdmin: idAdmin})}>
                                 <Image source={{uri: button.icon}} style={{width: 90, height: 90}} />
                                 <Text style={styles.textButton}>{button.title}</Text>
                             </TouchableOpacity>

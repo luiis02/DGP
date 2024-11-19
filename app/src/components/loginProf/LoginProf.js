@@ -38,7 +38,7 @@ const LoginProf = ({ profesores, admin }) => {
             );
             if (adminEncontrado) {
                 Alert.alert('Acceso concedido', 'Bienvenido Administrador');
-                navigation.navigate('HomeAdmin'); // Redirige a la pantalla principal de profesor
+                navigation.navigate('HomeAdmin', {idAdmin: adminEncontrado.id}); // Redirige a la pantalla principal de profesor
             }else {
                 Alert.alert('Acceso denegado', 'Usuario o contraseña incorrectos');
             }

@@ -15,6 +15,9 @@ import AgregarAlumno from './views/AgregarAlumno/AgregarAlumno';
 import InformacionUsuario from './views/InformacionUsuario/InformacionUsuario';
 import Alumnos from './views/Alumnos/Alumnos';
 
+import AgregarMaterial from './views/AgregarMaterial/AgregarMaterial';
+import InformacionMaterial from './views/InformacionMaterial/InformacionMaterial';
+
 import GestionInventario from './views/GestionInventario/GestionInventario';
 import GestionAlumnos from './views/GestionAlumnos/GestionAlumnos';
 import GestionTareas from './views/GestionTareas/GestionTareas';
@@ -45,6 +48,10 @@ const App = () => {
         <Stack.Screen name="AgregarAlumno" component={AgregarAlumno} options={{headerShown: false}} />
         <Stack.Screen name="Alumnos" component={Alumnos} options={{headerShown: false}} />
         <Stack.Screen name="InformacionUsuario" component={InformacionUsuario} options={{headerShown: false}} />
+
+
+        <Stack.Screen name="AgregarMaterial" component={AgregarMaterial} options={{headerShown: false}} />
+        <Stack.Screen name="InformacionMaterial" component={InformacionMaterial} options={{headerShown: false}} />
 
        
         <Stack.Screen name="GestionInventario" component={GestionInventario} options={{headerShown: false}} />

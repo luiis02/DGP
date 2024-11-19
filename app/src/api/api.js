@@ -1,4 +1,4 @@
-const ipAddress = '192.168.1.26'; // Coloca una IP predeterminada aquí si deseas
+const ipAddress = 'localhost'; // Coloca una IP predeterminada aquí si deseas
 
 export const getEstudiantes = async () => {
   const resp = await fetch(`http://${ipAddress}:5000/estudiantes`);
@@ -12,6 +12,11 @@ export const getProfesores = async () => {
 
 export const getAdmin = async () => {
   const resp = await fetch(`http://${ipAddress}:5000/admins`);
+  return await resp.json();
+};
+
+export const getMateriales = async () => {
+  const resp = await fetch(`http://${ipAddress}:5000/materiales`);
   return await resp.json();
 };
 
@@ -62,6 +67,28 @@ export const deleteImage = async (fotoId) => {
     throw error;
   }
 };
+
+
+export const postMaterial = async (datosMaterial) => {
+  try {
+    const response = await fetch(`http://${ipAddress}:5000/materiales`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(datosMaterial), // Enviamos los datos del material
+    });
+
+    if (response.ok) {
+      console.log("Se ha creado el material")
+      return await response.json();  // Retorna la respuesta si es exitosa
+    } else {
+      throw new Error('Error al crear el material');
+    }
+  } catch (error) {
+    throw new Error('Error al crear el material: ' + error.message);
+  }
+}
 
 
 export const postEstudiante = async (datosAlumno) => {

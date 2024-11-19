@@ -339,6 +339,39 @@ ALTER TABLE `TIENE`
   ADD CONSTRAINT `TIENE_ibfk_2` FOREIGN KEY (`id_chat`) REFERENCES `CHAT` (`id`);
 COMMIT;
 
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `MATERIALES_ALMACEN`
+--
+
+CREATE TABLE MATERIALES_ALMACEN (
+    id_material INT AUTO_INCREMENT PRIMARY KEY, -- Identificador único para cada material
+    nombre_material VARCHAR(255) NOT NULL,      -- Nombre del material
+    descripcion TEXT,                           -- Descripción opcional del material
+    categoria VARCHAR(100) NOT NULL,            -- Categoría del material (ej. Papelería, Tecnología)
+    cantidad INT NOT NULL,                      -- Cantidad disponible en el almacén
+    fecha_ingreso DATE NOT NULL,                -- Fecha en que el material fue ingresado al almacén
+    estado ENUM('Disponible', 'Agotado', 'Dañado') DEFAULT 'Disponible', -- Estado del material
+    ultima_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Fecha de última actualización
+    id_administrador INT NOT NULL,              -- Para vincular los materiales con el administrador, que es el encargado de gestionarlos
+    FOREIGN KEY (id_administrador) REFERENCES USUARIO(id)
+);
+
+--
+-- Volcado de datos para la tabla `MATERIALES_ALMACEN`
+--
+INSERT INTO MATERIALES_ALMACEN (nombre_material, descripcion, categoria, cantidad, fecha_ingreso, estado, id_administrador
+) VALUES
+    ('Cuaderno A4', 'Cuaderno de 80 hojas, tamaño A4', 'Papelería', 50, '2024-11-15', 'Disponible', 5),
+    ('Lápiz HB', 'Lápiz para escritura general', 'Papelería', 200, '2024-11-16', 'Disponible', 5),
+    ('Marcadores', 'Marcadores de colores surtidos', 'Papelería', 30, '2024-11-12', 'Disponible', 5),
+    ('Borradores', 'Borradores de goma para lápiz', 'Papelería', 100, '2024-11-10', 'Disponible', 5),
+    ('Rotuladores', 'Rotuladores de colores', 'Papelería', 80, '2024-11-08', 'Disponible', 5);
+
+
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
