@@ -8,7 +8,8 @@ import { useNavigation } from "@react-navigation/native";
 import { Icon, Button } from "@rneui/themed";
 import * as ImagePicker from "expo-image-picker";
 import { Checkbox } from "react-native-paper";
-import { postEstudiante, postImagen } from "../../api/api";
+import { postEstudiante } from "../../api/apiUsuario";
+import { postImagen } from "../../api/apiImage";
 import { Alert } from "react-native";
 
 const AgregarAlumno = () => {
@@ -114,9 +115,12 @@ const AgregarAlumno = () => {
     }
     const handleAñadirAlumnoPress = async () => {
         const contraseñaConcatenada = contraseña.map((item) => item.hash).join('');
-        const urlFotoPerfil = await postImagen({ fotoUri: fotoPerfil, nombre: nombreUsuario }); 
-        if (!urlFotoPerfil) {
-            Alert.alert("Error al subir la imagen.");
+        let urlFotoPerfil = null; 
+        if (fotoPerfil) {
+            urlFotoPerfil = await postImagen({ fotoUri: fotoPerfil, nombre: nombreUsuario }); 
+            if (!urlFotoPerfil) {
+                Alert.alert("Error al subir la imagen.");
+            }
         }
         const datosAlumno = {
             "nombre": nombre,
@@ -124,9 +128,9 @@ const AgregarAlumno = () => {
             "nombre_usuario": nombreUsuario,
             "contraseña": contraseñaConcatenada,
             "color_fondo": backGroundColor,
-            "tamaño_letra": fontSize,
-            "rol": "estudiante",
-            "foto_perfil": urlFotoPerfil,
+            "tamaño_letra": fontSize + "px",
+            "rol": "ESTUDIANTE",
+            "foto_perfil": urlFotoPerfil!==null ? urlFotoPerfil : "https://st3.depositphotos.com/3538469/15750/i/450/depositphotos_157501024-stock-photo-business-man-icon.jpg",
         };
         const resp = await postEstudiante(datosAlumno);
         if (resp) {

@@ -26,6 +26,8 @@ import GestionComedor from './views/GestionComedor/GestionComedor';
 
 import SolicitudMaterial from './views/SolicitudMaterial/SolicitudMaterial';
 
+import SolicitudComanda from './views/SolicitudComanda/SolicitudComanda';
+
 import Chat from './views/Chat/Chat';
 
 
@@ -61,6 +63,8 @@ const App = () => {
         <Stack.Screen name="GestionComedor" component={GestionComedor} options={{headerShown: false}} />
 
         <Stack.Screen name="SolicitudMaterial" component={SolicitudMaterial} options={{headerShown: false}} />
+
+        <Stack.Screen name="SolicitudComanda" component={SolicitudComanda} options={{headerShown: false}}/>
 
         <Stack.Screen name="Chat" component={Chat} options={{headerShown: false}} />
 

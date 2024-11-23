@@ -5,7 +5,8 @@ import { obtenerPictograma } from '../../api/apiArasaac';
 import { useNavigation } from '@react-navigation/native';
 import { Input, Button } from '@rneui/themed';
 import { Alert } from 'react-native';
-import { putEstudiante, deleteEstudiante, deleteImage } from '../../api/api'; // Asume que tienes la API configurada
+import { putEstudiante, deleteEstudiante } from '../../api/apiUsuario'; // Asume que tienes la API configurada
+import { deleteImage } from '../../api/apiImage';
 
 const InformacionUsuario = ({ route }) => {
     const { alumno } = route.params;
@@ -75,7 +76,7 @@ const InformacionUsuario = ({ route }) => {
     };
 
     const handleEliminarPress = async () => {
-        // Llamar a la API para eliminar el alumno
+        const respuesta = await deleteEstudiante(alumno.id);
         if (respuesta) {
             Alert.alert('Éxito', 'Alumno eliminado correctamente.');
             navigation.goBack();

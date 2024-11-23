@@ -1,4 +1,4 @@
-#!/home/migue-maca/DGP/back-end/server/venv/bin/python3
+#!/Users/luiggimt/Desktop/appColegio/DGP/back-end/server/venv/bin/python3.13
 # -*- coding: utf-8 -*-
 import re
 import sys

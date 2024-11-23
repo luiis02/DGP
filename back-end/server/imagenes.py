@@ -66,6 +66,16 @@ def imagenes():
 
     return jsonify({'url': image_url}), 200
 
+@imagenesBP.route('/imagenes/<string:fotoId>', methods=['DELETE'])
+def delete_imagenes(fotoId):
+    username = fotoId.split('.')[0]
+    try:
+        # Eliminar la imagen y el nombre de usuario de la base de datos
+        query = "DELETE FROM `MULTIMEDIA` WHERE username = %s"
+        db_conn.execute_query(query, (username,))
+        return jsonify({'success': 'Imagen eliminada exitosamente'}), 200
+    except Exception as e:
+        return jsonify({'error': 'Error al eliminar la imagen', 'detalle': str(e)}), 500
 
 @imagenesBP.route('/visualiza/<int:id>', methods=['GET'])
 def visualiza(id):
@@ -84,3 +94,40 @@ def visualiza(id):
         return Response(image_data, mimetype='image/jpeg')  # Cambiar mimetype según el tipo de imagen
     except Exception as e:
         return jsonify({'error': 'Error al recuperar la imagen', 'detalle': str(e)}), 500
+
+
+@imagenesBP.route('/pictograma', methods=['POST'])
+def pictograma():
+    if 'foto' not in request.files:
+        return jsonify({'error': 'No se envió la imagen'}), 400
+
+    foto = request.files['foto']
+
+    if foto.filename == '':
+        return jsonify({'error': 'El archivo no tiene nombre'}), 400
+
+    if not allowed_file(foto.filename):
+        return jsonify({'error': 'Tipo de archivo no permitido'}), 400
+
+    try:
+        image_data = foto.read()
+
+        query = "INSERT INTO `MULTIMEDIA` (`tipo`, `archivo`) VALUES (%s, %s)"
+        db_conn.execute_query(query, ('FOTO', image_data))
+    except Exception as e:
+        return jsonify({'error': 'Error al guardar en la base de datos', 'detalle': str(e)}), 500
+
+    try:
+        # Obtener el ID de la imagen insertada
+        query = "SELECT MAX(id) AS max_id FROM `MULTIMEDIA`"
+        result = db_conn.fetch_query(query)
+
+        if not result or not result[0]:
+            return jsonify({'error': 'No se pudo obtener un ID válido'}), 500
+
+        max_id = result[0][0]
+        image_url = f'http://{request.host}/visualiza/{max_id}'
+    except Exception as e:
+        return jsonify({'error': 'Error al obtener el ID de la imagen', 'detalle': str(e)}), 500
+
+    return jsonify({'url': image_url}), 200

@@ -2,7 +2,7 @@
 import { View, Text, FlatList, StyleSheet, Image, Button, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { getEstudiantes } from '../../api/api';
+import { getEstudiantes } from '../../api/apiUsuario';
 import Layaout from '../../components/Layaout/Layaout';
 
 const Home = () => {
@@ -10,15 +10,24 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [students, setStudents] = useState([]); // Cuando se carga la pantalla sera un array vacío
   const loadStudents =  async () => {
-    const data = await getEstudiantes();
-    setStudents(data); // Cuando se cargan los estudiantes, se van a almacenar en el estado de la app
+    try{
+      const data = await getEstudiantes();
+      if (data) {
+        setStudents(data);
+      } else {
+        console.log('Error al obtener los estudiantes');
+      }
+    }catch(error){
+    console.log(error);
+    }
   }
   const navigation = useNavigation();
 
-  // Calcular el índice de inicio y fin para la página actual
+
+  // Calcular el índice de inicio y fin para la página actual 
   const startIndex = currentPage * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentStudents = students.slice(startIndex, endIndex);
+  const currentStudents = students.length > 0 ? students.slice(startIndex, endIndex):0;
 
   // Calcular número total de páginas
   const totalPages = Math.ceil(students.length / ITEMS_PER_PAGE);
@@ -73,6 +82,7 @@ const Home = () => {
         <View>
           <Text style={styles.title}>INICIO</Text>
         </View>
+        { students.length > 0 &&
         <View style={styles.studentsContainer}>
           <FlatList
             data={currentStudents}
@@ -82,11 +92,19 @@ const Home = () => {
             contentContainerStyle={styles.list}
           />
         </View>
+        }
+        { students.length > 0 && 
         <View style={styles.pagination}>
           <Button title="Atrás" onPress={handlePreviousPage} disabled={currentPage === 0} />
           <Text style={styles.pageText}>{`${currentPage + 1} / ${totalPages}`}</Text>
           <Button title="Siguiente" onPress={handleNextPage} disabled={currentPage === totalPages - 1} />
         </View>
+        }
+        {students .length === 0 &&
+        <View style={styles.container}>
+          <Text style={styles.headerText}>No hay Alumno</Text>
+        </View>
+        }
       </View>
     </Layaout>
   );

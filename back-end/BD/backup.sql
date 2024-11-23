@@ -128,7 +128,9 @@ CREATE TABLE `TAREA` (
   `fecha_fin` date DEFAULT NULL,
   `estado` varchar(20) DEFAULT NULL,
   `prioridad` varchar(20) DEFAULT NULL,
-  `es_creada_por` int DEFAULT NULL
+  `es_creada_por` int DEFAULT NULL, 
+  `descripcion` varchar(50),
+  `tipo` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------

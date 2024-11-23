@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View, Image, ScrollView, Platform, Alert } from "react-native";
 import Layaout from "../../components/Layaout/Layaout";
 import { useNavigation } from "@react-navigation/native";
@@ -6,6 +6,7 @@ import { obtenerPictograma } from "../../api/apiArasaac";
 import { Icon, Button } from "@rneui/themed";
 import { Input } from "@rneui/base";
 import { useFocusEffect } from '@react-navigation/native';
+import { getMateriales } from "../../api/apiInventario";
 /* import { getMateriales } from "../../test/materiales"; */
 
 const GestionInventario = ({route}) => {
@@ -20,36 +21,24 @@ const GestionInventario = ({route}) => {
     const [materialesFiltrados, setMaterialesFiltrados] = useState([]); // Estado para los materiales filtrados
     const [filtro, setFiltro] = useState(""); // Estado para el filtro
     
-    useFocusEffect(
-        React.useCallback(() => {
-        const fetchPictograma = async () => {
-            const respuesta = await obtenerPictograma(pictograma.atras);
-            if (respuesta) {
-                setUrlAtras(respuesta);
-            } else {
-                Alert.alert("Error al obtener el pictograma.");
-            }
-        };
+    const fetchMateriales = async () => {
+        const data = await getMateriales();
+        setMateriales(data);
+        setMaterialesFiltrados(data);
+    };
+    const fetchPictograma = async () => {
+        const respuesta = await obtenerPictograma(pictograma.atras);
+        if (respuesta) {
+            setUrlAtras(respuesta);
+        } else {
+            Alert.alert("Error al obtener el pictograma.");
+        }
+    };
 
-        const fetchMateriales = async () => {
-            try {
-                const response = await fetch('http://localhost:5000/materiales');
-
-                if (!response.ok) {
-                    throw new Error('Error al obtener los materiales');
-                }
-
-                const data = await response.json();
-                setMateriales(data);
-                setMaterialesFiltrados(data);
-            } catch (err) {
-              setError('Error al obtener los materiales');
-            }
-        };
-      
-          fetchPictograma();
+    useEffect(() => {
+        fetchPictograma();
           fetchMateriales();
-    }, []));
+    }, []);
 
     // Función para manejar el filtro
     const handleFilterSubmit = () => {

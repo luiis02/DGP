@@ -1,9 +1,8 @@
 //views/LoginProfesores/LoginProfesores.jsx
 import React, { useEffect, useState } from 'react'
 import Layaout from '../../components/Layaout/Layaout'
-import { getProfesores } from '../../api/api'; // Este método se encargaría de obtener los profesores}
 import LoginProf from '../../components/loginProf/LoginProf'
-import { getAdmin } from '../../api/api'; // Este método se encargaría de obtener si el profesor es administrador}
+import { getAdmin, getProfesores } from '../../api/apiUsuario'; // Este método se encargaría de obtener si el profesor es administrador}
 
 const LoginProfesores =  () => {
     const [profesores, setProfesores] = useState([]) // Estado para almacenar el nombre del profesor

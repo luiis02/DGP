@@ -5,7 +5,7 @@ import { Input } from "@rneui/themed";
 import { obtenerPictograma } from "../../api/apiArasaac";
 import { useNavigation } from "@react-navigation/native";
 import { Icon, Button } from "@rneui/themed";
-import { postMaterial } from "../../api/api";
+import { postMaterial } from "../../api/apiInventario";
 import { Alert } from "react-native";
 import { format } from 'date-fns';
 

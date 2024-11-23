@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Input, Button } from '@rneui/themed';
 import { Alert } from 'react-native';
 import { format } from 'date-fns';
-/* import { putEstudiante, deleteEstudiante, deleteImage } from '../../api/api'; */
+import { deleteMaterial, putMaterial } from '../../api/apiInventario'; 
 
 const InformacionMaterial = ({ route }) => {
     const { material } = route.params || {};
@@ -50,46 +50,25 @@ const InformacionMaterial = ({ route }) => {
             ultima_actualizacion: fechaActualizacion
         };
 
-        try {
-            const response = await fetch(`http://localhost:5000/materiales/${material.id_material}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(datosMaterial),
-            });
-        
-            if (!response.ok) {
-              throw new Error('Error al actualizar el material');
-            }
-        
-            const data = await response.json();
-            console.log('Material actualizado:', data);
-            Alert.alert("Material actualizado correctamente.");
+        const dato = await putMaterial(datosMaterial);
+
+        if (dato) {
+            Alert.alert("Material modificado correctamente.");
             navigation.navigate('GestionInventario', {idAdmin: material.id_administrador});
-        } catch (error) {
-            console.error('Error:', error.message);
+        } else {
+            Alert.alert("Error al modificar el material.");
+    
         }
     };
 
     const handleEliminarPress = async () => {
-        try {
-            const response = await fetch(`http://localhost:5000/materiales/${material.id_material}`, {
-                method: 'DELETE',
-            });
-        
-            if (!response.ok) {
-                throw new Error('Error al eliminar el material');
-            }
-        
-            const data = await response.json();
-            console.log('Material eliminado:', data);
-        } catch (error) {
-            console.error('Error:', error.message);
+        const material = await deleteMaterial(material)
+        if (material) {
+            Alert.alert("Material eliminado correctamente.");
+            navigation.navigate('GestionInventario', {idAdmin: material.id_administrador});
+        } else{
+            Alert.alert("Error al modificar el material.");
         }
-
-        Alert.alert("Material eliminado correctamente.");
-        navigation.navigate('GestionInventario', {idAdmin: material.id_administrador});
     };
 
 

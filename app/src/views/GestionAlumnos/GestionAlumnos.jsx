@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View, Image, ScrollView, Platform, 
 import Layaout from "../../components/Layaout/Layaout";
 import { useNavigation } from "@react-navigation/native";
 import { obtenerPictograma } from "../../api/apiArasaac";
-import { getEstudiantes } from "../../api/api";
+import { getEstudiantes } from "../../api/apiUsuario";
 import { Icon, Button } from "@rneui/themed";
 import { Input } from "@rneui/base";
 

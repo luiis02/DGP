@@ -4,12 +4,19 @@ from db_controller import DatabaseController
 from usuarios import userBP
 from imagenes import imagenesBP
 from materiales import materialesBP
-
+from peticiones import peticionesBP
+from comanda import comandaBP
+from tareas import tareasBP
+from profesor import profesorBP
 app = Flask(__name__)
 CORS(app)
 app.register_blueprint(userBP)
 app.register_blueprint(imagenesBP)
 app.register_blueprint(materialesBP)
+app.register_blueprint(peticionesBP)
+app.register_blueprint(comandaBP)
+app.register_blueprint(tareasBP)
+app.register_blueprint(profesorBP)
 
 # Instanciar el controlador de la base de datos
 db_controller = DatabaseController()
