@@ -60,3 +60,32 @@ export const getMateriales = async () => {
   }
 }
 
+export const getSolicitud = async () => {
+  try{
+    const response = await fetch(`http://localhost:5000/solicitud`);
+    if(response)
+      return await response.json();
+  } catch (error) {
+    console.error('Error:', error.message);
+    return null;
+  }
+}
+
+export const postSolicitud = async (datosSolicitud) => {
+  console.log(datosSolicitud)
+  try{
+    const response = await fetch(`http://localhost:5000/solicitud`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(datosSolicitud),
+    });
+    if(response)
+      return await response.json();
+  } catch (error) {
+    console.error('Error:', error.message);
+    return null;
+  }
+}
+

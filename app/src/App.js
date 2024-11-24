@@ -25,8 +25,11 @@ import GestionInformacion from './views/GestionInformacion/GestionInformacion';
 import GestionComedor from './views/GestionComedor/GestionComedor';
 
 import SolicitudMaterial from './views/SolicitudMaterial/SolicitudMaterial';
+import SolicitudMaterialAdmins from './views/SolicitudMaterialAdmins/SolicitudMaterialAdmins';
 
 import SolicitudComanda from './views/SolicitudComanda/SolicitudComanda';
+
+import GenerarTareaMaterial from './views/GenerarTareaMaterial/GenerarTareaMaterial';
 
 import Chat from './views/Chat/Chat';
 
@@ -63,8 +66,11 @@ const App = () => {
         <Stack.Screen name="GestionComedor" component={GestionComedor} options={{headerShown: false}} />
 
         <Stack.Screen name="SolicitudMaterial" component={SolicitudMaterial} options={{headerShown: false}} />
+        <Stack.Screen name="SolicitudMaterialAdmins" component={SolicitudMaterialAdmins} options={{headerShown: false}} />
 
         <Stack.Screen name="SolicitudComanda" component={SolicitudComanda} options={{headerShown: false}}/>
+
+        <Stack.Screen name="GenerarTareaMaterial" component={GenerarTareaMaterial} options={{headerShown: false}} />
 
         <Stack.Screen name="Chat" component={Chat} options={{headerShown: false}} />
 

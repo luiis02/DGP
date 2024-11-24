@@ -5,21 +5,25 @@ import { useNavigation } from "@react-navigation/native";
 import { obtenerPictograma } from "../../api/apiArasaac";
 import { Icon, Button } from "@rneui/themed";
 import { Input } from "@rneui/base";
-import { useFocusEffect } from '@react-navigation/native';
-import { getMateriales } from "../../api/apiInventario";
+import { getMateriales/*, getSolicitud*/ } from "../../api/apiInventario";
+import { getSolicitud } from "../../test/SolicitudMaterial";
 /* import { getMateriales } from "../../test/materiales"; */
 
 const GestionInventario = ({route}) => {
     const { idAdmin } = route.params || {};
 
     const pictograma = { 
-        atras: "38249/38249_2500.png", 
+        atras: "38249/38249_2500.png",
+        solicitud: "6518/6518_2500.png", 
     }
     const navigation = useNavigation();
     const [urlAtras, setUrlAtras] = useState(null);
+    const [urlSolicitud, setUrlSolicitud] = useState(null);
     const [materiales, setMateriales] = useState([]);
     const [materialesFiltrados, setMaterialesFiltrados] = useState([]); // Estado para los materiales filtrados
     const [filtro, setFiltro] = useState(""); // Estado para el filtro
+    const [solicitud, setSolucitud] = useState([]); //
+
     
     const fetchMateriales = async () => {
         const data = await getMateriales();
@@ -33,11 +37,25 @@ const GestionInventario = ({route}) => {
         } else {
             Alert.alert("Error al obtener el pictograma.");
         }
+        const respuestaSolicitud = await obtenerPictograma(pictograma.solicitud);
+        if (respuestaSolicitud) {
+            setUrlSolicitud(respuestaSolicitud);
+        } else {
+            Alert.alert("Error al obtener el pictograma.");
+        }
     };
+
+    const existeSolicitud = () => { 
+        const data =  getSolicitud(true); 
+        if (data) {
+            setSolucitud(data);
+        }
+    }
 
     useEffect(() => {
         fetchPictograma();
           fetchMateriales();
+          existeSolicitud();
     }, []);
 
     // Función para manejar el filtro
@@ -106,7 +124,16 @@ const GestionInventario = ({route}) => {
                     ))}
                 </ScrollView>
             </View>
-
+            {solicitud.length > 0 && 
+            <View style={styles.solicitudBoton}>
+                <TouchableOpacity 
+                    style={styles.itemText}
+                    onPress={()=> navigation.navigate("SolicitudMaterialAdmins", {solicitudes: solicitud} )}
+                    >
+                    <Image source={{uri: urlSolicitud}} style={{width: 80, height: 80}}/>
+                </TouchableOpacity>
+            </View>
+            }
 
             {/* Botón para añadir un nuevo material al inventario */}
             <View style={styles.footer}>
@@ -165,6 +192,14 @@ const styles = StyleSheet.create({
         fontSize: 13,
         textAlign: 'center',
     },
+    solicitudBoton: {
+        width: '100%',
+        paddingVertical: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 50,
+    },
+
     footer: {
         padding: 20,
         justifyContent: 'flex-end',  // Asegura que el botón esté alineado en la parte inferior
