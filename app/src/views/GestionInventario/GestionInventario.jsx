@@ -127,11 +127,11 @@ const GestionInventario = ({route}) => {
             {solicitud.length > 0 && 
             <View style={styles.solicitudBoton}>
                 <TouchableOpacity 
-                    style={styles.itemText}
                     onPress={()=> navigation.navigate("SolicitudMaterialAdmins", {solicitudes: solicitud} )}
                     >
-                    <Image source={{uri: urlSolicitud}} style={{width: 80, height: 80}}/>
+                    <Image source={{uri: urlSolicitud}} style={{width: 80, height: 80}}/>   
                 </TouchableOpacity>
+                <Text style={styles.solicitudText}>Solicitudes</Text>
             </View>
             }
 
@@ -198,6 +198,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 50,
+        flexDirection: 'column', // Asegura que el contenido esté en columna (imagen y texto)
+        alignItems: 'center', // Centra la imagen y el texto
     },
 
     footer: {
@@ -210,6 +212,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         textAlign: 'center',
+      },
+      solicitudText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'black',
+        marginTop: 10, // Añade un poco de espacio entre la imagen y el texto
+        textAlign: 'center', // Asegura que el texto esté centrado
       },
 });
 
