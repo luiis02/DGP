@@ -24,7 +24,7 @@ import GestionTareas from './views/GestionTareas/GestionTareas';
 import GestionInformacion from './views/GestionInformacion/GestionInformacion';
 import GestionComedor from './views/GestionComedor/GestionComedor';
 
-import SolicitudMaterial from './views/SolicitudMaterial/SolicitudMaterial';
+import SolicitudMaterial from './views/SolicitudMaterialProfesor/SolicitudMaterialProfesor';
 import SolicitudMaterialAdmins from './views/SolicitudMaterialAdmins/SolicitudMaterialAdmins';
 
 import SolicitudComanda from './views/SolicitudComanda/SolicitudComanda';
