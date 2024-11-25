@@ -102,7 +102,7 @@ const Home = () => {
         }
         {students .length === 0 &&
         <View style={styles.container}>
-          <Text style={styles.headerText}>No hay Alumno</Text>
+          <Text style={styles.headerText}>No hay alumnos</Text>
         </View>
         }
       </View>
@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginEnd: 10,
+    marginLeft: 20,
   },
   buttonLogo: {
     flexDirection: 'row',
