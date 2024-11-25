@@ -2,4 +2,3 @@
 back-end/server/__pycache__/
 back-end/server/venv/
 node_modules/
-app/src/api/config.js
