@@ -1,5 +1,4 @@
 **/.DS_Store
-
 back-end/server/__pycache__/
 back-end/server/venv/
-back-end/server/myenv/
+package-lock.json
