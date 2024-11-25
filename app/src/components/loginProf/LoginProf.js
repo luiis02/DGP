@@ -31,7 +31,7 @@ const LoginProf = ({ profesores, admin }) => {
         );
         if (profesorEncontrado) {
             Alert.alert('Acceso concedido', 'Bienvenido Profesor');
-            navigation.navigate('HomeProfesor'); // Redirige a la pantalla de administrador
+            navigation.navigate('HomeProfesor', {idProfesor: profesorEncontrado.id}); // Redirige a la pantalla de administrador
         } else {
             const adminEncontrado = admin.find(
                 (admin) => admin.nombre_usuario === username && admin.contraseña === password
