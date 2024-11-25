@@ -56,7 +56,7 @@ const GestionInventario = ({route}) => {
         fetchPictograma();
           fetchMateriales();
           existeSolicitud();
-    }, []);
+    }, [materiales]);
 
     // Función para manejar el filtro
     const handleFilterSubmit = () => {
@@ -66,7 +66,7 @@ const GestionInventario = ({route}) => {
             return nombre.includes(filtro.toLowerCase());
         });
 
-        // Actualizar el estado de los estudiantes filtrados
+        // Actualizar el estado de los materiales filtrados
         setMaterialesFiltrados(datosFiltrados);
     }
 

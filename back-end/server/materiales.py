@@ -66,78 +66,67 @@ def materiales():
 
 @materialesBP.route('/materiales/<int:id_material>', methods=['PUT'])
 def modificar_material(id_material):
-    # Obtener los datos del cuerpo de la solicitud
-    data = request.json
+    # Obtener los datos enviados en la solicitud
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No se enviaron datos para actualizar"}), 400
 
-    # Asegúrate de validar los datos antes de usarlos
-    nombre_material = data.get('nombre_material')
-    descripcion = data.get('descripcion')
-    categoria = data.get('categoria')
-    cantidad = data.get('cantidad')
-    estado = data.get('estado')
-    ultima_actualizacion = data.get('ultima_actualizacion')
-
-    # Verifica que al menos uno de los campos sea válido para actualizar
-    if not any([nombre_material, descripcion, categoria, cantidad, estado]):
-        return jsonify({"error": "No hay datos válidos para actualizar"}), 400
-
-    # Construir la consulta dinámica para actualizar solo los campos necesarios
-    campos_a_actualizar = []
+    # Crear la consulta dinámica para actualizar solo los campos enviados
+    campos_actualizar = []
     valores = []
 
-    if nombre_material:
-        campos_a_actualizar.append("nombre_material = %s")
-        valores.append(nombre_material)
-    if descripcion:
-        campos_a_actualizar.append("descripcion = %s")
-        valores.append(descripcion)
-    if categoria:
-        campos_a_actualizar.append("categoria = %s")
-        valores.append(categoria)
-    if cantidad:
-        campos_a_actualizar.append("cantidad = %s")
-        valores.append(cantidad)
-    if estado:
-        campos_a_actualizar.append("estado = %s")
-        valores.append(estado)
+    if 'nombre_material' in data:
+        campos_actualizar.append("nombre_material = %s")
+        valores.append(data['nombre_material'])
 
-    # Siempre actualizamos la última actualización, si es necesario
-    if not ultima_actualizacion:
-        ultima_actualizacion = "NOW()"  # SQL para la fecha y hora actuales
-    else:
-        valores.append(ultima_actualizacion)
-        campos_a_actualizar.append("ultima_actualizacion = %s")
+    if 'descripcion' in data:
+        campos_actualizar.append("descripcion = %s")
+        valores.append(data['descripcion'])
 
-    # Agregar el ID del material al final de los valores
+    if 'categoria' in data:
+        campos_actualizar.append("categoria = %s")
+        valores.append(data['categoria'])
+
+    if 'cantidad' in data:
+        if not isinstance(data['cantidad'], int) or data['cantidad'] < 0:
+            return jsonify({"error": "La cantidad debe ser un número entero no negativo"}), 400
+        campos_actualizar.append("cantidad = %s")
+        valores.append(data['cantidad'])
+
+    if 'estado' in data:
+        if data['estado'] not in ['Disponible', 'Agotado', 'Dañado']:
+            return jsonify({"error": "Estado inválido"}), 400
+        campos_actualizar.append("estado = %s")
+        valores.append(data['estado'])
+
+    # Verificar si hay campos para actualizar
+    if not campos_actualizar:
+        return jsonify({"error": "No se proporcionaron campos válidos para actualizar"}), 400
+
+    # Añadir el ID del material al final de los valores
     valores.append(id_material)
 
     # Crear la consulta dinámica
-    query = f"""
-        UPDATE MATERIALES_ALMACEN
-        SET {', '.join(campos_a_actualizar)}
-        WHERE id_material = %s
-    """
+    query = f"UPDATE MATERIALES_ALMACEN SET {', '.join(campos_actualizar)} WHERE id_material = %s"
 
-    # Ejecutar la consulta
     try:
-        db_controller.execute_query(query, tuple(valores))
-        return jsonify({"success": "Material actualizado exitosamente"}), 200
+        if db_controller.execute_query(query, valores):
+            return jsonify({"message": "Material actualizado correctamente."}), 200
+        else:
+            return jsonify({"error": "Material no encontrado"}), 404
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"Error al actualizar el material: {str(e)}"}), 500
+
+
 
 @materialesBP.route('/materiales/<int:id_material>', methods=['DELETE'])
 def eliminar_material(id_material):
-    # Construir la consulta para eliminar el material
+    # Crear la consulta SQL para eliminar el material
     query = "DELETE FROM MATERIALES_ALMACEN WHERE id_material = %s"
+    valores = (id_material,)
 
-    try:
-        # Ejecutar la consulta con el ID proporcionado
-        result = db_controller.execute_query(query, (id_material,))
-        
-        # Verificar si se eliminó algún registro
-        if result.rowcount > 0:
-            return jsonify({"success": "Material eliminado exitosamente"}), 200
-        else:
-            return jsonify({"error": "No se encontró el material con el ID proporcionado"}), 404
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    # Ejecutar la consulta
+    if db_controller.execute_query(query, valores):
+        return jsonify({"message": "Material eliminado correctamente."}), 200
+    else:
+        return jsonify({"error": "No se pudo eliminar el material. Puede que no exista."}), 404

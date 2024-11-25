@@ -6,6 +6,7 @@ export const getMateriales = async () => {
   };
 
   export const postMaterial = async (datosMaterial) => {
+    console.log("datosMaterial --> " + datosMaterial);
     try {
       const response = await fetch(`http://${ipAddress}:5000/materiales`, {
         method: 'POST',
@@ -28,23 +29,30 @@ export const getMateriales = async () => {
 
   export const putMaterial = async (datosMaterial) => {
     try {
-      const response = await fetch(`http://localhost:5000/materiales/${datosMaterial.id_material}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(datosMaterial),
+      const response = await fetch(`http://${ipAddress}:5000/materiales/${datosMaterial.id_material}`, {
+          method: 'PUT',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(datosMaterial),
       });
+
+      // Verificar la respuesta del servidor
+      if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Error: ${response.status} - ${errorText}`);
+      }
+
       return await response.json();
-    }catch(error){
-        console.error(error);
+    } catch (error) {
+        console.error("Error al modificar el material:", error.message);
         return null;
     }
   }
 
-  export const deleteMaterial = async (datosMaterial) =>{
+  export const deleteMaterial = async (id_material) =>{
     try {
-      const response = await fetch(`http://localhost:5000/materiales/${datosMaterial.id_material}`, {
+      const response = await fetch(`http://${ipAddress}:5000/materiales/${id_material}`, {
           method: 'DELETE',
       });
   
@@ -62,7 +70,7 @@ export const getMateriales = async () => {
 
 export const getSolicitud = async () => {
   try{
-    const response = await fetch(`http://localhost:5000/solicitud`);
+    const response = await fetch(`http://${ipAddress}:5000/solicitud`);
     if(response)
       return await response.json();
   } catch (error) {
@@ -74,7 +82,7 @@ export const getSolicitud = async () => {
 export const postSolicitud = async (datosSolicitud) => {
   console.log(datosSolicitud)
   try{
-    const response = await fetch(`http://localhost:5000/solicitud`, {
+    const response = await fetch(`http://${ipAddress}:5000/solicitud`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -42,28 +42,28 @@ const InformacionMaterial = ({ route }) => {
 
     const handleAceptarPress = async () => {
         const datosMaterial = {
-            nombre_material: nombre,
-            descripcion: descripcion,
-            categoria: categoria,
-            cantidad: cantidad,
-            estado: estado,
-            ultima_actualizacion: fechaActualizacion
+            id_material: material.id_material, // ID del material a modificar
+            nombre_material: nombre,          // Nuevo nombre
+            descripcion: descripcion,         // Nueva descripción
+            categoria: categoria,             // Nueva categoría
+            cantidad: parseInt(cantidad, 10), // Nueva cantidad
+            estado: estado,                   // Nuevo estado
         };
+    
+        const resultado = await putMaterial(datosMaterial);
 
-        const dato = await putMaterial(datosMaterial);
-
-        if (dato) {
+        if (resultado) {
             Alert.alert("Material modificado correctamente.");
             navigation.navigate('GestionInventario', {idAdmin: material.id_administrador});
         } else {
             Alert.alert("Error al modificar el material.");
-    
         }
     };
 
     const handleEliminarPress = async () => {
-        const material = await deleteMaterial(material)
-        if (material) {
+        const response = await deleteMaterial(material.id_material)
+        
+        if (response) {
             Alert.alert("Material eliminado correctamente.");
             navigation.navigate('GestionInventario', {idAdmin: material.id_administrador});
         } else{
@@ -106,7 +106,7 @@ const InformacionMaterial = ({ route }) => {
                 <Input
                     style={styles.input}
                     placeholder="Cantidad"
-                    value={cantidad}
+                    value={cantidad.toString()}
                     onChangeText={setCantidad}
                 />
                 <Input
