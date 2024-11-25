@@ -7,7 +7,7 @@ import { Icon, Button } from "@rneui/themed";
 import { Input } from "@rneui/base";
 import { getMateriales/*, getSolicitud*/ } from "../../api/apiInventario";
 import { getSolicitud } from "../../test/SolicitudMaterial";
-/* import { getMateriales } from "../../test/materiales"; */
+import { useFocusEffect } from '@react-navigation/native';
 
 const GestionInventario = ({route}) => {
     const { idAdmin } = route.params || {};
@@ -52,11 +52,16 @@ const GestionInventario = ({route}) => {
         }
     }
 
-    useEffect(() => {
-        fetchPictograma();
-          fetchMateriales();
-          existeSolicitud();
-    }, [materiales]);
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchPictograma();
+            fetchMateriales();
+            existeSolicitud();
+    
+            // Cleanup si es necesario
+            return () => {};
+        }, [])
+    );
 
     // Función para manejar el filtro
     const handleFilterSubmit = () => {
