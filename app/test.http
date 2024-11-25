@@ -1,0 +1,14 @@
+@api = http://localhost:5000
+http://192.168.18.44:5000
+
+###
+GET {{api}}/admins
+
+### 
+GEt {{api}}/profesores
+
+###
+GET {{api}}/estudiantes
+
+###
+GET {{api}}/materiales
