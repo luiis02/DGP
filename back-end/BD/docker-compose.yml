@@ -4,6 +4,7 @@ services:
   db:
     image: mysql:latest  # o puedes usar mariadb:latest si prefieres MariaDB
     container_name: db
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword  # Contraseña de root
       MYSQL_DATABASE: dgp  # Base de datos predeterminada
@@ -17,6 +18,7 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin
+    restart: always
     environment:
       PMA_HOST: db  # Nombre del contenedor de MySQL
       PMA_USER: root  # Usuario root
