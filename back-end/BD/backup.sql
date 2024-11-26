@@ -81,6 +81,8 @@ CREATE TABLE `PETICION` (
 
 -- --------------------------------------------------------
 
+
+
 --
 -- Estructura de tabla para la tabla `RECIBE`
 --
@@ -128,10 +130,13 @@ CREATE TABLE `TAREA` (
   `fecha_fin` date DEFAULT NULL,
   `estado` varchar(20) DEFAULT NULL,
   `prioridad` varchar(20) DEFAULT NULL,
-  `es_creada_por` int DEFAULT NULL, 
-  `descripcion` varchar(50),
-  `tipo` varchar(50) DEFAULT NULL
+  `es_creada_por` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+
+
 
 -- --------------------------------------------------------
 
@@ -151,7 +156,7 @@ CREATE TABLE `TIENE` (
 --
 
 CREATE TABLE `USUARIO` (
-  `id` int NOT NULL,
+  `id` INT NOT NULL,
   `nombre` varchar(50) DEFAULT NULL,
   `apellidos` varchar(50) DEFAULT NULL,
   `nombre_usuario` varchar(30) DEFAULT NULL,
@@ -160,6 +165,13 @@ CREATE TABLE `USUARIO` (
   `tamaño_letra` varchar(20) DEFAULT NULL,
   `rol` enum('ADMINISTRADOR','ESTUDIANTE','PROFESOR') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+--
+-- Estructura de tabla para la tabla `SOLICITUD_MATERIAL`
+--
+
+
 
 --
 -- Volcado de datos para la tabla `USUARIO`
@@ -342,6 +354,21 @@ ALTER TABLE `TIENE`
 COMMIT;
 
 
+
+
+
+
+CREATE TABLE SOLICITUD_MATERIAL (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `profesor_id` INT NOT NULL,
+    `alumno_id` INT NOT NULL,
+    `material` VARCHAR(255) NOT NULL,
+    `fecha_entrega` DATE NOT NULL,
+    FOREIGN KEY (profesor_id) REFERENCES USUARIO(id),
+    FOREIGN KEY (alumno_id) REFERENCES USUARIO(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ALTER TABLE TAREA ADD COLUMN id_solicitud INT, ADD FOREIGN KEY (id_solicitud) REFERENCES SOLICITUD_MATERIAL(id);
 -- --------------------------------------------------------
 
 --

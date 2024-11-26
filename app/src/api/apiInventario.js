@@ -60,9 +60,9 @@ export const getMateriales = async () => {
   }
 }
 
-export const getSolicitud = async () => {
+export const getPeticion = async () => {
   try{
-    const response = await fetch(`http://localhost:5000/solicitud`);
+    const response = await fetch(`http://localhost:5000/peticiones`);
     if(response)
       return await response.json();
   } catch (error) {
@@ -71,10 +71,10 @@ export const getSolicitud = async () => {
   }
 }
 
-export const postSolicitud = async (datosSolicitud) => {
+export const postPeticion = async (datosSolicitud) => {
   console.log(datosSolicitud)
   try{
-    const response = await fetch(`http://localhost:5000/solicitud`, {
+    const response = await fetch(`http://localhost:5000/peticion`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

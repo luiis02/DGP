@@ -6,8 +6,7 @@ import { obtenerPictograma } from "../../api/apiArasaac";
 import { Icon, Button } from "@rneui/themed";
 import { Input } from "@rneui/base";
 import { getMateriales/*, getSolicitud*/ } from "../../api/apiInventario";
-import { getSolicitud } from "../../test/SolicitudMaterial";
-/* import { getMateriales } from "../../test/materiales"; */
+import { getPeticion } from "../../api/apiInventario";
 
 const GestionInventario = ({route}) => {
     const { idAdmin } = route.params || {};
@@ -45,8 +44,8 @@ const GestionInventario = ({route}) => {
         }
     };
 
-    const existeSolicitud = () => { 
-        const data =  getSolicitud(true); 
+    const existeSolicitud = async () => { 
+        const data =  await getPeticion(); 
         if (data) {
             setSolucitud(data);
         }
@@ -57,6 +56,9 @@ const GestionInventario = ({route}) => {
           fetchMateriales();
           existeSolicitud();
     }, []);
+    useEffect(() => {
+        console.log(solicitud);
+    },[solicitud])
 
     // Función para manejar el filtro
     const handleFilterSubmit = () => {

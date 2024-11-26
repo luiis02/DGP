@@ -131,7 +131,7 @@ const students = [
     }
   ];
   
-  export function getEstudiantes() {
-    return students;
+  export function getEstudiantes(condicion) {
+    return condicion ? students : [];
   };
   

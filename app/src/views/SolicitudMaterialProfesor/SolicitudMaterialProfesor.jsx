@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { obtenerPictograma } from "../../api/apiArasaac";
 import { getMateriales } from "../../api/apiInventario";
 import { putMaterial } from "../../api/apiInventario";
+import { postPeticion } from "../../api/apiInventario";
 
 const SolicitudMaterial = ({route}) => {
     const pictogramas = { 
@@ -90,18 +91,19 @@ const SolicitudMaterial = ({route}) => {
     
                 // Construir el cuerpo para la solicitud
                 const peticiones = materialesFiltrados.map((material) => ({
-                    id_material: material.id_material,
-                    nombre: material.nombre_material,
-                    cantidad: material.cantidad, // Cantidad solicitada
+                        id_material: material.id_material,
+                        nombre: material.nombre_material,
+                        cantidad: material.cantidad, // Cantidad solicitada
                 }));
                 const reqData = {
-                    id_profesor: idProfesor,
-                    materiales: peticiones,
+                    profesor_id: idProfesor,
+                    alumno_id : 0,
+                    material: peticiones,
                     fecha_entrega: fechaEntrega, // Usar la fecha ingresada
                 };
     
                 // Realizar el POST de la solicitud
-                const resp = await postSolicitud(reqData);
+                const resp = await postPeticion(reqData);
                 if (resp) {
                     Alert.alert("Solicitud enviada correctamente.");
                     setMateriales(nuevosMateriales); // Actualizar el estado con las cantidades ajustadas
