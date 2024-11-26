@@ -68,7 +68,7 @@ export const getMateriales = async () => {
   }
 }
 
-export const getSolicitud = async () => {
+export const getPeticion = async () => {
   try{
     const response = await fetch(`http://${ipAddress}:5000/solicitud`);
     if(response)
@@ -79,7 +79,7 @@ export const getSolicitud = async () => {
   }
 }
 
-export const postSolicitud = async (datosSolicitud) => {
+export const postPeticion = async (datosSolicitud) => {
   console.log(datosSolicitud)
   try{
     const response = await fetch(`http://${ipAddress}:5000/solicitud`, {

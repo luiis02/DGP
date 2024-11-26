@@ -68,6 +68,7 @@ const Home = () => {
             <Button
               title="Profesores"
               color="#000100"
+              testID = "Profesores"
               onPress={() => navigation.navigate('LoginProfesores')
               }
             />
@@ -83,7 +84,7 @@ const Home = () => {
           <Text style={styles.title}>INICIO</Text>
         </View>
         { students.length > 0 &&
-        <View style={styles.studentsContainer}>
+        <View style={styles.studentsContainer} data-testID="Estudiantes">
           <FlatList
             data={currentStudents}
             keyExtractor={(item) => item.id.toString()}

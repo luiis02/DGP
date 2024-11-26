@@ -18,6 +18,12 @@ def peticion():
         material = data.get('material')
         fecha_entrega = data.get('fecha_entrega')
 
+        print(data)
+        print(profesor_id)
+        print(alumno_id)
+        print(material)
+        print(fecha_entrega)
+
         if not (profesor_id and alumno_id and material and fecha_entrega):
             return jsonify({'error': 'Todos los campos son obligatorios.'}), 400
 

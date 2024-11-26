@@ -228,4 +228,41 @@ def ver_historial():
         print(f"Error inesperado: {response.status_code}")
         print(response.json())
         
-ver_historial()
+def crear_material():
+    # URL del endpoint de la API
+    url = "http://127.0.0.1:5000/materiales"
+
+    # Datos que se enviarán en el cuerpo de la solicitud
+    payload = {
+        "fecha_entrega": "2013-01-01",
+        "id_profesor": 3,
+        "materiales": [
+            {"cantidad": 50, "id": 1, "nombre": "Papelería"},
+            {"cantidad": 200, "id": 2, "nombre": "Papelería"},
+            {"cantidad": 30, "id": 3, "nombre": "Papelería"},
+            {"cantidad": 100, "id": 4, "nombre": "Papelería"},
+            {"cantidad": 80, "id": 5, "nombre": "Papelería"}
+        ]
+    }
+
+    # Cabeceras de la solicitud
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    try:
+        # Realizar el POST a la API
+        response = requests.post(url, json=payload, headers=headers)
+
+        # Evaluar el resultado
+        if response.status_code == 200:
+            print("Solicitud enviada exitosamente.")
+            print("Respuesta del servidor:", response.json())
+        else:
+            print(f"Error al enviar la solicitud: {response.status_code}")
+            print("Detalle del error:", response.text)
+
+    except requests.exceptions.RequestException as e:
+        print("Error de conexión o solicitud:", e)
+
+crear_material()

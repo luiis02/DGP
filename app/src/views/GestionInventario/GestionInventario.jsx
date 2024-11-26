@@ -45,8 +45,8 @@ const GestionInventario = ({route}) => {
         }
     };
 
-    const existeSolicitud = () => { 
-        const data =  getSolicitud(true); 
+    const existeSolicitud = async () => { 
+        const data =  await getPeticion(); 
         if (data) {
             setSolucitud(data);
         }
@@ -62,6 +62,15 @@ const GestionInventario = ({route}) => {
             return () => {};
         }, [])
     );
+    // Cambio de Luis Alberto:
+    /* useEffect(() => {
+        fetchPictograma();
+          fetchMateriales();
+          existeSolicitud();
+    }, []);
+    useEffect(() => {
+        console.log(solicitud);
+    },[solicitud]) */
 
     // Función para manejar el filtro
     const handleFilterSubmit = () => {
