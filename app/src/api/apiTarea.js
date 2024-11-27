@@ -93,7 +93,7 @@ export const getTareasAlumno = async (idAlumno) => {
 // función para asignar un estudiante a una tarea
 export const postTareaEstudiante = async (tareaId, estudianteId)=>{
     try {
-        const response = await fetch(`/asignar_estudiante/${tareaId}/${estudianteId}`, {
+        const response = await fetch(`http://${ipAddress}/asignar_estudiante/${tareaId}/${estudianteId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -112,3 +112,30 @@ export const postTareaEstudiante = async (tareaId, estudianteId)=>{
         console.error("Error en la solicitud:", error);
     }
 }
+
+
+//funcion para agregar una nueva tarea
+export const postTarea = async (datos) => {
+    try {
+        const response = await fetch(`http://${ipAddress}:5000/tareas`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(datos),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error al agregar la tarea:", response.status, errorData);
+            throw new Error(errorData.error || "Error desconocido");
+        }
+
+        const data = await response.json();
+        console.log("Respuesta del servidor:", data);
+        return data;
+    } catch (error) {
+        console.error("Error en la solicitud:", error);
+        throw error; // Lanza el error para que pueda ser manejado donde se llame
+    }
+};

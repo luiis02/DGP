@@ -45,6 +45,39 @@ def marcar_tarea_como_finalizada(tarea_id):
     else:
         return jsonify({"message": "Error al marcar la tarea como finalizada"}), 500
     
+
+
+# Añadir una nueva tarea
+@tareasBP.route('/tareas', methods=['POST'])
+def crear_tarea():
+
+    data = request.get_json() # Obtener los datos del cuerpo de la solicitud
+
+    #verificar que los campos esenciales estén presentes 
+    required_fields = ['fecha_inicio', 'fecha_fin', 'prioridad', 'es_creada_por', 'id_estudiante']
+    if not all(field in data for field in required_fields):
+        missing_fields = [field for field in required_fields if field not in data]
+        return jsonify({"error": f"Faltan los siguientes campos: {', '.join(missing_fields)}"}), 400
+
+    # Asignar valores de los campos recibidos
+    fecha_inicio = data.get('fecha_inicio')
+    fecha_fin = data.get('fecha_fin')
+    estado = 'PENDIENTE'
+    prioridad = data.get('prioridad')
+    es_creada_por = data.get('es_creada_por')
+    id_estudiante = data.get('id_estudiante')
+
+    # Crear la tarea
+    crear_tarea_query = "INSERT INTO TAREA (fecha_inicio, fecha_fin, estado, prioridad, es_creada_por, id_estudiante) VALUES (%s, %s, %s, %s, %s, %s)"
+
+    try:
+        db.execute_query(crear_tarea_query, (fecha_inicio, fecha_fin, estado, prioridad, es_creada_por, id_estudiante))
+        return jsonify({"message": "Tarea creada exitosamente"}), 201
+    except Exception as e:
+        return jsonify({"message": f"Error al crear la tarea: {str(e)}"}), 500
+    
+
+
 @tareasBP.route('/ver_tareas/<int:estudiante_id>', methods=['GET'])
 def ver_tareas_pendientes(estudiante_id):
 
@@ -74,6 +107,8 @@ def ver_tareas_pendientes(estudiante_id):
     except Exception as e:
         return jsonify({"message": f"Error al obtener las tareas: {str(e)}"}), 500
     
+
+
 @tareasBP.route('/ver_estado_tarea/<int:tarea_id>', methods=['GET'])
 def ver_estado_tarea(tarea_id):
 

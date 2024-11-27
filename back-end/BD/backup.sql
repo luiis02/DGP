@@ -130,12 +130,8 @@ CREATE TABLE `TAREA` (
   `fecha_fin` date DEFAULT NULL,
   `estado` varchar(20) DEFAULT NULL,
   `prioridad` varchar(20) DEFAULT NULL,
-<<<<<<< HEAD
   `es_creada_por` int DEFAULT NULL,
   `id_estudiante` INT NOT NULL -- Para vincular la tarea con el alumno
-=======
-  `es_creada_por` int DEFAULT NULL
->>>>>>> origin/DEV_LuisArrabalGutierrez
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
