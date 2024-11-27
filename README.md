@@ -13,3 +13,9 @@
 ```bash
   npm start
 ```
+
+1.- npm install en app
+2.- docker-compose up en BD
+3.- mysql -u root -p -h 127.0.0.1 -P 3307 dgp <./backup.sql en BD
+4.- python app.py en server
+5.- ifconfig y ver la direccion ip de wlpIs0 y meterla en app/src/api

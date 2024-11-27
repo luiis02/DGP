@@ -130,8 +130,12 @@ CREATE TABLE `TAREA` (
   `fecha_fin` date DEFAULT NULL,
   `estado` varchar(20) DEFAULT NULL,
   `prioridad` varchar(20) DEFAULT NULL,
+<<<<<<< HEAD
   `es_creada_por` int DEFAULT NULL,
   `id_estudiante` INT NOT NULL -- Para vincular la tarea con el alumno
+=======
+  `es_creada_por` int DEFAULT NULL
+>>>>>>> origin/DEV_LuisArrabalGutierrez
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -415,6 +419,13 @@ VALUES
   (2, '2024-11-20', '2024-11-21', 'EN PROCESO', 'baja', 3, 1),
   (3, '2024-11-22', '2024-11-22', 'TERMINADA', 'alta', 3, 1);
 
+CREATE TABLE TAREA_ESTUDIANTE (
+    id_tarea INT NOT NULL,                      -- ID de la tarea, referencia a la tabla TAREA
+    id_estudiante INT NOT NULL,                -- ID del estudiante, referencia a la tabla USUARIO
+    PRIMARY KEY (id_tarea, id_estudiante),     -- Llave primaria compuesta por id_tarea y id_estudiante
+    FOREIGN KEY (id_tarea) REFERENCES TAREA(id), -- Clave foránea que referencia a la tabla TAREA
+    FOREIGN KEY (id_estudiante) REFERENCES USUARIO(id) -- Clave foránea que referencia a la tabla USUARIO
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
