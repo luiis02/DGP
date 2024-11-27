@@ -130,7 +130,8 @@ CREATE TABLE `TAREA` (
   `fecha_fin` date DEFAULT NULL,
   `estado` varchar(20) DEFAULT NULL,
   `prioridad` varchar(20) DEFAULT NULL,
-  `es_creada_por` int DEFAULT NULL
+  `es_creada_por` int DEFAULT NULL,
+  `id_estudiante` INT NOT NULL -- Para vincular la tarea con el alumno
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -343,7 +344,8 @@ ALTER TABLE `SUPERVISADO_POR`
 -- Filtros para la tabla `TAREA`
 --
 ALTER TABLE `TAREA`
-  ADD CONSTRAINT `TAREA_ibfk_1` FOREIGN KEY (`es_creada_por`) REFERENCES `USUARIO` (`id`);
+  ADD CONSTRAINT `TAREA_ibfk_1` FOREIGN KEY (`es_creada_por`) REFERENCES `USUARIO` (`id`),
+  ADD CONSTRAINT `TAREA_ibfk_2` FOREIGN KEY (`id_estudiante`) REFERENCES `USUARIO` (`id`);
 
 --
 -- Filtros para la tabla `TIENE`
@@ -402,6 +404,16 @@ INSERT INTO MATERIALES_ALMACEN (nombre_material, descripcion, categoria, cantida
     ('Marcadores', 'Marcadores de colores surtidos', 'Papelería', 30, '2024-11-12', 'Disponible', 5),
     ('Borradores', 'Borradores de goma para lápiz', 'Papelería', 100, '2024-11-10', 'Disponible', 5),
     ('Rotuladores', 'Rotuladores de colores', 'Papelería', 80, '2024-11-08', 'Disponible', 5);
+
+
+--
+-- Volcado de datos para la tabla `TAREA`
+--
+INSERT INTO TAREA (id, fecha_inicio, fecha_fin, estado, prioridad, es_creada_por, id_estudiante)
+VALUES 
+  (1, '2024-11-15', '2024-11-15', 'TERMINADA', 'media', 3, 1),
+  (2, '2024-11-20', '2024-11-21', 'EN PROCESO', 'baja', 3, 1),
+  (3, '2024-11-22', '2024-11-22', 'TERMINADA', 'alta', 3, 1);
 
 
 

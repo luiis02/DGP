@@ -13,6 +13,7 @@ export const getTareaComanda = async () => {
         throw error;
     }
 } 
+
 export const postTareaComanda = async (requestData) =>{
     try{
         console.log(requestData)
@@ -73,3 +74,18 @@ export const deleteTareaComanda = async (id) => {
         throw error;
     }
 }
+
+// Obtener todas las tareas de un alumno:
+export const getTareasAlumno = async (idAlumno) => { 
+    try {
+        const response = await fetch(`http://${ipAddress}:5000/tareas/${idAlumno}`);
+        if(response.ok){
+            return await response.json();  // Retorna la respuesta si es exitosa
+        }else{
+            throw new Error('Error al obtener las tareas del alumno');
+        }
+    } catch(error){
+        console.error("Error al obtener las tareas del alumno:", error.message);
+        throw error;
+    }
+} 

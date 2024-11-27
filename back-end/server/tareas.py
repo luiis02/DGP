@@ -94,3 +94,41 @@ def ver_estado_tarea(tarea_id):
 
     except Exception as e:
         return jsonify({"message": f"Error al obtener las tareas: {str(e)}"}), 500
+    
+
+
+
+@tareasBP.route('/tareas/<int:estudiante_id>', methods=['GET'])
+def obtener_tareas_estudiante(estudiante_id):
+
+    # Validar que el estudiante_id esté presente
+    if not estudiante_id:
+        return jsonify({"message": "Falta el parámetro 'estudiante_id'"}), 400
+
+    try:
+        # Consultar las tareas asignadas al estudiante
+        query  = "SELECT * FROM TAREA WHERE id_estudiante = %s"
+        tareas = db.fetch_query(query, (estudiante_id,))
+
+        # Verificar si el estudiante tiene tareas
+        if not tareas:
+            return jsonify({"message": "No tienes tareas."}), 200
+
+        # Retornar las tareas con sus estados
+        tareas = [
+            {
+                "id": tarea[0], 
+                "fecha_inicio": tarea[1], 
+                "fecha_fin": tarea[2],
+                "estado": tarea[3], 
+                "prioridad": tarea[4],
+                "es_creada_por": tarea[5], 
+                "id_estudiante": tarea[6],
+                "id_solicitud": tarea[7]
+            } for tarea in tareas
+        ]
+
+        return jsonify(tareas), 200
+
+    except Exception as e:
+        return jsonify({"message": f"Error al obtener las tareas: {str(e)}"}), 500
