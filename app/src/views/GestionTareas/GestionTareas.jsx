@@ -13,7 +13,10 @@ const GestionTareas = () => {
     }
     const navigation = useNavigation();
     const [urlAtras, setUrlAtras] = useState(null);
-    
+    const [alumnos, setAlumnos] = useState([]);
+    const [filteredAlumnos, setFilteredAlumnos] = useState([]); // Estado para los estudiantes filtrados
+    const [filter, setFilter] = useState(""); // Estado para el filtro
+
     const fetch = async () => {
         const respuesta = await obtenerPictograma(pictograma.atras);
         if (respuesta) {
@@ -21,14 +24,30 @@ const GestionTareas = () => {
         } else {
             Alert.alert("Error al obtener el pictograma.");
         }
-       
+        const data = await getEstudiantes(); 
+        if (data) {
+            setAlumnos(data);
+            setFilteredAlumnos(data); // Inicializamos los estudiantes filtrados con todos los estudiantes
+        } else {
+            Alert.alert("Error al obtener los alumnos.");
+        }
     }
     
     useEffect(() => {
         fetch();
     }, []);
 
-   
+    // Función para manejar el filtro
+    const handleFilterSubmit = () => {
+        // Filtrar los estudiantes por nombre o apellido
+        const filteredData = alumnos.filter((item) => {
+            const fullName = `${item.nombre} ${item.apellido}`.toLowerCase();
+            return fullName.includes(filter.toLowerCase());
+        });
+
+        // Actualizar el estado de los estudiantes filtrados
+        setFilteredAlumnos(filteredData);
+    }
 
     return (
         <Layaout>
@@ -40,11 +59,58 @@ const GestionTareas = () => {
                         }
                     </TouchableOpacity>
                 }
-                <Text style={styles.titleHeader}> Gestión de Tareas</Text>
+                <Text style={styles.titleHeader}> Gestión de Tareas </Text>
             </View>
 
-           
-            
+            <View style={styles.body}>
+                {/* Filtro de búsqueda arriba */}
+                <View style={styles.filtrar}>
+                    <Input 
+                        placeholder="Filtrar por nombre o apellido"
+                        inputStyle={{alignItems: 'center'}}
+                        value={filter} // Vinculamos el estado al input
+                        onChangeText={(text) => setFilter(text)} // Actualiza el estado al escribir
+                        rightIcon={
+                            <TouchableOpacity onPress={handleFilterSubmit}>
+                                <Icon name="search" size={24} color="black" />
+                            </TouchableOpacity>
+                        }
+                    />
+                </View>
+
+                {/* Contenido de los estudiantes filtrados en el medio */}
+                <ScrollView style={styles.scrollView}>
+                    {filteredAlumnos.map((item) => (
+                        <TouchableOpacity 
+                            key={item.id} 
+                            style={styles.item} 
+                            onPress={() => {
+
+                                navigation.navigate('InformacionUsuario', {alumno: item})
+                                }
+                            }
+                        >
+                            <Image source={{uri: item.foto_perfil}} style={{width: 80, height: 80, borderRadius: 40}} />
+                            <Text style={styles.itemText}>{item.nombre} {item.apellido}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+            </View>
+
+            {/* Botón para añadir un nuevo alumno abajo */}
+            <View style={styles.footer}>
+                <Button 
+                    icon={<Icon 
+                            name="journal-outline"
+                            type="ionicon"
+                            color="black"
+                        />}
+                    color='#F8F8F8'
+                    title='Añadir tarea'
+                    titleStyle={{fontSize: 16, color: '#000', fontWeight: 'bold', margin: 10}}
+                    onPress={() => navigation.navigate('AgregarTarea')}
+                />
+            </View>
         </Layaout>     
     );
 }

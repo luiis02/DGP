@@ -7,37 +7,52 @@ materialesBP = Blueprint('materiales', __name__)
 db_controller = DatabaseController()
 
 @materialesBP.route('/materiales', methods=['POST'])
-def post_material():
-    # Obtenemos los datos del cuerpo de la petición
-    data = request.get_json()
+def crear_solicitud_material():
+    """ Maneja la creación de una solicitud de materiales. """
+    try:
+        # Parsear los datos del JSON recibido
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Datos no proporcionados"}), 400
 
-    # Verificamos si los datos requeridos están presentes
-    if not all(key in data for key in ['nombre_material', 'descripcion', 'categoria', 'cantidad', 'fecha_ingreso', 'estado', 'id_administrador']):
-        return jsonify({"error": "Faltan datos requeridos"}), 400
+        fecha_entrega = data.get("fecha_entrega")
+        id_profesor = data.get("id_profesor")
+        materiales = data.get("materiales")
 
-    # Preparar la consulta SQL para insertar un nuevo estudiante
-    query = """
-    INSERT INTO MATERIALES_ALMACEN (nombre_material, descripcion, categoria, cantidad, fecha_ingreso, estado, id_administrador)
-    VALUES (%s, %s, %s, %s, %s, %s, %s)
-    """
+        # Validar los campos principales
+        if not fecha_entrega or not id_profesor or not materiales:
+            return jsonify({"error": "Campos obligatorios faltantes"}), 400
 
-    # Parametros a insertar en la base de datos
-    params = (
-        data['nombre_material'],
-        data['descripcion'],
-        data['categoria'],
-        data['cantidad'],
-        data['fecha_ingreso'],
-        data['estado'],
-        data['id_administrador']
-    )
+        # Validar que la lista de materiales no esté vacía
+        if not isinstance(materiales, list) or len(materiales) == 0:
+            return jsonify({"error": "La lista de materiales está vacía"}), 400
 
-    # Ejecutar la consulta
-    if db_controller.execute_query(query, params):
-        return jsonify({"message": "Material creado correctamente."}), 201
-    else:
-        return jsonify({"error": "Error al crear el material."}), 400
-    
+        # Insertar cada material en la tabla SOLICITUD_MATERIAL
+        for material in materiales:
+            id_material = material.get("id")
+            cantidad = material.get("cantidad")
+            nombre_material = material.get("nombre")
+
+            # Validar los campos de cada material
+            if not id_material or not cantidad or not nombre_material:
+                return jsonify({"error": "Información incompleta en los materiales"}), 400
+
+            query = """
+                INSERT INTO SOLICITUD_MATERIAL (profesor_id, cantidad, material, fecha_entrega)
+                VALUES (%s, %s, %s, %s)
+            """
+            params = (id_profesor, cantidad, nombre_material, fecha_entrega)
+
+            # Ejecutar la consulta para cada material
+            if not db_controller.execute_query(query, params):
+                return jsonify({"error": "Error al insertar material en la base de datos"}), 500
+
+        return jsonify({"message": "Solicitud de materiales creada exitosamente"}), 201
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": "Ocurrió un error al procesar la solicitud"}), 500
+        
 @materialesBP.route('/materiales', methods=['GET'])
 def materiales():
     query = "SELECT * FROM MATERIALES_ALMACEN"

@@ -17,12 +17,6 @@ def crear_tarea_comanda():
     fecha_entrega = data.get('fecha_entrega')
     estudiantes = data.get('estudiantes')
 
-    print(descripcion)
-    print(fecha_inicio)
-    print(fecha_entrega)
-    print(estudiantes)
-
-
     # Verificar si faltan parámetros
     if not descripcion or not fecha_inicio or not fecha_entrega or not estudiantes:
         return jsonify({"message": "Faltan parámetros requeridos"}), 400
@@ -125,54 +119,3 @@ def editar_tarea_comanda(tarea_id):
         return jsonify({"message": "Tarea de comanda actualizada exitosamente"}), 200
     else:
         return jsonify({"message": "Error al actualizar la tarea"}), 500
-
-@comandaBP.route('/comanda', methods=['GET'])
-def obtener_tareas_comanda():
-    try:
-        # Consulta para obtener todas las tareas de comanda
-        query = """
-            SELECT id, descripcion, fecha_inicio, fecha_fin, estado, tipo
-            FROM TAREA
-            WHERE tipo = 'comanda'
-        """
-        
-        # Ejecutar la consulta
-        result = db.fetch_query(query)
-
-        # Verificar si se encontraron tareas
-        if not result:
-            return jsonify({"message": "No se encontraron tareas de comanda"}), 404
-
-        # Formatear las tareas en una lista de diccionarios
-        tareas = []
-        for tarea in result:
-            tarea_dict = {
-                "id": tarea[0],
-                "descripcion": tarea[1],
-                "fecha_inicio": tarea[2].strftime('%Y-%m-%d'),
-                "fecha_fin": tarea[3].strftime('%Y-%m-%d'),
-                "estado": tarea[4],
-                "tipo": tarea[5]
-            }
-            tareas.append(tarea_dict)
-
-        return jsonify({"tareas": tareas}), 200
-
-    except Exception as e:
-        return jsonify({"message": f"Error al procesar la solicitud: {str(e)}"}), 500
-
-@comandaBP.route('/comanda/<int:tarea_id>', methods=['DELETE'])
-
-def eliminar_tarea_comanda(tarea_id):
-    try:
-        # Consulta para eliminar la tarea de comanda
-        query = "DELETE FROM TAREA WHERE id = %s AND tipo = 'comanda'"
-        
-        # Ejecutar la consulta
-        if db.execute_query(query, (tarea_id,)):
-            return jsonify({"message": "Tarea de comanda eliminada exitosamente"}), 200
-        else:
-            return jsonify({"message": "No se encontró la tarea de comanda para eliminar"}), 404
-        
-    except Exception as e:
-        return jsonify({"message": f"Error al procesar la solicitud: {str(e)}"}), 500

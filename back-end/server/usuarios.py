@@ -45,6 +45,7 @@ def obtener_usuarios_por_rol(rol):
                 'foto_perfil': foto_perfil
             }
             usuarios.append(usuario)
+    print(usuarios)
     
     return usuarios
 
@@ -173,6 +174,7 @@ def post_estudiante():
     """
 
     try:
+        print("Porfa entra aqui")
         db_controller.execute_query(query_insert, (nombre, apellidos, nombre_usuario, contraseña, rol, color_fondo, tamaño_letra))
         
         # Después de insertar, obtener la lista completa de estudiantes

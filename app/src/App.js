@@ -33,7 +33,7 @@ import GenerarTareaMaterial from './views/GenerarTareaMaterial/GenerarTareaMater
 
 import Chat from './views/Chat/Chat';
 
-
+import AgregarTarea from './views/AgregarTarea/AgregarTarea';
 
 const Stack = createStackNavigator(); // Nos va a poder definir las distintas pantallas de la app
 
@@ -73,7 +73,9 @@ const App = () => {
         <Stack.Screen name="GenerarTareaMaterial" component={GenerarTareaMaterial} options={{headerShown: false}} />
 
         <Stack.Screen name="Chat" component={Chat} options={{headerShown: false}} />
-
+        
+        <Stack.Screen name="AgregarTarea" component={AgregarTarea} options={{headerShown: false}} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   )

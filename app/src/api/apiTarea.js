@@ -73,3 +73,26 @@ export const deleteTareaComanda = async (id) => {
         throw error;
     }
 }
+
+// función para asignar un estudiante a una tarea
+export const postTareaEstudiante = async (tareaId, estudianteId)=>{
+    try {
+        const response = await fetch(`/asignar_estudiante/${tareaId}/${estudianteId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Respuesta del servidor:", data);
+            return data;
+        } else {
+            console.error("Error al asignar estudiante a la tarea", response.status);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error en la solicitud:", error);
+    }
+}
