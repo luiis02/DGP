@@ -128,9 +128,7 @@ CREATE TABLE `TAREA` (
   `fecha_fin` date DEFAULT NULL,
   `estado` varchar(20) DEFAULT NULL,
   `prioridad` varchar(20) DEFAULT NULL,
-  `es_creada_por` int DEFAULT NULL, 
-  `descripcion` varchar(50),
-  `tipo` varchar(50) DEFAULT NULL
+  `es_creada_por` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -372,6 +370,14 @@ INSERT INTO MATERIALES_ALMACEN (nombre_material, descripcion, categoria, cantida
     ('Borradores', 'Borradores de goma para lápiz', 'Papelería', 100, '2024-11-10', 'Disponible', 5),
     ('Rotuladores', 'Rotuladores de colores', 'Papelería', 80, '2024-11-08', 'Disponible', 5);
 
+
+CREATE TABLE TAREA_ESTUDIANTE (
+    id_tarea INT NOT NULL,                      -- ID de la tarea, referencia a la tabla TAREA
+    id_estudiante INT NOT NULL,                -- ID del estudiante, referencia a la tabla USUARIO
+    PRIMARY KEY (id_tarea, id_estudiante),     -- Llave primaria compuesta por id_tarea y id_estudiante
+    FOREIGN KEY (id_tarea) REFERENCES TAREA(id), -- Clave foránea que referencia a la tabla TAREA
+    FOREIGN KEY (id_estudiante) REFERENCES USUARIO(id) -- Clave foránea que referencia a la tabla USUARIO
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
