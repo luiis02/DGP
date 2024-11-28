@@ -128,7 +128,7 @@ const AgregarAlumno = () => {
             "nombre_usuario": nombreUsuario,
             "contraseña": contraseñaConcatenada,
             "color_fondo": backGroundColor,
-            "tamaño_letra": fontSize + "px",
+            "tamaño_letra": fontSize,
             "rol": "ESTUDIANTE",
             "foto_perfil": urlFotoPerfil!==null ? urlFotoPerfil : "https://st3.depositphotos.com/3538469/15750/i/450/depositphotos_157501024-stock-photo-business-man-icon.jpg",
         };

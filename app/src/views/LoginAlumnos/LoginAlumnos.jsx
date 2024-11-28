@@ -49,7 +49,7 @@ const LoginAlumnos = ({route}) => {
     const handleSubmit = () => {
         const contraseñaConcatenada = contraseña.map((item) => item.hash).join('');
         if (contraseñaConcatenada === alumno.contraseña) {
-            navigation.navigate('HomeAlumno', { alumno });
+            navigation.navigate('HomeAlumno', { alumno: alumno });
         } else {
             Alert.alert('Error', 'Contraseña incorrecta.');
         }
@@ -72,12 +72,13 @@ const LoginAlumnos = ({route}) => {
                 </View>
                 <View style={styles.inputContraseña}>
                     {figuras.map((figura, index) => (
-                        <Button key={index} icon={<Icon 
-                            name={figura.name}
-                            type="ionicon"
-                            color={figura.color}
+                        <Button key={index} 
+                                title={figuras.title}
+                                icon={<Icon 
+                                name={figura.name}
+                                type="ionicon"
+                                color={figura.color}
                         />}
-                        title={figura.title}
                         color='#F8F8F8'
                         onPress={() => handleFigurePress(figura)}
                         />
