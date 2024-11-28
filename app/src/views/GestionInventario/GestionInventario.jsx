@@ -45,8 +45,8 @@ const GestionInventario = ({route}) => {
         }
     };
 
-    const existeSolicitud = async () => { 
-        const data =  await getPeticion(); 
+    const existeSolicitud =  () => { 
+        const data = getSolicitud(true)// await getPeticion(); 
         if (data) {
             setSolucitud(data);
         }
