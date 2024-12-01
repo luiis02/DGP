@@ -90,7 +90,7 @@ export const getTareasAlumno = async (idAlumno) => {
 // función para asignar un estudiante a una tarea
 export const postTareaEstudiante = async (tareaId, estudianteId)=>{
     try {
-        const response = await fetch(`/asignar_estudiante/${tareaId}/${estudianteId}`, {
+        const response = await fetch(`http://${ipAddress}/asignar_estudiante/${tareaId}/${estudianteId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
