@@ -6,7 +6,6 @@ export const getMateriales = async () => {
   };
 
   export const postMaterial = async (datosMaterial) => {
-    console.log("datosMaterial --> " + datosMaterial);
     try {
       const response = await fetch(`http://${ipAddress}:5000/materiales`, {
         method: 'POST',
@@ -17,7 +16,6 @@ export const getMateriales = async () => {
       });
   
       if (response.ok) {
-        console.log("Se ha creado el material")
         return await response.json();  // Retorna la respuesta si es exitosa
       } else {
         throw new Error('Error al crear el material');
@@ -45,7 +43,7 @@ export const getMateriales = async () => {
 
       return await response.json();
     } catch (error) {
-        console.error("Error al modificar el material:", error.message);
+        throw new Error("Error al modificar el material:", error.message);
         return null;
     }
   }
@@ -63,7 +61,7 @@ export const getMateriales = async () => {
       const data = await response.json();
       return data;
   } catch (error) {
-      console.error('Error:', error.message);
+      throw new Error('Error:', error.message);
       return null;
   }
 }
@@ -74,13 +72,11 @@ export const getPeticion = async () => {
     if(response)
       return await response.json();
   } catch (error) {
-    console.error('Error:', error.message);
-    return null;
+    throw new Error('Error:', error.message);
   }
 }
 
 export const postPeticion = async (datosSolicitud) => {
-  console.log(datosSolicitud)
   try{
     const response = await fetch(`http://${ipAddress}:5000/solicitud`, {
       method: 'POST',
@@ -92,8 +88,7 @@ export const postPeticion = async (datosSolicitud) => {
     if(response)
       return await response.json();
   } catch (error) {
-    console.error('Error:', error.message);
+    throw new Error('Error:', error.message);
     return null;
   }
 }
-

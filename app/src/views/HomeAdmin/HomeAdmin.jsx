@@ -64,7 +64,7 @@ const HomeAdmin = ({route}) => {
     const buttons = [ 
         {title: 'Gestion de Alumnos', icon: urlCompañeros, screen: 'GestionAlumnos'}, 
         {title: 'Gestion de Inventario', icon: urlAlmacen, screen: 'GestionInventario'},
-        {title: 'Gestion de Tareas', icon: urlTareas, screen: 'GestionTareas'},
+        {title: 'Gestion de Tareas por Pasos', icon: urlTareas, screen: 'GestionTareas'},
         {title: 'Gestion de Información', icon: urlGestionInformaes, screen: 'GestionInformacion'},
         {title: 'Gestion de Comedor', icon: urlGestionComedor, screen: 'GestionComedor'},
         {title: 'Chat', icon: urlChat, screen: 'Chat'},

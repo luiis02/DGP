@@ -21,12 +21,10 @@ export const postImagen = async ({ fotoUri, nombre }) => {
         if (resp.ok) {
             return data.url; // Devolver la URL de la imagen subida
         } else {
-            console.error("Error al subir la imagen.");
-            return null;
+            throw new Error("Error al subir la imagen.");
         }
     } catch (error) {
-        console.error("Error al subir la imagen:", error);
-        return null;
+        throw new Error("Error al subir la imagen:", error);
     }
   }
   
@@ -37,14 +35,13 @@ export const postImagen = async ({ fotoUri, nombre }) => {
       });
   
       if (response.ok) {
-        console.log(`Foto con ID ${fotoId} eliminada correctamente.`);
         return await response.json();  // Retorna la respuesta si es exitosa
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Error al eliminar la foto');
       }
     } catch (error) {
-      console.error("Error al eliminar la foto:", error.message);
+      throw new Error("Error al eliminar la foto:", error.message);
       throw error;
     }
   };

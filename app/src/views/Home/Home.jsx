@@ -1,7 +1,7 @@
 
-import { View, Text, FlatList, StyleSheet, Image, Button, TouchableOpacity } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, FlatList, StyleSheet, Image, Button, TouchableOpacity, Platform, Alert } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getEstudiantes } from '../../api/apiUsuario';
 import Layaout from '../../components/Layaout/Layaout';
 
@@ -15,10 +15,10 @@ const Home = () => {
       if (data) {
         setStudents(data);
       } else {
-        console.log('Error al obtener los estudiantes');
+        Alert.alert('Error al obtener los estudiantes');
       }
     }catch(error){
-    console.log(error);
+      throw new Error(error);
     }
   }
   const navigation = useNavigation();
@@ -54,9 +54,11 @@ const Home = () => {
       <Text style={styles.students}>{item.nombre} {item.apellido}</Text>
     </TouchableOpacity>
   );
-  useEffect(() => {
-    loadStudents();
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      loadStudents();
+    }, [])
+  );
   return (
     <Layaout>
       <View style={styles.container}>
@@ -75,7 +77,7 @@ const Home = () => {
           </View>
           <View style={styles.logo}>
             <Image
-              source={{ uri: `https://static.wixstatic.com/media/0e9b68_8c37acf90ff04033ba94d8ac591c2aeb.png/v1/fill/w_404,h_122,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/0e9b68_8c37acf90ff04033ba94d8ac591c2aeb.png` }}
+              source={require("../../../assets/Logo.jpeg")}
               style={styles.image}
             />
           </View>
@@ -96,14 +98,18 @@ const Home = () => {
         }
         { students.length > 0 && 
         <View style={styles.pagination}>
-          <Button title="Atrás" onPress={handlePreviousPage} disabled={currentPage === 0} />
+          <View style={styles.button}>
+            <Button title="Atrás" onPress={handlePreviousPage} disabled={currentPage === 0} />
+          </View>
           <Text style={styles.pageText}>{`${currentPage + 1} / ${totalPages}`}</Text>
-          <Button title="Siguiente" onPress={handleNextPage} disabled={currentPage === totalPages - 1} />
+          <View style={styles.bbutton}>
+            <Button title="Siguiente" onPress={handleNextPage} disabled={currentPage === totalPages - 1} />
+          </View>
         </View>
         }
         {students .length === 0 &&
         <View style={styles.container}>
-          <Text style={styles.headerText}>No hay alumnos</Text>
+          <Text style={styles.headerText}>No hay Alumnos</Text>
         </View>
         }
       </View>
@@ -125,7 +131,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginEnd: 10,
-    marginLeft: 20,
   },
   buttonLogo: {
     flexDirection: 'row',
@@ -133,6 +138,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 20,
     paddingHorizontal: 20,
+    paddingBottom: 20, 
   },
   button: {
     padding: 2,
@@ -143,11 +149,11 @@ const styles = StyleSheet.create({
   },
   logo: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'center',
   },
   image: {
-    width: 200,
+    width: 60,
     height: 60,
   },
   title: {

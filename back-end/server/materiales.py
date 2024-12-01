@@ -7,6 +7,37 @@ materialesBP = Blueprint('materiales', __name__)
 db_controller = DatabaseController()
 
 @materialesBP.route('/materiales', methods=['POST'])
+def post_material():
+    # Obtenemos los datos del cuerpo de la petición
+    data = request.get_json()
+
+    # Verificamos si los datos requeridos están presentes
+    if not all(key in data for key in ['nombre_material', 'descripcion', 'categoria', 'cantidad', 'fecha_ingreso', 'estado', 'id_administrador']):
+        return jsonify({"error": "Faltan datos requeridos"}), 400
+
+    # Preparar la consulta SQL para insertar un nuevo estudiante
+    query = """
+    INSERT INTO MATERIALES_ALMACEN (nombre_material, descripcion, categoria, cantidad, fecha_ingreso, estado, id_administrador)
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """
+
+    # Parametros a insertar en la base de datos
+    params = (
+        data['nombre_material'],
+        data['descripcion'],
+        data['categoria'],
+        data['cantidad'],
+        data['fecha_ingreso'],
+        data['estado'],
+        data['id_administrador']
+    )
+
+    # Ejecutar la consulta
+    if db_controller.execute_query(query, params):
+        return jsonify({"message": "Material creado correctamente."}), 201
+    else:
+        return jsonify({"error": "Error al crear el material."}), 400
+    
 def crear_solicitud_material():
     """ Maneja la creación de una solicitud de materiales. """
     try:

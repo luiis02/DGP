@@ -40,12 +40,12 @@ const AgregarAlumno = () => {
     ]);
     
     const figuras = [
-        {name: 'cloudy-night-outline', color: '#0DA9F6', hash: 'a1b2c3' }, 
-        {name: 'extension-puzzle-outline', color: '#708090', hash: 'd4e6f1' }, 
-        {name: 'flash-outline', color: '#00CED1', hash: 'abcdefdef' }, 
-        {name: 'radio-button-off-outline', color: '#FF7F50', hash: '800080' }, 
-        {name: 'square-outline', color: '#9B30FF', hash: 'FFA500' }, 
-        {name: 'star-outline', color: '#1E90FF', hash: '008000' }, 
+        { title: "nube", name: 'cloudy-night-outline', color: '#0DA9F6', hash: 'a1b2c3-' },
+        { title: "puzzle", name: 'extension-puzzle-outline', color: '#708090', hash: 'd4e6f1-' },
+        { title: "rayo", name: 'flash-outline', color: '#00CED1', hash: 'abcdefdef-' },
+        { title: "circulo", name: 'radio-button-off-outline', color: '#FF7F50', hash: '800080-' },
+        { title: "cuadrado", name: 'square-outline', color: '#9B30FF', hash: 'FFA500-' },
+        { title: "estrella", name:'star-outline', color: '#1E90FF', hash: '008000-' },   
     ]
 
     const handleFigurePress = (figura) => {
@@ -168,11 +168,15 @@ const AgregarAlumno = () => {
                     value={nombreUsuario}
                     onChangeText={setNombreUsuario}
                 />
-                <Button title="Seleccionar Foto de Perfil" buttonStyle={styles.button} onPress={handleSeleccionarImagenPress} />
+                <Button title="Seleccionar Foto de Perfil" 
+                        buttonStyle={styles.button} 
+                        onPress={handleSeleccionarImagenPress}/>
                 {fotoPerfil &&
-                <View>
-                    <Image source={{uri: fotoPerfil}} style={{width:100, height: 100}}/>
-                    <Button title="Eliminar" buttonStyle={styles.button} onPress={() => setFotoPerfil(null)} />
+                <View style={styles.previewContainer}>
+                    <Image source={{uri: fotoPerfil}} style={styles.previewImage}/>
+                    <Button title="Eliminar" 
+                            buttonStyle={styles.button} 
+                            onPress={() => setFotoPerfil(null)} />
                 </View>
                 }
                 <View>
@@ -288,13 +292,27 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'black',
     },
-    body:{},
-    input: {},
+    body:{
+        padding: 20,
+    },
+    input: {
+        marginVertical: 10,
+    },
     info: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
         margin: 10,
+    },
+    previewContainer:{
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    previewImage:{
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        marginBottom: 10,
     },
     button: {
         backgroundColor: '#B4D2E7',

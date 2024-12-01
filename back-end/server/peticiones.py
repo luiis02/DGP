@@ -15,22 +15,20 @@ def peticion():
         data = request.get_json()
         profesor_id = data.get('profesor_id')
         alumno_id = data.get('alumno_id')
-        material = data.get('material')
+        materiales = data.get('material')
         fecha_entrega = data.get('fecha_entrega')
-
-        print(data)
-        print(profesor_id)
-        print(alumno_id)
-        print(material)
-        print(fecha_entrega)
-
-        if not (profesor_id and alumno_id and material and fecha_entrega):
+        if not (profesor_id and alumno_id and materiales and fecha_entrega):
             return jsonify({'error': 'Todos los campos son obligatorios.'}), 400
-
+        
+        for material in materiales: 
+            print(material)
+            print(profesor_id)
+            print(fecha_entrega)
+            print(alumno_id)
         # Insertar la solicitud en la base de datos
-        query = """INSERT INTO SOLICITUD_MATERIAL (profesor_id, alumno_id, material, fecha_entrega) 
-                    VALUES (%s, %s, %s, %s)"""
-        params = (profesor_id, alumno_id, material, fecha_entrega)
+            query = """INSERT INTO SOLICITUD_MATERIAL (profesor_id, alumno_id, material, fecha_entrega) 
+                        VALUES (%s, %s, %s, %s)"""
+            params = (profesor_id, alumno_id, material, fecha_entrega)
 
         if db.execute_query(query, params):
             return jsonify({'message': 'Solicitud creada exitosamente.'}), 201

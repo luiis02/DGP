@@ -59,7 +59,7 @@ const GestionTareas = () => {
                         }
                     </TouchableOpacity>
                 }
-                <Text style={styles.titleHeader}> Gestión de Tareas </Text>
+                <Text style={styles.titleHeader}> Gestión de Tareas por Pasos</Text>
             </View>
 
             <View style={styles.body}>
@@ -101,7 +101,7 @@ const GestionTareas = () => {
             <View style={styles.footer}>
                 <Button 
                     icon={<Icon 
-                            name="journal-outline"
+                            name="add-circle-outline"
                             type="ionicon"
                             color="black"
                         />}
@@ -109,6 +109,19 @@ const GestionTareas = () => {
                     title='Añadir tarea'
                     titleStyle={{fontSize: 16, color: '#000', fontWeight: 'bold', margin: 10}}
                     onPress={() => navigation.navigate('AgregarTarea')}
+                />
+            </View>
+            <View>
+                <Button 
+                    icon={<Icon 
+                            name="help-circle-outline"
+                            type="ionicon"
+                            color="black"
+                        />}
+                    color='#F8F8F8'
+                    title='Seleccionar icono'
+                    titleStyle={{fontSize: 16, color: '#000', fontWeight: 'bold', margin: 10}}
+                    onPress={() => navigation.navigate("SeleccionarIcono")}
                 />
             </View>
         </Layaout>     

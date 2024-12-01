@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layaout from "../../components/Layaout/Layaout";
-import { StyleSheet, Text, TouchableOpacity, View, Image, Platform } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View, Image, Platform, SafeAreaView } from "react-native";
 import { obtenerPictograma } from "../../api/apiArasaac";
 import { useNavigation } from "@react-navigation/native";
 import { Icon, Button } from "@rneui/themed";
@@ -49,14 +49,14 @@ const LoginAlumnos = ({route}) => {
     const handleSubmit = () => {
         const contraseñaConcatenada = contraseña.map((item) => item.hash).join('');
         if (contraseñaConcatenada === alumno.contraseña) {
-            navigation.navigate('HomeAlumno', { alumno: alumno });
+            navigation.navigate('HomeAlumno', { alumno });
         } else {
             Alert.alert('Error', 'Contraseña incorrecta.');
         }
     }
     return (
         // Los estilos de tamaño de texto serán in line porque va con el valor de alumno
-        <Layaout>
+        <SafeAreaView style={{backgroundColor: alumno.color_tema, flex: 1}}>
             <View style={{flex: 1, borderBlockColor:alumno.backGroundColor, padding: 20}}>
                 <View style={styles.header}>
                     {Platform.OS !== 'android' && 
@@ -64,29 +64,28 @@ const LoginAlumnos = ({route}) => {
                         <Image source={{ uri: urlAtras }} style={{ width: 50, height: 50 }} />
                     </TouchableOpacity>
                     }                
-                    <Text style={styles.titleHeader}>Inicio de Sesión</Text>
+                    <Text style={[styles.titleHeader, {fontSize: alumno.tamaño_letra}]}>Inicio de Sesión</Text>
                 </View>
                 <View style={styles.body}>
-                    <Text style={styles.infoHeader}>Alumno {alumno.nombre} {alumno.apellido}</Text>
-                    <Text style={styles.info}>Contraseña</Text>
+                    <Text style={[styles.infoHeader, {fontSize: alumno.tamaño_letra}]}>Alumno {alumno.nombre} {alumno.apellido}</Text>
+                    <Text style={[styles.info, {fontSize: alumno.tamaño_letra}]}>Contraseña</Text>
                 </View>
                 <View style={styles.inputContraseña}>
                     {figuras.map((figura, index) => (
-                        <Button key={index} 
-                                title={figuras.title}
-                                icon={<Icon 
-                                name={figura.name}
-                                type="ionicon"
-                                color={figura.color}
+                        <Button key={index} icon={<Icon 
+                            name={figura.name}
+                            type="ionicon"
+                            color={figura.color}
                         />}
-                        color='#F8F8F8'
+                        color= {alumno.color_tema}
+                        accessibilityLabel={`Botón ${figura.title}`}  // VoiceOver leerá este texto.
                         onPress={() => handleFigurePress(figura)}
                         />
                     ))}
                 </View>
                 <View>
                     {contraseña.length > 0 &&
-                    <Text style={styles.info}>Contraseña introducida</Text>}
+                    <Text style={[styles.info, {fontSize: alumno.tamaño_letra}]}>Contraseña introducida</Text>}
                     {contraseña.length>0 &&                  
                     <View style={styles.input}>
                         {contraseña.map((item, index) => (
@@ -107,7 +106,7 @@ const LoginAlumnos = ({route}) => {
                     }
                 </View>
             </View>
-        </Layaout>
+        </SafeAreaView>
     )
 }
 const styles = StyleSheet.create({
@@ -117,18 +116,15 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     titleHeader: {
-        fontSize: 20,
         fontWeight: 'bold',
         color: 'black',
     },
     body: {},
     infoHeader: {
-        fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 10,
     },
     info: {
-        fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
     },

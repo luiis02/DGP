@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { obtenerPictograma } from '../../api/apiArasaac';
 import { Image } from '@rneui/base';
 
-const HomeAlumno = ({route}) => { 
+const HomeAlumno = ({route}) => {
     const {alumno} = route.params; 
     const [urlCerrarSesion, setUrlCerrarSesion] = useState(null);
     const pictograma = { 
@@ -20,20 +20,19 @@ const HomeAlumno = ({route}) => {
             Alert.alert('Error', 'No se pudo obtener el pictograma.');
         }
     };
-    useEffect(() =>{ 
+    useEffect(() =>{
         fetchPictograma();
     }, []);
     return (
         <SafeAreaView style={{backgroundColor: alumno.color_tema, flex: 1}}>
             <View style={styles.header}> 
-            <TouchableOpacity onPress={() => navigation.navigate('Home') }>
-                <Image source={{ uri: urlCerrarSesion }} style={{ width: 50, height: 50 }} /> 
-                <Text style={{fontSize: alumno.tamaño_letra}}>Cerrar Sesión</Text>   
-            </TouchableOpacity> 
-            <Text style={{fontSize: alumno.tamaño_letra, fontWeight: 'bold'}}> Página Principal</Text>
-            </View>     
+                <TouchableOpacity onPress={() => navigation.navigate('Home') }>
+                    <Image source={{ uri: urlCerrarSesion }} style={{ width: 50, height: 50 }} /> 
+                    <Text style={{fontSize: alumno.tamaño_letra}}>Cerrar Sesión</Text>   
+                </TouchableOpacity> 
+                <Text style={[styles.titleHeader, {fontSize: alumno.tamaño_letra}]}> Página Principal</Text>
+            </View>
         </SafeAreaView>
-            
             
     )
 }
@@ -42,14 +41,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#F8F8F8',
         flex: 1,
     },
-
     header: {
         flexDirection: 'row',
         justifyContent:'space-between',
         padding: 10,
     },
     titleHeader: {
-        fontSize: 20,
         fontWeight: 'bold',
         color: 'black',
     },

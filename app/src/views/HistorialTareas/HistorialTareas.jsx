@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Platform, TouchableOpacity, Image, ScrollView, Alert } from "react-native";
-import { Icon, Button } from "@rneui/themed";
-import { Input } from "@rneui/base";
 import Layaout from "../../components/Layaout/Layaout";
 import { useNavigation } from "@react-navigation/native";
 import { obtenerPictograma } from "../../api/apiArasaac";
@@ -14,9 +12,9 @@ const HistorialTareas = ({route}) => { 
         atras: "38249/38249_2500.png",
     };
     const navigation = useNavigation();
-    const {alumno} = route.params || {};
+    const {alumno, admin} = route.params || {};
     const [urlAtras, setUrlAtras] = useState(null);
-    const [historialTareasRealizadas, setHistorialTareasRealizadas] = useState([]);
+    const [historialTareas, setHistorialTareas] = useState([]);
 
     // Utilidad para dar formato a las fechas:
     const formatearFecha = (cadenaFecha) => {
@@ -37,14 +35,11 @@ const HistorialTareas = ({route}) => { 
 
         // Obtener las tareas del alumno recibido:
         const tareas = await getTareasAlumno(alumno.id);
-        console.log("Datos devueltos por 'getTareasAlumno':", tareas);
-        console.log("Tipo de dato:", typeof tareas);
         if (tareas) {
-            Alert.alert("Se han obtenido las tareas del alumno correctamente.");
-            setHistorialTareasRealizadas(tareas);
+            setHistorialTareas(tareas);
         } else {
             Alert.alert("Error al obtener las tareas del alumno.");
-            setHistorialTareasRealizadas([]);
+            setHistorialTareas([]);
         }
         
     }
@@ -64,6 +59,10 @@ const HistorialTareas = ({route}) => { 
                         {urlAtras && <Image source={{ uri: urlAtras }} style={styles.iconBack} />}
                     </TouchableOpacity>
                 }
+                <View>
+                    <Text style={styles.titleHeader}>Informe</Text>
+                    <Text style={styles.subTitleHeader}>Alumna: {alumno.nombre} {alumno.apellido}</Text>
+                </View>
             </View>
 
             <View style={styles.body}>
@@ -86,27 +85,46 @@ const HistorialTareas = ({route}) => { 
                     <Text style={styles.headerCell}>Estado</Text>
                     <Text style={styles.headerCell}>Prioridad</Text>
                 </View>
+                <View style={styles.scrollView}>
+                    {/* Historial de las tareas realizadas por el alumno pasado */}
+                    <ScrollView>
+                        {Array.isArray(historialTareas) && 
+                        historialTareas.length > 0 ? (
+                            historialTareas.map((item) => (
+                                <TouchableOpacity 
+                                    key={item.id} 
+                                    style={styles.item}
+                                >
+                                    <Text style={styles.itemText}>{item.id}</Text>
+                                    <Text style={styles.itemText}>{formatearFecha(item.fecha_inicio)}</Text>
+                                    <Text style={styles.itemText}>{formatearFecha(item.fecha_fin)}</Text>
+                                    <Text style={styles.itemText}>{item.estado}</Text>
+                                    <Text style={styles.itemText}>{item.prioridad}</Text>
+                                </TouchableOpacity>
+                            ))
+                        ) : (
+                            <Text style={styles.itemText}>No hay tareas disponibles</Text>
+                        )}
+                    </ScrollView>
+                </View>
+                
 
-                {/* Historial de las tareas realizadas por el alumno pasado */}
-                <ScrollView style={styles.scrollView}>
-                    {Array.isArray(historialTareasRealizadas) && 
-                     historialTareasRealizadas.length > 0 ? (
-                        historialTareasRealizadas.map((item) => (
-                            <TouchableOpacity 
-                                key={item.id} 
-                                style={styles.item}
-                            >
-                                <Text style={styles.itemText}>{item.id}</Text>
-                                <Text style={styles.itemText}>{formatearFecha(item.fecha_inicio)}</Text>
-                                <Text style={styles.itemText}>{formatearFecha(item.fecha_fin)}</Text>
-                                <Text style={styles.itemText}>{item.estado}</Text>
-                                <Text style={styles.itemText}>{item.prioridad}</Text>
-                            </TouchableOpacity>
-                        ))
-                    ) : (
-                        <Text style={styles.itemText}>No hay tareas disponibles</Text>
-                    )}
-                </ScrollView>
+                {/* El botón para generar el informe del alumno solo aparecerá en caso de que el 
+                profesor que está en la pantalla es un usuario administrador */}
+                {admin && Platform.OS === "web" && (
+                    <View style={styles.contenedorBoton}>
+                        <TouchableOpacity 
+                        style={styles.botonGenerarInforme} 
+                        onPress={() => {
+                            navigation.navigate(
+                                'InformeAlumno', 
+                                {alumno: alumno, historialTareas: historialTareas})
+                        }
+                        }>
+                            <Text style={styles.botonTexto}>Generar informe</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
             </View>
         </Layaout>
     )
@@ -128,6 +146,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'black',
         marginLeft: 20,
+    },
+    subTitleHeader: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginTop: 10,
     },
     container: {
         flex: 1,
@@ -174,6 +197,21 @@ const styles = StyleSheet.create({
     },
     contenedorCabecera: {
         marginBottom: 50,
+    },
+    contenedorBoton: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    botonGenerarInforme: {
+        backgroundColor: '#007bff',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    botonTexto: {
+        color: '#FFFFFF',
+        fontWeight: 'bold', 
     }
 });
 

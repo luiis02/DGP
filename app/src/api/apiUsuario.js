@@ -55,8 +55,15 @@ export const putEstudiante = async (datosAlumno) => {
       },
       body: JSON.stringify(datosAlumno), // Enviamos los datos del estudiante
     });
+    
+    if (response.ok) {
+      return await response.json();  // Retorna la respuesta si es exitosa
+    } else {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al actualizar el estudiante');
+    }
   }catch(error){
-    console.error("Error al actualizar el estudiante:", error.message);
+    throw new Error("Error al actualizar el estudiante:", error.message);
   }
 }
 
@@ -67,14 +74,12 @@ export const deleteEstudiante = async (idEstudiante) => {
     });
 
     if (response.ok) {
-      console.log(`Estudiante con ID ${idEstudiante} eliminado correctamente.`);
       return await response.json();  // Retorna la respuesta si es exitosa
     } else {
       const errorData = await response.json();
       throw new Error(errorData.message || 'Error al eliminar el estudiante');
     }
   } catch (error) {
-    console.error("Error al eliminar el estudiante:", error.message);
-    throw error;
+    throw new Error("Error al eliminar el estudiante:", error.message);
   }
 };

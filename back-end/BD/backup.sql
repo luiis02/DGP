@@ -1,3 +1,4 @@
+-- SQLBook: Code
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
@@ -130,8 +131,7 @@ CREATE TABLE `TAREA` (
   `fecha_fin` date DEFAULT NULL,
   `estado` varchar(20) DEFAULT NULL,
   `prioridad` varchar(20) DEFAULT NULL,
-  `es_creada_por` int DEFAULT NULL,
-  `id_estudiante` INT NOT NULL -- Para vincular la tarea con el alumno
+  `es_creada_por` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -344,8 +344,7 @@ ALTER TABLE `SUPERVISADO_POR`
 -- Filtros para la tabla `TAREA`
 --
 ALTER TABLE `TAREA`
-  ADD CONSTRAINT `TAREA_ibfk_1` FOREIGN KEY (`es_creada_por`) REFERENCES `USUARIO` (`id`),
-  ADD CONSTRAINT `TAREA_ibfk_2` FOREIGN KEY (`id_estudiante`) REFERENCES `USUARIO` (`id`);
+  ADD CONSTRAINT `TAREA_ibfk_1` FOREIGN KEY (`es_creada_por`) REFERENCES `USUARIO` (`id`);
 
 --
 -- Filtros para la tabla `TIENE`
@@ -370,8 +369,8 @@ CREATE TABLE SOLICITUD_MATERIAL (
     FOREIGN KEY (alumno_id) REFERENCES USUARIO(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-ALTER TABLE TAREA ADD COLUMN id_solicitud INT, ADD FOREIGN KEY (id_solicitud) REFERENCES SOLICITUD_MATERIAL(id);
 -- --------------------------------------------------------
+ALTER TABLE TAREA ADD COLUMN id_estudiante INT;
 
 --
 -- Estructura de tabla para la tabla `MATERIALES_ALMACEN`
@@ -390,10 +389,6 @@ CREATE TABLE MATERIALES_ALMACEN (
     FOREIGN KEY (id_administrador) REFERENCES USUARIO(id)
 );
 
-ALTER TABLE MATERIALES_ALMACEN 
-MODIFY COLUMN ultima_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
-
-
 --
 -- Volcado de datos para la tabla `MATERIALES_ALMACEN`
 --
@@ -405,25 +400,35 @@ INSERT INTO MATERIALES_ALMACEN (nombre_material, descripcion, categoria, cantida
     ('Borradores', 'Borradores de goma para lápiz', 'Papelería', 100, '2024-11-10', 'Disponible', 5),
     ('Rotuladores', 'Rotuladores de colores', 'Papelería', 80, '2024-11-08', 'Disponible', 5);
 
-
---
--- Volcado de datos para la tabla `TAREA`
---
-INSERT INTO TAREA (id, fecha_inicio, fecha_fin, estado, prioridad, es_creada_por, id_estudiante)
-VALUES 
-  (1, '2024-11-15', '2024-11-15', 'TERMINADA', 'media', 3, 1),
-  (2, '2024-11-20', '2024-11-21', 'EN PROCESO', 'baja', 3, 1),
-  (3, '2024-11-22', '2024-11-22', 'TERMINADA', 'alta', 3, 1);
-
-CREATE TABLE TAREA_ESTUDIANTE (
-    id_tarea INT NOT NULL,                      -- ID de la tarea, referencia a la tabla TAREA
-    id_estudiante INT NOT NULL,                -- ID del estudiante, referencia a la tabla USUARIO
-    PRIMARY KEY (id_tarea, id_estudiante),     -- Llave primaria compuesta por id_tarea y id_estudiante
-    FOREIGN KEY (id_tarea) REFERENCES TAREA(id), -- Clave foránea que referencia a la tabla TAREA
-    FOREIGN KEY (id_estudiante) REFERENCES USUARIO(id) -- Clave foránea que referencia a la tabla USUARIO
+CREATE TABLE TAREA_POR_PASOS (
+  id_paso INT AUTO_INCREMENT PRIMARY KEY,
+  num_pasos INT NOT NULL,
+  tipo ENUM('texto', 'audio', 'video', 'imagen') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE PASO(
+  id_paso INT AUTO_INCREMENT PRIMARY KEY, 
+  texto VARCHAR(255)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE CONTIENE (
+  `id` INT NOT NULL,
+  `id_paso` INT NOT NULL,
+  PRIMARY KEY (`id`, `id_paso`),
+  FOREIGN KEY (`id_paso`) REFERENCES PASO(`id_paso`),
+  FOREIGN KEY (`id`) REFERENCES TAREA(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE ES_SUBIDO_POR(
+  `id` INT NOT NULL,
+  `id_paso` INT NOT NULL,
+  FOREIGN KEY (`id_paso`) REFERENCES TAREA_POR_PASOS(`id_paso`),
+  FOREIGN KEY (`id`) REFERENCES TAREA(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

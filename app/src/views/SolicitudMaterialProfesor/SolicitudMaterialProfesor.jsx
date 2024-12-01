@@ -97,7 +97,7 @@ const SolicitudMaterial = ({route}) => {
                 }));
                 const reqData = {
                     profesor_id: idProfesor,
-                    alumno_id : 0,
+                    alumno_id : 1,
                     material: peticiones,
                     fecha_entrega: fechaEntrega, // Usar la fecha ingresada
                 };
@@ -171,14 +171,15 @@ const SolicitudMaterial = ({route}) => {
                 <Text style={styles.solicitudTitle}>Listado de Materiales</Text>
                 <ScrollView style={styles.materialesScroll}>
                     {materialesFiltrados.length > 0 ? (
-                        materiales.map((material, index) => (
-                            <View key={material.id} style={styles.material}>
+                        materiales.map((material) => (
+                            <View key={material.id_material} style={styles.material}>
                                 <Text style={styles.materialName}>{material.nombre}</Text>
                                 <Text style={styles.materialDescripcion}>{material.descripcion}</Text>
                                 <Text style={styles.materialCantidad}>Disponible: {material.cantidad}</Text>
 
                                 {/* Input para la cantidad */}
                                 <TextInput
+                                    key={material.id_material}
                                     style={styles.inputCantidad}
                                     placeholder="Cantidad"
                                     keyboardType="numeric"

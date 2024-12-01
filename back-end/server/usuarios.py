@@ -45,8 +45,6 @@ def obtener_usuarios_por_rol(rol):
                 'foto_perfil': foto_perfil
             }
             usuarios.append(usuario)
-    print(usuarios)
-    
     return usuarios
 
 
@@ -88,43 +86,40 @@ def put_estudiante(id):
     data = request.get_json()
 
     # Verifica que al menos uno de los campos sea válido para actualizar
-    if not any([data.get(key) for key in ['apellido', 'color_tema', 'contraseña', 'foto_perfil', 'id', 'nombre', 'nombre_usuario', 'supervisado_por', 'tamaño_letra', 'tipo_usuario']]):
+    if not any([data.get(key) for key in ['apellidos', 'color_fondo', 'contraseña', 'foto_perfil', 'id', 'nombre', 'nombre_usuario', 'supervisado_por', 'tamaño_letra', 'tipo_usuario']]):
         return jsonify({"error": "No hay datos válidos para actualizar"}), 400
     
     # Construir la consulta dinámica para actualizar solo los campos necesarios
     campos_a_actualizar = []
     valores = []
-
-    if data.get('apellido'): 
-        campos_a_actualizar.append("apellido = %s")
-        valores.append(data['apellido'])
-    if data.get('color_tema'):
-        campos_a_actualizar.append("color_tema = %s")
-        valores.append(data['color_tema'])
+    print(data)
+    if data.get('apellidos'): 
+        campos_a_actualizar.append("apellidos = %s")
+        valores.append(data['apellidos'])
+    if data.get('color_fondo'):
+        campos_a_actualizar.append("color_fondo = %s")
+        valores.append(data['color_fondo'])
     if data.get('contraseña'):
         campos_a_actualizar.append("contraseña = %s")
         valores.append(data['contraseña'])
-    if data.get('foto_perfil'):
-        campos_a_actualizar.append("foto_perfil = %s")
-        valores.append(data['foto_perfil'])
     if data.get('nombre'):
         campos_a_actualizar.append("nombre = %s")
         valores.append(data['nombre'])
-    if data.get('nombre_usuario'):
-        campos_a_actualizar.append("nombre_usuario = %s")
-        valores.append(data['nombre_usuario'])
-    if data.get('supervisado_por'): 
-        campos_a_actualizar.append("supervisado_por = %s")
-        valores.append(data['supervisado_por'])
     if data.get('tamaño_letra'):
         campos_a_actualizar.append("tamaño_letra = %s")
         valores.append(data['tamaño_letra'])
+    if data.get('nombre_usuario'): 
+        campos_a_actualizar.append("nombre_usuario = %s")
+        valores.append(data['nombre_usuario'])
+    if data.get('rol'): 
+        campos_a_actualizar.append("rol = %s")
+        valores.append(data['rol'])
     
     # Siempre actualizamos la última actualización
-    ultima_actualizacion = "NOW()"
-    valores.append(ultima_actualizacion)
-    campos_a_actualizar.append("ultima_actualizacion = %s")
-
+    #ultima_actualizacion = "NOW()"
+    #valores.append(ultima_actualizacion)
+    #campos_a_actualizar.append("ultima_actualizacion = %s")
+    
     # Agregar el id al final 
     valores.append(id)
 
@@ -137,7 +132,7 @@ def put_estudiante(id):
 
     try:
         db_controller.execute_query(query, valores)
-        return jsonify({"success": "Estudiante actualizado exitosamente"}), 200
+        return jsonify({"success": "Estudiante actualizado exitosamente"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -174,7 +169,6 @@ def post_estudiante():
     """
 
     try:
-        print("Porfa entra aqui")
         db_controller.execute_query(query_insert, (nombre, apellidos, nombre_usuario, contraseña, rol, color_fondo, tamaño_letra))
         
         # Después de insertar, obtener la lista completa de estudiantes

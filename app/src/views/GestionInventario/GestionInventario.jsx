@@ -6,8 +6,8 @@ import { obtenerPictograma } from "../../api/apiArasaac";
 import { Icon, Button } from "@rneui/themed";
 import { Input } from "@rneui/base";
 import { getMateriales/*, getSolicitud*/ } from "../../api/apiInventario";
+import { getPeticion } from "../../api/apiInventario";
 import { getSolicitud } from "../../test/SolicitudMaterial";
-import { useFocusEffect } from '@react-navigation/native';
 
 const GestionInventario = ({route}) => {
     const { idAdmin } = route.params || {};
@@ -46,32 +46,17 @@ const GestionInventario = ({route}) => {
     };
 
     const existeSolicitud =  () => { 
-        const data = getSolicitud(true)// await getPeticion(); 
+        const data =  getSolicitud(true) //await getPeticion(); 
         if (data) {
             setSolucitud(data);
         }
     }
 
-    useFocusEffect(
-        React.useCallback(() => {
-            fetchPictograma();
-            fetchMateriales();
-            existeSolicitud();
-    
-            // Cleanup si es necesario
-            return () => {};
-        }, [])
-    );
-    // Cambio de Luis Alberto:
-    /* useEffect(() => {
+    useEffect(() => {
         fetchPictograma();
           fetchMateriales();
           existeSolicitud();
     }, []);
-    useEffect(() => {
-        console.log(solicitud);
-    },[solicitud]) */
-
     // Función para manejar el filtro
     const handleFilterSubmit = () => {
         // Filtrar los materiales por nombre
@@ -80,7 +65,7 @@ const GestionInventario = ({route}) => {
             return nombre.includes(filtro.toLowerCase());
         });
 
-        // Actualizar el estado de los materiales filtrados
+        // Actualizar el estado de los estudiantes filtrados
         setMaterialesFiltrados(datosFiltrados);
     }
 

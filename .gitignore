@@ -2,6 +2,7 @@
 back-end/server/__pycache__/
 back-end/server/venv/
 node_modules/
+src/api/config.js
 
 **/.*
 !.gitignore

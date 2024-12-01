@@ -1,76 +1,3 @@
-/*import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Image, Platform, Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import {Layaout} from "../../components/Layaout/Layaout";
-import { obtenerPictograma } from "../../api/apiArasaac";
-
-const AgregarTarea = () => {
-    const pictograma = {
-        atras: "38249/38249_2500.png",
-    }
-    const navigation = useNavigation();
-    
-    const [tareaId, setTareaId] = useState('');
-    const [estudianteId, setEstudianteId] = useState('');
-    const [message, setMessage] = useState('');
-    const [urlAtras, setUrlAtras] = useState(null);
-
-
-    const fetch = async () => {
-        const respuesta = await obtenerPictograma(pictograma.atras);
-        if (respuesta) {
-            setUrlAtras(respuesta);
-        } else {
-            Alert.alert("Error al obtener el pictograma.");
-        }
-    }
-
-    const asignarEstudiante = async (tareaId, estudianteId) => {
-        if (!tareaId || !estudianteId) {
-            alert("Por favor, complete ambos campos.");
-            return;
-        }
-
-        try {
-            const response = await fetch(`/asignar_estudiante/${tareaId}/${estudianteId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setMessage(data.message);
-            } else {
-                const errorData = await response.json();
-                setMessage(errorData.message || "Error desconocido al asignar estudiante.");
-            }
-        } catch (error) {
-            console.error("Error al asignar estudiante:", error);
-            setMessage("Hubo un error al conectar con el servidor.");
-        }
-    };
-
-    return (
-        <Layaout>
-        <View style={styles.header}>
-            {Platform.OS !== 'android' &&
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-            {urlAtras &&
-                <Image source={{uri: urlAtras}} style={{width:50, height: 50}}/>
-            }
-            </TouchableOpacity>
-            }
-            <Text style={styles.titleHeader}>Añadir Tarea</Text>
-        </View>
-       
-        </Layaout>
-    );
-};
-export default AgregarTarea;
-
-*/
 
 import React, { useEffect, useState } from "react";
 import Layaout from "../../components/Layaout/Layaout";
@@ -79,6 +6,8 @@ import { obtenerPictograma } from "../../api/apiArasaac";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@rneui/themed";
 import { Alert } from "react-native";
+import { TextInput } from "react-native-gesture-handler";
+import { postTarea } from "../../api/apiTarea";
 
 const AgregarTarea = () => {
 
@@ -88,12 +17,15 @@ const AgregarTarea = () => {
     
     const navigation = useNavigation();
     const [tareaId, setTareaId] = useState('');
-    const [estudianteId, setEstudianteId] = useState('');
     const [message, setMessage] = useState('');
     const [urlAtras, setUrlAtras] = useState(null);
     const [nombreUsuario, setNombreUsuario] = useState('');
+    const [fechaFin, setFechaFin] = useState('');
+    const [prioridad, setPrioridad] = useState('');
+    const [idEstudiante, setIdEstudiante] = useState('');
     
     
+    const fechaInicio = new Date().toISOString().split('T')[0];
     
     const fetch = async () => {
         const respuesta = await obtenerPictograma(pictograma.atras);
@@ -110,7 +42,27 @@ const AgregarTarea = () => {
         fetch();
     }, []);
     
+    const asignarTareaEstudiante = async (datos) => {
+        if (!datos.id_estudiante || !datos.fecha_inicio || !datos.fecha_fin || !datos.prioridad) {
+            alert("Por favor, complete todos los campos.");
+            return;
+        }
     
+        try {
+            const response = await postTarea(datos);
+    
+            if (response) {
+                setMessage(response.message || "Tarea creada exitosamente.");
+            } else {
+                setMessage("Error desconocido al asignar tarea.");
+            }
+        } catch (error) {
+            console.error("Error al asignar tarea:", error);
+            setMessage("Hubo un error al conectar con el servidor.");
+        }
+    };
+    
+
     return (
         <Layaout>
            <View style={styles.header}>
@@ -121,11 +73,51 @@ const AgregarTarea = () => {
             }
             </TouchableOpacity>
             }
-            <Text style={styles.titleHeader}>Añadir Alumno</Text>
+            <Text style={styles.titleHeader}>Añadir Tarea</Text>
            </View>
-            
-            <Button title="Añadir Tarea" buttonStyle={styles.button} />
-            
+            <View style={styles.formContainer}>
+                
+                <Text style={styles.label}>Fecha Fin:</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="YYYY-MM-DD"
+                    value={fechaFin}
+                    onChangeText={setFechaFin}
+                />
+                
+                <Text style={styles.label}>Prioridad:</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Prioridad"
+                    value={prioridad}
+                    onChangeText={setPrioridad}
+                />
+               
+                <Text style={styles.label}>ID Estudiante:</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="ID Estudiante"
+                    value={idEstudiante}
+                    onChangeText={setIdEstudiante}
+                />
+
+
+            </View>
+            {/* se añade una nueva tarea con los datos */}
+           <Button 
+                title="Añadir Tarea" 
+                buttonStyle={styles.button} 
+                onPress={() => {
+                    const datos = {
+                    fecha_inicio: fechaInicio,
+                    fecha_fin: fechaFin,
+                    prioridad,
+                    id_estudiante: idEstudiante,
+                    };
+                    asignarTareaEstudiante(datos);
+                }} 
+                />
+
         </Layaout>
     )
 }

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { StyleSheet, Text, TouchableOpacity, View, Image, ScrollView, Platform, Alert } from "react-native";
 import Layaout from "../../components/Layaout/Layaout";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { obtenerPictograma } from "../../api/apiArasaac";
 import { getEstudiantes } from "../../api/apiUsuario";
 import { Icon, Button } from "@rneui/themed";
@@ -32,11 +32,11 @@ const GestionAlumnos = () => {
             Alert.alert("Error al obtener los alumnos.");
         }
     }
-    
-    useEffect(() => {
-        fetch();
-    }, []);
-
+    useFocusEffect(
+        useCallback(() => {
+          fetch();
+        }, [])
+      );
     // Función para manejar el filtro
     const handleFilterSubmit = () => {
         // Filtrar los estudiantes por nombre o apellido
@@ -79,18 +79,18 @@ const GestionAlumnos = () => {
                 </View>
 
                 {/* Contenido de los estudiantes filtrados en el medio */}
-                <ScrollView style={styles.scrollView}>
+                <ScrollView 
+                    contentContainerStyle={{ flexGrow: 1 }} 
+                    keyboardShouldPersistTaps="handled" 
+                    showsVerticalScrollIndicator={false}                
+                    style={styles.scrollView}>
                     {filteredAlumnos.map((item) => (
                         <TouchableOpacity 
                             key={item.id} 
                             style={styles.item} 
-                            onPress={() => {
-
-                                navigation.navigate('InformacionUsuario', {alumno: item})
-                                }
-                            }
+                            onPress={() => navigation.navigate('InformacionUsuario', { alumno: item })}
                         >
-                            <Image source={{uri: item.foto_perfil}} style={{width: 80, height: 80, borderRadius: 40}} />
+                            <Image source={{ uri: item.foto_perfil }} style={{ width: 80, height: 80, borderRadius: 40 }} />
                             <Text style={styles.itemText}>{item.nombre} {item.apellido}</Text>
                         </TouchableOpacity>
                     ))}
