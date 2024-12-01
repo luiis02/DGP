@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View, Image, ScrollView, Platform, 
 import Layaout from "../../components/Layaout/Layaout";
 import { useNavigation } from "@react-navigation/native";
 import { obtenerPictograma } from "../../api/apiArasaac";
-import { getEstudiantes } from "../../api/apiUsuario";
+import { getEstudiantesConTareas } from "../../api/apiUsuario";
 import { Icon, Button } from "@rneui/themed";
 import { Input } from "@rneui/base";
 
@@ -24,7 +24,7 @@ const GestionTareas = () => {
         } else {
             Alert.alert("Error al obtener el pictograma.");
         }
-        const data = await getEstudiantes(); 
+        const data = await getEstudiantesConTareas(); 
         if (data) {
             setAlumnos(data);
             setFilteredAlumnos(data); // Inicializamos los estudiantes filtrados con todos los estudiantes
@@ -97,7 +97,7 @@ const GestionTareas = () => {
                 </ScrollView>
             </View>
 
-            {/* Botón para añadir un nuevo alumno abajo */}
+            {/* Botón para añadir un nuevo tarea abajo */}
             <View style={styles.footer}>
                 <Button 
                     icon={<Icon 

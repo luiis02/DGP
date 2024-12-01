@@ -55,6 +55,31 @@ def estudiantes():
     return jsonify(estudiantes)  # Siempre retornamos la lista (vacía si no hay usuarios)
 
 
+@userBP.route('/estudiantes/conTareas', methods=['GET'])
+def estudiantesConTareas():
+    """Obtener lista de estudiantes con tareas pendientes únicamente"""
+    estudiantes = obtener_usuarios_por_rol('ESTUDIANTE')  # Obtener todos los estudiantes
+    estudiantes_con_tareas = []
+
+    for estudiante in estudiantes:
+        # Contar las tareas pendientes para cada estudiante
+        query = f"""
+            SELECT COUNT(*) 
+            FROM TAREA 
+            WHERE estado = 'PENDIENTE' AND id_estudiante = {estudiante['id']}
+        """
+        result = db_controller.fetch_query(query)
+        tareas_pendientes = result[0][0] if result and result[0] else 0
+        
+        if tareas_pendientes > 0:
+            estudiante['tareas_pendientes'] = tareas_pendientes
+            estudiantes_con_tareas.append(estudiante)
+    
+    print("estudiantes con tareas pendientes", estudiantes_con_tareas)  # Log para depuración
+
+    return jsonify(estudiantes_con_tareas)  # Retornar solo estudiantes con tareas pendientes
+
+
 @userBP.route('/profesores', methods=['GET'])
 def profesores():
     """Obtener lista de profesores"""

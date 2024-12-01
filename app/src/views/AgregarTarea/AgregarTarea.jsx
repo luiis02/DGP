@@ -8,6 +8,7 @@ import { Button } from "@rneui/themed";
 import { Alert } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { postTarea } from "../../api/apiTarea";
+import { ScreenHeight } from "@rneui/base";
 
 const AgregarTarea = () => {
 
@@ -16,10 +17,8 @@ const AgregarTarea = () => {
     }
     
     const navigation = useNavigation();
-    const [tareaId, setTareaId] = useState('');
     const [message, setMessage] = useState('');
     const [urlAtras, setUrlAtras] = useState(null);
-    const [nombreUsuario, setNombreUsuario] = useState('');
     const [fechaFin, setFechaFin] = useState('');
     const [prioridad, setPrioridad] = useState('');
     const [idEstudiante, setIdEstudiante] = useState('');
@@ -77,7 +76,7 @@ const AgregarTarea = () => {
            </View>
             <View style={styles.formContainer}>
                 
-                <Text style={styles.label}>Fecha Fin:</Text>
+                <Text >Fecha Fin:</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="YYYY-MM-DD"
@@ -85,7 +84,7 @@ const AgregarTarea = () => {
                     onChangeText={setFechaFin}
                 />
                 
-                <Text style={styles.label}>Prioridad:</Text>
+                <Text >Prioridad:</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="Prioridad"
@@ -93,7 +92,7 @@ const AgregarTarea = () => {
                     onChangeText={setPrioridad}
                 />
                
-                <Text style={styles.label}>ID Estudiante:</Text>
+                <Text>ID Estudiante:</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="ID Estudiante"
@@ -103,21 +102,27 @@ const AgregarTarea = () => {
 
 
             </View>
-            {/* se añade una nueva tarea con los datos */}
-           <Button 
-                title="Añadir Tarea" 
-                buttonStyle={styles.button} 
-                onPress={() => {
-                    const datos = {
-                    fecha_inicio: fechaInicio,
-                    fecha_fin: fechaFin,
-                    prioridad,
-                    id_estudiante: idEstudiante,
-                    };
-                    asignarTareaEstudiante(datos);
-                }} 
-                />
 
+            {/* Botón en la parte inferior */}
+            {/* se añade una nueva tarea con los datos */}
+
+            <View style={styles.botonAñadirTarea}>
+            <Button 
+                    title="Añadir Tarea" 
+                    buttonStyle={styles.button} 
+                    onPress={() => {
+                        const datos = {
+                        fecha_inicio: fechaInicio,
+                        fecha_fin: fechaFin,
+                        prioridad,
+                        id_estudiante: idEstudiante,
+                        };
+                        asignarTareaEstudiante(datos);
+                    }} 
+                    />
+
+            </View>
+            
         </Layaout>
     )
 }
@@ -137,7 +142,14 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     body:{},
-    input: {},
+    input: {
+        backgroundColor: '#F8F8F8',
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 10,
+        marginTop: 10,
+        borderWidth: 1,
+        borderColor: '#B4D2E7',},
     info: {
         fontSize: 18,
         fontWeight: 'bold',
@@ -149,11 +161,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderRadius: 5,
-        inputContraseña: {
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-        },
+        margin: 10,
     },
     inputContraseña: {
         flexDirection: 'row',
@@ -185,6 +193,19 @@ const styles = StyleSheet.create({
     sliderContainer: {
         marginBottom: 20,
         flexDirection: 'row',
+    },
+    
+    botonAñadirTarea:{
+        backgroundColor: '#B4D2E7',
+        paddingHorizontal: 20,
+        paddingVertical: 1,
+        borderRadius: 5,
+        margin: 10,
+    },
+
+    formContainer: {
+        flex: 1,
+        margin: 10,
     },
 })
 export default AgregarTarea;
