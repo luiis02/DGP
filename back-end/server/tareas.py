@@ -195,3 +195,17 @@ def juego():
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
+    
+@tareasBP.route('/juego', methods=['GET'])
+def obtener_juegos():
+    # Consulta para obtener las URLs de los juegos
+    query = "SELECT url FROM TAREA_JUEGO"
+    try: 
+        url = db.execute_query(query)
+        if url:
+            return jsonify({"juegos": url}), 200
+        else:
+            return jsonify({}), 200
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": "Error interno del servidor"}), 500

@@ -10,6 +10,7 @@ import { postTareaJuego } from "../../api/apiTarea";
 const TareaJuego = () => {
     const [urlAtras, setUrlAtras] = useState(null); 
     const [urlJuego, setUrlJuego] = useState(null); 
+    const [exiteJuego, setExiteJuego] = useState(false);
     const pictograma = {
         atras: "38249/38249_2500.png",
     }
