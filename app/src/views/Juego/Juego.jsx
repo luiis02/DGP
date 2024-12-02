@@ -7,6 +7,7 @@ import { getTareasJuego } from "../../api/apiTarea";
 
 const Juego = ({route}) => {
     const { alumno } = route.params;  // Obtiene el alumno desde la ruta
+    console
     const [urlAtras, setUrlAtras] = useState(null);
     const [urlJuego, setUrlJuego] = useState(null);
     const pictogramas = {
@@ -31,7 +32,7 @@ const Juego = ({route}) => {
         fetchPictograma();
     },[])
     return(
-        <SafeAreaView style={[{backgroundColor: alumno.color_fondo}, styles.container]}>
+        <SafeAreaView style={[{backgroundColor: alumno.color_tema}, styles.container]}>
             { urlJuego ? (
             <>
                 {urlAtras &&
@@ -42,19 +43,21 @@ const Juego = ({route}) => {
                     <Text style={[{fontSize: alumno.tamaño_letra}, styles.title]}>Juego</Text> 
                 </View> 
                 }
-            <View style={styles.body}>
-               <WebView
-                source={{uri: urlJuego}}
-               />
-            </View>
+                <View style={[styles.body]}>
+                    <WebView
+                        source={{uri: urlJuego}}
+                    />
+                </View>
             </>):(
-                <View style={styles.none}>
+            <>
+                <View style={[styles.none]}>
                     <Text style={{fontSize: 50, fontWeight: 'bold'}}>Juego</Text>
                     <Text style={{fontSize: 50, fontWeight: 'bold'}}>Logopedia</Text>
                     <TouchableOpacity onPress={()=> navigation.goBack()}>
                         <Image source={{uri: urlAtras}} style={{width: 150, height:150}}/>
                     </TouchableOpacity>
                 </View>
+            </>
             )}
         </SafeAreaView>    
     ); 

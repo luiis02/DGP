@@ -9,6 +9,8 @@ const LoginAlumnos = ({ route }) => {
     const { alumno } = route.params;
     const pictograma = {
         atras: "38249/38249_2500.png",
+        borrar: "38199/38199_2500.png",
+        entrar: "6491/6491_2500.png",
     };
 
     const figuras = [
@@ -21,12 +23,26 @@ const LoginAlumnos = ({ route }) => {
     ];
 
     const [urlAtras, setUrlAtras] = useState(null);
+    const [urlBorrar, setUrlBorrar] = useState(null);
+    const [urlEntrar, setUrlEntrar] = useState(null);
     const [contraseña, setContraseña] = useState([]);
 
     const fetchPictograma = async () => {
         const respuesta = await obtenerPictograma(pictograma.atras);
         if (respuesta) {
             setUrlAtras(respuesta);
+        } else {
+            Alert.alert('Error', 'No se pudo obtener el pictograma.');
+        }
+        const respuestaBorrar = await obtenerPictograma(pictograma.borrar);
+        if (respuestaBorrar) {
+            setUrlBorrar(respuestaBorrar);
+        } else {
+            Alert.alert('Error', 'No se pudo obtener el pictograma.');
+        }
+        const respuestaEntrar = await obtenerPictograma(pictograma.entrar);
+        if (respuestaEntrar) {
+            setUrlEntrar(respuestaEntrar);
         } else {
             Alert.alert('Error', 'No se pudo obtener el pictograma.');
         }
@@ -79,6 +95,8 @@ const LoginAlumnos = ({ route }) => {
                             key={index}
                             style={[styles.iconButton, { backgroundColor: figura.color }]}
                             onPress={() => handleFigurePress(figura)}
+                            accessible={true}
+                            accessibilityLabel={`Botón de ${figura.title}`}
                         >
                             <Icon name={figura.name} type="ionicon" color="#fff" size={40} />
                         </TouchableOpacity>
@@ -87,14 +105,48 @@ const LoginAlumnos = ({ route }) => {
 
                 {contraseña.length > 0 && (
                     <>
-                        <Text style={[styles.info, { fontSize: alumno.tamaño_letra }]}>Contraseña introducida:</Text>
+                        <Text style={[styles.info, { fontSize: alumno.tamaño_letra }]}
+                        >
+                            Contraseña introducida:
+                            
+                        </Text>
                         <View style={styles.input}>
                             {contraseña.map((item, index) => (
-                                <Icon key={index} name={item.name} type="ionicon" color={item.color} size={30} />
+                                <Icon key={index} 
+                                      name={item.name} 
+                                      type="ionicon" 
+                                      color={item.color} 
+                                      size={30}
+                                      accessible={true}
+                                      accessibilityLabel={`Elemento ${index+1} de la contraseña ${item.title}`}
+                                      
+                                />
                             ))}
                         </View>
-                        <Button title="Borrar" buttonStyle={styles.button} onPress={eliminarUltimoElemento} />
-                        {comprobar() && <Button title="Ingresar" buttonStyle={styles.button} onPress={handleSubmit} />}
+                        <Button 
+                            title="Borrar" 
+                            buttonStyle={styles.button} 
+                            onPress={eliminarUltimoElemento} 
+                            icon={
+                                <Image
+                                    source={{ uri: urlBorrar }}
+                                    style={styles.imiageIcon}
+                                />
+                            }
+                        />
+                        {comprobar() && 
+                        <Button 
+                            title="Ingresar" 
+                            buttonStyle={styles.button} 
+                            onPress={handleSubmit}
+                            icon = {
+                                <Image
+                                    source={{uri: urlEntrar}}
+                                    style={styles.imiageIcon}
+                                />
+                            }
+                        />
+                        }
                     </>
                 )}
             </View>
@@ -142,6 +194,10 @@ const styles = StyleSheet.create({
         marginTop: 10,
         borderRadius: 10,
         backgroundColor: '#94C5CC',
+    },
+    imiageIcon: {
+        width: 50,
+        height: 50,
     },
 });
 
