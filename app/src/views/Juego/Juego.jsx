@@ -19,7 +19,11 @@ const Juego = ({route}) => {
     }
     const fetchJuego = async () => {
         const url = await getTareasJuego();
-        setUrlJuego(url);
+        if (url) {
+            setUrlJuego(url[0].url);
+        }else {
+            Alert.alert("Error al obtener la tarea.");
+        }
     }
     const navigation = useNavigation();
     useEffect(()=>{
@@ -40,7 +44,7 @@ const Juego = ({route}) => {
                 }
             <View style={styles.body}>
                <WebView
-                source={{uri: "https://www.google.com/?client=safari"}}
+                source={{uri: urlJuego}}
                />
             </View>
             </>):(
