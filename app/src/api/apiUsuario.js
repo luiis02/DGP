@@ -26,16 +26,6 @@ export const getEstudiantes = async () => {
   }
 };
 
-export const getEstudiantesConTareas = async () => {
-  const resp = await fetch(`http://${ipAddress}:5000/estudiantes/conTareas`);
-  if(resp){
-
-    return await resp.json();
-  }else{
-    throw new Error('Error al obtener los estudiantes');
-  }
-};
-
 export const postEstudiante = async (datosAlumno) => {
   try { 
     const response = await fetch(`http://${ipAddress}:5000/estudiantes`, {
@@ -91,5 +81,15 @@ export const deleteEstudiante = async (idEstudiante) => {
     }
   } catch (error) {
     throw new Error("Error al eliminar el estudiante:", error.message);
+  }
+};
+
+export const getEstudiantesConTareas = async () => {
+  const resp = await fetch(`http://${ipAddress}:5000/estudiantes/conTareas`);
+  if(resp){
+
+    return await resp.json();
+  }else{
+    throw new Error('Error al obtener los estudiantes');
   }
 };
