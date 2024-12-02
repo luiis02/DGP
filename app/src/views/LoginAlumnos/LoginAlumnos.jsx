@@ -14,12 +14,12 @@ const LoginAlumnos = ({route}) => {
         atras: "38249/38249_2500.png",  // Pictograma para el botón "Atrás"
     }
     const figuras = [
-        {title: "nube", name: 'cloudy-night-outline', color: '#0DA9F6', hash: 'a1b2c3' }, 
-        {title: "puzzle", name: 'extension-puzzle-outline', color: '#708090', hash: 'd4e6f1' }, 
-        {title: "rayo", name: 'flash-outline', color: '#00CED1', hash: 'abcdefdef'}, 
-        {title: "circulo", name: 'radio-button-off-outline', color: '#FF7F50', hash: '800080' }, 
-        {title: "cuadrado", name: 'square-outline', color: '#9B30FF', hash: 'FFA500' }, 
-        {title: "estrella", name: 'star-outline', color: '#1E90FF', hash: '008000' }, 
+        {title: "nube", name: 'cloudy-night-outline', color: '#0DA9F6', hash: 'a1b2c3-' }, 
+        {title: "puzzle", name: 'extension-puzzle-outline', color: '#708090', hash: 'd4e6f1-' }, 
+        {title: "rayo", name: 'flash-outline', color: '#00CED1', hash: 'abcdefdef-'}, 
+        {title: "circulo", name: 'radio-button-off-outline', color: '#FF7F50', hash: '800080-' }, 
+        {title: "cuadrado", name: 'square-outline', color: '#9B30FF', hash: 'FFA500-' }, 
+        {title: "estrella", name: 'star-outline', color: '#1E90FF', hash: '008000-' }, 
     ]
     const [urlAtras, setUrlAtras] = useState(null); 
     const [contraseña, setContraseña] = useState([]);

@@ -43,6 +43,12 @@ import InformeAlumno from './src/views/InformeAlumno/InformeAlumno';
 
 import SeleccionarIcono from './src/views/SeleccionarIcono/SeleccionarIcono';
 
+import TareaJuego from './src/views/TareaJuego/TareaJuego';
+
+import Menu from './src/views/Menu/Menu';
+
+import Juego from './src/views/Juego/Juego';
+
 import { Platform } from 'react-native';
 
 
@@ -98,8 +104,12 @@ const App = () => {
         <Stack.Screen name="InformeAlumno" component={InformeAlumno} options={{headerShown: false}} />
         
         <Stack.Screen name="SeleccionarIcono" component={SeleccionarIcono} options={{headerShown: false}} />
-        
 
+        <Stack.Screen name="TareaJuego" component={TareaJuego} options={{headerShown: false}} />
+
+        <Stack.Screen name="Menu" component={Menu} options={{headerShown: false}} />
+
+        <Stack.Screen name="Juego" component={Juego} options={{headerShown: false}} />
       </Stack.Navigator>
     </NavigationContainer>
   )
