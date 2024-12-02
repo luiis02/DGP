@@ -15,6 +15,7 @@ const HomeAdmin = ({route}) => {
         gestionInformacion: "39172/39172_2500.png",
         gestionComedor: "5970/5970_2500.png",
         chat: "36398/36398_2500.png",
+        tarea_juego:"27399/27399_2500.png",
     }
     const navigation = useNavigation();
     const [urlCompañeros, setUrlCompañeros] = useState(null);
@@ -23,6 +24,7 @@ const HomeAdmin = ({route}) => {
     const [urlGestionInformaes, setUrlGestionInformaes] = useState(null);
     const [urlGestionComedor, setUrlGestionComedor] = useState(null);
     const [urlChat, setUrlChat] = useState(null);
+    const [urlTareaJuego, setUrlTareaJuego] = useState(null);
     const fetchPictograma = async () => {
         const compañero = await obtenerPictograma(pictogramas.compañero);  // Usamos la función modularizada
         if (compañero) {
@@ -60,6 +62,12 @@ const HomeAdmin = ({route}) => {
         } else {
             Alert.alert("Error al obtener el pictograma.");
         }
+        const juego = await obtenerPictograma(pictogramas.tarea_juego);
+        if (juego) {
+            setUrlTareaJuego(juego);
+        } else {
+            Alert.alert("Error al obtener el pictograma.");
+        }
     };
     const buttons = [ 
         {title: 'Gestion de Alumnos', icon: urlCompañeros, screen: 'GestionAlumnos'}, 
@@ -68,6 +76,7 @@ const HomeAdmin = ({route}) => {
         {title: 'Gestion de Información', icon: urlGestionInformaes, screen: 'GestionInformacion'},
         {title: 'Gestion de Comedor', icon: urlGestionComedor, screen: 'GestionComedor'},
         {title: 'Chat', icon: urlChat, screen: 'Chat'},
+        {title: 'Tarea de Juego', icon: urlTareaJuego, screen: 'TareaJuego'},
     ]
       useEffect(() => {
         fetchPictograma();
