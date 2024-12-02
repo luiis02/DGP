@@ -3,6 +3,7 @@ import { SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity } from "r
 import { obtenerPictograma } from "../../api/apiArasaac";
 import { useNavigation } from "@react-navigation/native";
 import WebView from "react-native-webview";
+import { getTareasJuego } from "../../api/apiTarea";
 
 const Juego = ({route}) => {
     const { alumno } = route.params;  // Obtiene el alumno desde la ruta
@@ -16,22 +17,27 @@ const Juego = ({route}) => {
         const url = await obtenerPictograma(pictogramas.atras);
         setUrlAtras(url);
     }
+    const fetchJuego = async () => {
+        const url = await getTareasJuego();
+        setUrlJuego(url);
+    }
     const navigation = useNavigation();
     useEffect(()=>{
+        fetchJuego();
         fetchPictograma();
     },[])
     return(
-        <SafeAreaView style={[{backgroundColor: alumno.color_tema}, styles.container]}>
+        <SafeAreaView style={[{backgroundColor: alumno.color_fondo}, styles.container]}>
             { urlJuego ? (
             <>
-            <View style={styles.header}>
                 {urlAtras &&
-                <TouchableOpacity onPress={()=> navigation.goBack()}>
-                    <Image source={{uri: urlAtras}} style={{width: 50, height: 50}} />
-                    <Text style={[{fontSize: alumno.tamaño_letra}, styles.title]}>Juego</Text>
-                </TouchableOpacity>    
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={()=> navigation.goBack()}>
+                        <Image source={{uri: urlAtras}} style={{width: 50, height: 50}} />
+                    </TouchableOpacity>  
+                    <Text style={[{fontSize: alumno.tamaño_letra}, styles.title]}>Juego</Text> 
+                </View> 
                 }
-            </View>
             <View style={styles.body}>
                <WebView
                 source={{uri: "https://www.google.com/?client=safari"}}

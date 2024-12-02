@@ -140,9 +140,9 @@ export const getTareasJuego = async () => {
     }
 }
 
-export const deleteTareaJuego = async () => {
+export const deleteTareaJuego = async (id) => {
     try{
-        const response = await fetch(`http://${ipAddress}:5000/juego/`, {
+        const response = await fetch(`http://${ipAddress}:5000/juego/${id}`, {
             method: 'DELETE',
         });
 

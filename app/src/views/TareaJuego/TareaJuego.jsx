@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Layaout from "../../components/Layaout/Layaout";
-import { StyleSheet, Text, TouchableOpacity, View, Image, Platform, Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { StyleSheet, Text, TouchableOpacity, View, Image, Platform, Alert, Button } from "react-native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { obtenerPictograma } from "../../api/apiArasaac";
 import { Input } from "@rneui/base";
 import { Icon } from "@rneui/themed";
-import { postTareaJuego } from "../../api/apiTarea";
+import { deleteTareaJuego, getTareasJuego, postTareaJuego } from "../../api/apiTarea";
 
 const TareaJuego = () => {
     const [urlAtras, setUrlAtras] = useState(null); 
     const [urlJuego, setUrlJuego] = useState(null); 
-    const [exiteJuego, setExiteJuego] = useState(false);
+    const [urlIntroducida, setUrlIntroducida] = useState(null);
     const pictograma = {
         atras: "38249/38249_2500.png",
     }
@@ -23,17 +23,34 @@ const TareaJuego = () => {
             Alert.alert("Error al obtener el pictograma.");
         }
     };
+    const fetchExiteJuego = async () => { 
+        const respuesta = await getTareasJuego(); 
+        if (respuesta) {
+            setUrlJuego(respuesta);
+        }
+    }
+    const handleEliminarJuegoPress = async () => {
+        const respuesta = await deleteTareaJuego(urlJuego[0].id);
+        if(respuesta){
+            Alert.alert("Tarea eliminada correctamente.");
+            navigation.goBack();
+        }else{
+            Alert.alert("Error al eliminar la tarea.");
+        }
+    }
     function esURL(cadena) {
         const patronURL = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[\w-.~:?#[\]@!$&'()*+,;=]*)*\/?$/;
         return patronURL.test(cadena);
       }
     const handleAceptarPress = async () => {
-        if(!urlJuego){
+        if(!urlIntroducida){
             Alert.alert("Error", "Debe introducir un URL válido.");
         }else {
-            if(esURL(urlJuego)){ 
-                const respuesta = await postTareaJuego(urlJuego); 
+            if(esURL(urlIntroducida)){ 
+                console.log(urlIntroducida);
+                const respuesta = await postTareaJuego(urlIntroducida); 
                 if(respuesta){
+                    setUrlJuego(urlIntroducida);
                     Alert.alert("Tarea enviada correctamente.");
                     navigation.goBack();
                 }else{
@@ -44,9 +61,15 @@ const TareaJuego = () => {
             }
         }
     }
-    useEffect(() => {
-        fetchPictogramas();
-    }, []);
+    useFocusEffect(
+        useCallback(()=>{
+            fetchExiteJuego();
+            fetchPictogramas();
+        return () => { 
+            fetchExiteJuego();
+        }
+        },[])
+    );
     return(
         <Layaout>
             <View style={styles.header}>
@@ -60,10 +83,11 @@ const TareaJuego = () => {
                 <Text style={styles.titleHeader}>Aplicación Juego</Text>
             </View>
             <View style={styles.body}>
-                <Input
+                {urlJuego === null ? (
+                    <Input
                     placeholder="Introducir url"
                     inputStyle={styles.input} 
-                    onChangeText={(text) => setUrlJuego(text)}
+                    onChangeText={(text) => setUrlIntroducida(text)}
                     rightIcon={
                         <TouchableOpacity onPress={()=> handleAceptarPress()}>
                             <Icon
@@ -72,7 +96,15 @@ const TareaJuego = () => {
                             />
                         </TouchableOpacity>
                     }
-                />
+                />):(
+                    <View style={styles.eliminaJuego}>
+                        <Text style={styles.text}>Ya existe una tarea de juego.</Text>
+                        <View style={styles.button}>
+                            <Button title="Eliminar Juego" onPress={()=> handleEliminarJuegoPress()} />
+                        </View>
+                    </View> 
+                )}
+                
             </View>
         </Layaout>
     );
@@ -98,6 +130,26 @@ const styles = StyleSheet.create({
     },
     input: {
         
+    },
+    eliminaJuego: {
+        marginTop: 20,
+        marginBottom: 10,
+        alignContent: "center",
+        alignItems: "center",
+    },
+    text: {
+        marginTop: 20,
+        marginBottom: 10,
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+    button: {
+        marginTop: 20,
+        backgroundColor: "#B4D2E7",
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 5,
+        marginBottom: 10,
     },
 });
 export default TareaJuego;

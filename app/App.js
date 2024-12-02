@@ -105,11 +105,11 @@ const App = () => {
         
         <Stack.Screen name="SeleccionarIcono" component={SeleccionarIcono} options={{headerShown: false}} />
 
-        <Stack.Screen name="Juego" component={TareaJuego} options={{headerShown: false}} />
+        <Stack.Screen name="TareaJuego" component={TareaJuego} options={{headerShown: false}} />
 
         <Stack.Screen name="Menu" component={Menu} options={{headerShown: false}} />
 
-        <Stack.Screen name="TareaJuego" component={Juego} options={{headerShown: false}} />
+        <Stack.Screen name="Juego" component={Juego} options={{headerShown: false}} />
       </Stack.Navigator>
     </NavigationContainer>
   )

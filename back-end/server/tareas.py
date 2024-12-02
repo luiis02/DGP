@@ -168,44 +168,64 @@ def obtener_tareas_estudiante(estudiante_id):
     except Exception as e:
         return jsonify({"message": f"Error al obtener las tareas: {str(e)}"}), 500
     
+
 @tareasBP.route('/juego', methods=['POST'])
-def juego():
-    # Obtener los datos de la solicitud
-    data = request.get_json()
-
-    # Validar que todos los parámetros necesarios estén presentes
-    required_fields = ['url']
-    if not all(field in data for field in required_fields):
-        return jsonify({"error": "Faltan parámetros requeridos"}), 400
-
-    # Obtener la URL del juego
-    url = data['url']
-    print(url)
-
-    # Consulta para insertar la URL
-    query = """
-        INSERT INTO TAREA_JUEGO (url) VALUES (%s)
-    """ 
+def crear_juego():
+    """
+    Endpoint para crear un registro de juego.
+    Recibe un JSON con el campo 'url' para almacenarlo en la base de datos.
+    """
     try:
-        # Pasar el parámetro como una tupla
+        # Obtener los datos de la solicitud
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No se proporcionaron datos"}), 400
+
+        # Validar que todos los parámetros necesarios estén presentes
+        url = data.get('url')
+        if not url:
+            return jsonify({"error": "El campo 'url' es requerido y no debe estar vacío"}), 400
+
+        # Consulta para insertar la URL
+        query = """
+            INSERT INTO TAREA_JUEGO (url) VALUES (%s)
+        """
+
+        # Ejecutar la consulta
         if db.execute_query(query, (url,)):
             return jsonify({"success": "Juego almacenado"}), 201
         else:
             return jsonify({"error": "Error al almacenar el juego"}), 500
+
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error interno del servidor: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
     
 @tareasBP.route('/juego', methods=['GET'])
 def obtener_juegos():
-    # Consulta para obtener las URLs de los juegos
-    query = "SELECT url FROM TAREA_JUEGO"
+    # Consulta para obtener las IDs y URLs de los juegos
+    query = "SELECT id, url FROM TAREA_JUEGO"
     try: 
-        url = db.execute_query(query)
-        if url:
-            return jsonify({"juegos": url}), 200
-        else:
-            return jsonify({}), 200
+        juegos = db.fetch_query(query)  # fetch_query devuelve una lista de tuplas
+        print(juegos)  # Verificar el contenido recuperado
+
+        # Convertir las tuplas en una lista de diccionarios con id y url
+        juegos_list = [{"id": juego[0], "url": juego[1]} for juego in juegos] if juegos else None
+
+        return jsonify(juegos_list), 200
+
     except Exception as e:
-        print(f"Error: {e}")
+        return jsonify({"error": "Error interno del servidor"}), 500
+
+@tareasBP.route('/juego/<int:id>/', methods=['DELETE'])
+def borrar_juego(id):
+    # Consulta para borrar el juego con el id especificado
+    query = "DELETE FROM TAREA_JUEGO WHERE id = %s"
+    try:
+        # Pasar el parámetro como una tupla
+        if db.execute_query(query, (id,)):
+            return jsonify({"success": "Juego eliminado"}), 200
+        else:
+            return jsonify({}), 404
+    except Exception as e:
         return jsonify({"error": "Error interno del servidor"}), 500
