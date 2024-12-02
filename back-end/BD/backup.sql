@@ -1,4 +1,3 @@
--- SQLBook: Code
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
@@ -82,8 +81,6 @@ CREATE TABLE `PETICION` (
 
 -- --------------------------------------------------------
 
-
-
 --
 -- Estructura de tabla para la tabla `RECIBE`
 --
@@ -134,11 +131,6 @@ CREATE TABLE `TAREA` (
   `es_creada_por` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
-
-
-
-
 -- --------------------------------------------------------
 
 --
@@ -157,7 +149,7 @@ CREATE TABLE `TIENE` (
 --
 
 CREATE TABLE `USUARIO` (
-  `id` INT NOT NULL,
+  `id` int NOT NULL,
   `nombre` varchar(50) DEFAULT NULL,
   `apellidos` varchar(50) DEFAULT NULL,
   `nombre_usuario` varchar(30) DEFAULT NULL,
@@ -166,13 +158,6 @@ CREATE TABLE `USUARIO` (
   `tamaño_letra` varchar(20) DEFAULT NULL,
   `rol` enum('ADMINISTRADOR','ESTUDIANTE','PROFESOR') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-
---
--- Estructura de tabla para la tabla `SOLICITUD_MATERIAL`
---
-
-
 
 --
 -- Volcado de datos para la tabla `USUARIO`
@@ -355,22 +340,7 @@ ALTER TABLE `TIENE`
 COMMIT;
 
 
-
-
-
-
-CREATE TABLE SOLICITUD_MATERIAL (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `profesor_id` INT NOT NULL,
-    `alumno_id` INT NOT NULL,
-    `material` VARCHAR(255) NOT NULL,
-    `fecha_entrega` DATE NOT NULL,
-    FOREIGN KEY (profesor_id) REFERENCES USUARIO(id),
-    FOREIGN KEY (alumno_id) REFERENCES USUARIO(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 -- --------------------------------------------------------
-ALTER TABLE TAREA ADD COLUMN id_estudiante INT;
 
 --
 -- Estructura de tabla para la tabla `MATERIALES_ALMACEN`
@@ -399,6 +369,8 @@ INSERT INTO MATERIALES_ALMACEN (nombre_material, descripcion, categoria, cantida
     ('Marcadores', 'Marcadores de colores surtidos', 'Papelería', 30, '2024-11-12', 'Disponible', 5),
     ('Borradores', 'Borradores de goma para lápiz', 'Papelería', 100, '2024-11-10', 'Disponible', 5),
     ('Rotuladores', 'Rotuladores de colores', 'Papelería', 80, '2024-11-08', 'Disponible', 5);
+
+
 
 CREATE TABLE TAREA_POR_PASOS (
   id_paso INT AUTO_INCREMENT PRIMARY KEY,
