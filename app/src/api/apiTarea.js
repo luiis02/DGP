@@ -132,3 +132,33 @@ export const postTarea = async (datos) => {
         throw error; // Lanza el error para que pueda ser manejado donde se llame
     }
 }
+
+export const getTareasJuego = async () => {
+    try {
+        const response = await fetch(`http://${ipAddress}:5000/juego`);
+        if(response.ok){
+            return await response.json();  // Retorna la respuesta si es exitosa
+        } else{
+            throw new Error('Error al obtener las URLs de los juegos');
+        }
+    } catch(error){
+        throw new Error("Error al obtener las URLs de los juegos:", error.message);
+        throw error;
+    }
+}
+
+export const deleteTareaJuego = async (id) => {
+    try{
+        const response = await fetch(`http://${ipAddress}:5000/juego/${id}`, {
+            method: 'DELETE',
+        });
+
+        if(response.ok){
+            return await response.json();  // Retorna la respuesta si es exitosa
+        } else{
+            throw new Error('Error al eliminar la URL del juego');
+        }
+    }catch(error){
+        throw new Error("Error al eliminar la URL del juego:", error.message);
+    }
+}

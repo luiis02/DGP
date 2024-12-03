@@ -10,24 +10,42 @@ import { Alert } from 'react-native';
 const LoginAlumnos = ({route}) => { 
     const navigation = useNavigation();
     const { alumno } = route.params;
-    const pictograma = { 
-        atras: "38249/38249_2500.png",  // Pictograma para el botón "Atrás"
-    }
+    const pictograma = {
+        atras: "38249/38249_2500.png",
+        borrar: "38199/38199_2500.png",
+        entrar: "6491/6491_2500.png",
+    };
+
     const figuras = [
-        {title: "nube", name: 'cloudy-night-outline', color: '#0DA9F6', hash: 'a1b2c3-' }, 
-        {title: "puzzle", name: 'extension-puzzle-outline', color: '#708090', hash: 'd4e6f1-' }, 
-        {title: "rayo", name: 'flash-outline', color: '#00CED1', hash: 'abcdefdef-'}, 
-        {title: "circulo", name: 'radio-button-off-outline', color: '#FF7F50', hash: '800080-' }, 
-        {title: "cuadrado", name: 'square-outline', color: '#9B30FF', hash: 'FFA500-' }, 
-        {title: "estrella", name: 'star-outline', color: '#1E90FF', hash: '008000-' }, 
-    ]
-    const [urlAtras, setUrlAtras] = useState(null); 
+        { title: "nube", name: 'cloudy-night-outline', color: '#0DA9F6', hash: 'a1b2c3-' },
+        { title: "puzzle", name: 'extension-puzzle-outline', color: '#708090', hash: 'd4e6f1-' },
+        { title: "rayo", name: 'flash-outline', color: '#00CED1', hash: 'abcdefdef-' },
+        { title: "circulo", name: 'radio-button-off-outline', color: '#FF7F50', hash: '800080-' },
+        { title: "cuadrado", name: 'square-outline', color: '#9B30FF', hash: 'FFA500-' },
+        { title: "estrella", name: 'star-outline', color: '#1E90FF', hash: '008000-' },
+    ];
+
+    const [urlAtras, setUrlAtras] = useState(null);
+    const [urlBorrar, setUrlBorrar] = useState(null);
+    const [urlEntrar, setUrlEntrar] = useState(null);
     const [contraseña, setContraseña] = useState([]);
     const fetchPictograma = async () => {
         const respuesta = await obtenerPictograma(pictograma.atras); 
         if (respuesta) {
             setUrlAtras(respuesta);
         }else {
+            Alert.alert('Error', 'No se pudo obtener el pictograma.');
+        }
+        const respuestaBorrar = await obtenerPictograma(pictograma.borrar);
+        if (respuestaBorrar) {
+            setUrlBorrar(respuestaBorrar);
+        } else {
+            Alert.alert('Error', 'No se pudo obtener el pictograma.');
+        }
+        const respuestaEntrar = await obtenerPictograma(pictograma.entrar);
+        if (respuestaEntrar) {
+            setUrlEntrar(respuestaEntrar);
+        } else {
             Alert.alert('Error', 'No se pudo obtener el pictograma.');
         }
     };
@@ -72,39 +90,64 @@ const LoginAlumnos = ({route}) => {
                 </View>
                 <View style={styles.inputContraseña}>
                     {figuras.map((figura, index) => (
-                        <Button key={index} icon={<Icon 
-                            name={figura.name}
-                            type="ionicon"
-                            color={figura.color}
-                        />}
-                        color= {alumno.color_tema}
-                        accessibilityLabel={`Botón ${figura.title}`}  // VoiceOver leerá este texto.
-                        onPress={() => handleFigurePress(figura)}
-                        />
+                        <TouchableOpacity
+                            key={index}
+                            style={[styles.iconButton, { backgroundColor: figura.color }]}
+                            onPress={() => handleFigurePress(figura)}
+                            accessible={true}
+                            accessibilityLabel={`Botón de ${figura.title}`}
+                        >
+                            <Icon name={figura.name} type="ionicon" color="#fff" size={40} />
+                        </TouchableOpacity>
                     ))}
                 </View>
-                <View>
-                    {contraseña.length > 0 &&
-                    <Text style={[styles.info, {fontSize: alumno.tamaño_letra}]}>Contraseña introducida</Text>}
-                    {contraseña.length>0 &&                  
-                    <View style={styles.input}>
-                        {contraseña.map((item, index) => (
-                            <Icon 
-                                key={index}
-                                name={item.name}
-                                type="ionicon"
-                                color={item.color}
-                            />
+
+                {contraseña.length > 0 && (
+                    <>
+                        <Text style={[styles.info, { fontSize: alumno.tamaño_letra }]}
+                        >
+                            Contraseña introducida:
                             
-                        ))}
-                    </View>}
-                    {contraseña.length>0 &&
-                        <Button title="Borrar" buttonStyle={styles.button} onPress={()=>eliminarUltimoElemento()} />
-                    }
-                    {comprobar() && 
-                        <Button title="Ingresar" buttonStyle={styles.button} onPress={()=>handleSubmit()} />
-                    }
-                </View>
+                        </Text>
+                        <View style={styles.input}>
+                            {contraseña.map((item, index) => (
+                                <Icon key={index} 
+                                      name={item.name} 
+                                      type="ionicon" 
+                                      color={item.color} 
+                                      size={30}
+                                      accessible={true}
+                                      accessibilityLabel={`Elemento ${index+1} de la contraseña ${item.title}`}
+                                      
+                                />
+                            ))}
+                        </View>
+                        <Button 
+                            title="Borrar" 
+                            buttonStyle={styles.button} 
+                            onPress={eliminarUltimoElemento} 
+                            icon={
+                                <Image
+                                    source={{ uri: urlBorrar }}
+                                    style={styles.imiageIcon}
+                                />
+                            }
+                        />
+                        {comprobar() && 
+                        <Button 
+                            title="Ingresar" 
+                            buttonStyle={styles.button} 
+                            onPress={handleSubmit}
+                            icon = {
+                                <Image
+                                    source={{uri: urlEntrar}}
+                                    style={styles.imiageIcon}
+                                />
+                            }
+                        />
+                        }
+                    </>
+                )}
             </View>
         </SafeAreaView>
     )
@@ -151,5 +194,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-})
+    imiageIcon: {
+        width: 50,
+        height: 50,
+    },
+});
+
 export default LoginAlumnos;
