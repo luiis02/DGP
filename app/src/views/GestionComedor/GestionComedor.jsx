@@ -88,14 +88,14 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     elements: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'space-between',
         flexWrap: 'wrap', // Permite que los botones ocupen varias filas si es necesario
         flex: 1,
     },
     touchableButton: {
         height: 150,
-        width: '45%', // Tamaño flexible para dos botones por fila
+        width: 150, // Tamaño flexible para dos botones por fila
         alignItems: 'center',
         justifyContent: 'center',
         marginVertical: 10, // Espaciado entre botones

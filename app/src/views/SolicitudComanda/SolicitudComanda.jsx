@@ -29,6 +29,7 @@ const SolicitudComanda = () => {
     };
     const compruebaComanda = async () => { 
         const respuesta = await getTareaComanda(); 
+        console.log(respuesta); 
         setId(respuesta.tareas[0].id);
         if (respuesta) {
             const fechaActual = new Date();
@@ -72,11 +73,11 @@ const SolicitudComanda = () => {
 
     const handleSubmit = async () => {
         if (!alumnoReq) {
-            Alert.alert("Error", "Por favor, selecciona un alumno.");
+                Alert.alert("Error", "Por favor, selecciona un alumno.");
             return;
         }
         if (pictogramaCheck === null) {
-            Alert.alert("Error", "Por favor, selecciona una preferencia de pictograma.");
+                Alert.alert("Error", "Por favor, selecciona una preferencia de pictograma.");
             return;
         }
 
@@ -88,6 +89,7 @@ const SolicitudComanda = () => {
             fecha_inicio: fechaFormateada,
             fecha_entrega: fechaFormateada,
             estudiantes: alumnoReq.id,
+            
         };
         const resp = await postTareaComanda(requestData);
         if (resp){

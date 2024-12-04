@@ -3,6 +3,7 @@ import { Text, TouchableOpacity, View, Alert, StyleSheet, SafeAreaView } from 'r
 import { useNavigation } from '@react-navigation/native';
 import { obtenerPictograma } from '../../api/apiArasaac';
 import { Image } from '@rneui/base';
+import { getComanda } from '../../test/Comanda';
 
 const HomeAlumno = ({route}) => {
     const {alumno} = route.params; 
@@ -20,10 +21,21 @@ const HomeAlumno = ({route}) => {
             Alert.alert('Error', 'No se pudo obtener el pictograma.');
         }
     };
-
+    const fetchTareas = () => {
+       const respuesta = getComanda(); 
+       if (respuesta) {
+            setTareas(respuesta);
+        }
+    };
+        
     useEffect(() =>{
+        fetchTareas();
         fetchPictograma();
     }, []);
+
+    useEffect(() =>{
+        console.log(tareas);
+    },[tareas]);
 
     return (
         <SafeAreaView style={{backgroundColor: alumno.color_tema, flex: 1}}>
@@ -32,6 +44,15 @@ const HomeAlumno = ({route}) => {
             </View>
             <View style={styles.body}>
                 <Text style={[{fontSize:alumno.tamaño_letra}, styles.titleBody]}>Tareas Pendientes</Text>
+                <View style={styles.tareas}>
+                    {tareas.map((tarea, index) => (
+                        <TouchableOpacity key={index} style={styles.task} onPress={() => navigation.navigate(tarea.screen, {descripcion: tarea.descripcion, aula: "A", alumno: alumno})}>
+                            <Image style={styles.iconTouchable} 
+                                    src={{uri: tarea.url}}
+                            />
+                        </TouchableOpacity>
+                    ))}
+                </View>
             </View>
             <View style={styles.footer}>
                 {urlMenu &&
@@ -65,6 +86,18 @@ const styles = StyleSheet.create({
     titleBody: {
         fontWeight: 'bold',
         color: 'black',
+    },
+    task: {
+        marginVertical: 10,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    iconTouchable: {
+        width: 100,
+        height: 100,
+        marginHorizontal: 10,
+        tintColor: 'black',
     },
     footer: {
         justifyContent: 'center',

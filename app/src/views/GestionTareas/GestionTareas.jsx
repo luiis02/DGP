@@ -85,7 +85,6 @@ const GestionTareas = () => {
                             key={item.id} 
                             style={styles.item} 
                             onPress={() => {
-
                                 navigation.navigate('InformacionUsuario', {alumno: item})
                                 }
                             }

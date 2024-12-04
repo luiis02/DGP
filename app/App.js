@@ -49,6 +49,8 @@ import Menu from './src/views/Menu/Menu';
 
 import Juego from './src/views/Juego/Juego';
 
+import Comanda from './src/components/Comanda/Comanda';
+
 import { Platform } from 'react-native';
 
 
@@ -110,6 +112,8 @@ const App = () => {
         <Stack.Screen name="Menu" component={Menu} options={{headerShown: false}} />
 
         <Stack.Screen name="Juego" component={Juego} options={{headerShown: false}} />
+
+        <Stack.Screen name="Comanda" component={Comanda} options={{headerShown: false}} />
       </Stack.Navigator>
     </NavigationContainer>
   )

@@ -87,7 +87,6 @@ export const deleteEstudiante = async (idEstudiante) => {
 export const getEstudiantesConTareas = async () => {
   const resp = await fetch(`http://${ipAddress}:5000/estudiantes/conTareas`);
   if(resp){
-
     return await resp.json();
   }else{
     throw new Error('Error al obtener los estudiantes');
