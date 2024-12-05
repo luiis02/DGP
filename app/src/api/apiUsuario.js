@@ -6,7 +6,38 @@ export const getProfesores = async () => {
   return await resp.json();
 };
 
-
+export const putProfesor = async (profesor) => { 
+  try{
+    const response = await fetch(`http://${ipAddress}:5000/profesores/${profesor.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(profesor), // Enviamos los datos del profesor
+    });
+    if (response.ok){
+      return await response.json();  // Retorna la respuesta si es exitosa
+    }
+  }catch (error){
+    throw new Error('Error al actualizar el profesor: '+ error.message);
+  }
+}
+export const postProfesor = async (profesor) => { 
+  try{
+    const response = await fetch(`http://${ipAddress}:5000/profesores`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(profesor), // Enviamos los datos del profesor
+    });
+    if (response.ok){
+      return await response.json();  // Retorna la respuesta si es exitosa
+    }
+  }catch (error){
+    throw new Error('Error al crear el profesor: '+ error.message);
+  }
+}
 
 export const getAdmin = async () => {
   const resp = await fetch(`http://${ipAddress}:5000/admins`);

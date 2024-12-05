@@ -147,6 +147,7 @@ export const deleteTareaJuego = async (id) => {
         });
 
         if(response.ok){
+            console.log(response)
             return await response.json();  // Retorna la respuesta si es exitosa
         } else{
             throw new Error('Error al eliminar la URL del juego');

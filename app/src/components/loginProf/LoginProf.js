@@ -21,6 +21,9 @@ const LoginProf = ({ profesores, admin }) => {
             Alert.alert('Error', 'No se pudo obtener el pictograma.');
         }
     };
+    const handleContraseña = async () => {
+        navigation.navigate("ResetContraseña", {profesores})
+    };
     useEffect(()=>{
         fetchPictograma();
     })
@@ -78,9 +81,15 @@ const LoginProf = ({ profesores, admin }) => {
             <View style={styles.buttonContainer}>
                 <Button
                     title="Iniciar Sesión"
-                    buttonStyle={{ backgroundColor: '#B4D2E7', borderRadius: 10 }}
+                    buttonStyle={styles.button}
                     titleStyle={{ color: 'black', fontWeight: 'bold' }}
                     onPress={handleLogin}
+                />
+                <Button
+                    title="He olvidado mi contraseña"
+                    buttonStyle={styles.button}
+                    titleStyle={{ color: 'black', fontWeight: 'bold' }}
+                    onPress={handleContraseña}
                 />
             </View>
         </View>
@@ -127,6 +136,12 @@ const styles = StyleSheet.create({
     buttonContainer: {
         paddingHorizontal: 20,
         marginTop: 20,
+    },
+    button: {
+        backgroundColor: '#94C5CC',
+        padding: 10,
+        borderRadius: 10,
+        marginBottom: 10,
     },
 });
 

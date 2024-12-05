@@ -163,7 +163,8 @@ CREATE TABLE `USUARIO` (
   `contraseña` varchar(255) DEFAULT NULL,
   `color_fondo` varchar(20) DEFAULT NULL,
   `tamaño_letra` varchar(20) DEFAULT NULL,
-  `rol` enum('ADMINISTRADOR','ESTUDIANTE','PROFESOR') NOT NULL
+  `rol` enum('ADMINISTRADOR','ESTUDIANTE','PROFESOR') NOT NULL, 
+  `solicitudCambioContraseña` BOOLEAN DEFAULT 1 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
