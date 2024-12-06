@@ -424,7 +424,7 @@ CREATE TABLE TAREA_INVENTARIO (
     estado ENUM('Pendiente', 'En progreso', 'Finalizada') DEFAULT 'Pendiente', -- Estado de la tarea
     prioridad ENUM('ALTA', 'MEDIA', 'BAJA') DEFAULT 'MEDIA', 
     CONSTRAINT fk_estudiante FOREIGN KEY (estudiante_id) REFERENCES USUARIO(id), -- Relación con tabla de estudiantes
-    CONSTRAINT fk_tarea FOREIGN KEY (tarea_id) REFERENCES TAREA(id) -- Relación con tabla
+    CONSTRAINT fk_tarea FOREIGN KEY (id) REFERENCES TAREA(id) -- Relación con tabla
 );
 
 CREATE TABLE MATERIAL_TAREA (
