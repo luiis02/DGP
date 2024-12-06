@@ -156,3 +156,18 @@ export const deleteTareaJuego = async (id) => {
         throw new Error("Error al eliminar la URL del juego:", error.message);
     }
 }
+
+export const getAllTareas = async (id) => {
+    try {
+        const response = await fetch(`http://${ipAddress}:5000/allTareas/${id}`);
+        console.log(response)
+        if(response.ok){
+            return await response.json();  // Retorna la respuesta si es exitosa
+        } else{
+            throw new Error('Error al obtener todas las tareas');
+        }
+    } catch(error){
+        throw new Error("Error al obtener todas las tareas:", error.message);
+        throw error;
+    }
+}

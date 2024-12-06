@@ -561,3 +561,31 @@ def eliminar_tarea_inventario(tarea_id):
 
     except Exception as e:
         return jsonify({"error": f"Error al eliminar la tarea de inventario: {str(e)}"}), 500
+
+
+@tareasBP.route('/allTareas/<int:id>', methods=['GET'])
+def obtener_tareas(id):
+    """
+    Endpoint para obtener todas las tareas de inventario filtradas por un estudiante específico.
+    """
+    try:
+        # Consulta para obtener todas las tareas de inventario asociadas al estudiante
+        queryTareaInventario = """
+            SELECT ti.id AS tarea_inventario_id, ti.aula, ti.url_imagen,
+                   ti.screen, ti.fecha_inicio AS fecha_inicio_inventario, 
+                   ti.fecha_fin AS fecha_fin_inventario, ti.estado AS estado_inventario, 
+                   ti.prioridad AS prioridad_inventario, ti.estudiante_id
+            FROM TAREA_INVENTARIO ti
+            WHERE ti.estudiante_id = %s
+        """
+        tareas_inventario = db.fetch_query(queryTareaInventario, (id,))
+        print(tareas_inventario)
+        
+        if not tareas_inventario:
+            return jsonify({"message": "No hay tareas de inventario registradas para este estudiante."}), 200
+        
+        # Formatear la respuesta para las tareas de inventario
+        return jsonify({"tareas": tareas_inventario}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error al obtener las tareas de inventario: {str(e)}"}), 500

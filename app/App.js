@@ -48,6 +48,7 @@ import AgregarProfesor from './src/views/AgregarProfesor/AgregarProfesor';
 import SeleccionarIcono from './src/views/SeleccionarIcono/SeleccionarIcono';
 
 import TareaJuego from './src/views/TareaJuego/TareaJuego';
+import Inventario from './src/task/Inventario/Inventario';
 
 import Menu from './src/views/Menu/Menu';
 
@@ -118,6 +119,7 @@ const App = () => {
         <Stack.Screen name="SeleccionarIcono" component={SeleccionarIcono} options={{headerShown: false}} />
 
         <Stack.Screen name="TareaJuego" component={TareaJuego} options={{headerShown: false}} />
+        <Stack.Screen name="Inventario" component={Inventario} options={{headerShown: false}} />
 
         <Stack.Screen name="Menu" component={Menu} options={{headerShown: false}} />
 
