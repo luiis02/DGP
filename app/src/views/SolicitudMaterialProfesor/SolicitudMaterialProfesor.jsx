@@ -16,6 +16,7 @@ const SolicitudMaterial = ({route}) => {
     const [urlAtras, setUrlAtras] = useState(null);
     const [materiales, setMateriales] = useState([]);
     const [materialesFiltrados, setMaterialesFiltrados] = useState([]);
+    const [aula, setAula] = useState("");
     const [filtro, setFiltro] = useState("");
     
     const navigation = useNavigation();
@@ -51,70 +52,84 @@ const SolicitudMaterial = ({route}) => {
 
     // Manejar envío de petición
     const enviarPeticion = async () => {
-        // Mostrar un cuadro emergente para solicitar la fecha de entrega
-        Alert.prompt(
-            "Fecha de Entrega",
-            "Por favor, ingresa la fecha de entrega en formato YYYY-MM-DD:",
-            async (fechaEntrega) => {
-                // Validar que la fecha esté en el formato correcto
-                const regexFecha = /^\d{4}-\d{2}-\d{2}$/;
-                if (!regexFecha.test(fechaEntrega)) {
-                    Alert.alert("Error", "Formato de fecha inválido. Usa YYYY-MM-DD.");
-                    return;
-                }
-    
-                // Crear una copia de los materiales originales con la cantidad actualizada
-                const nuevosMateriales = materiales.map((materialOriginal) => {
-                    const materialSolicitado = materialesFiltrados.find(
-                        (material) => material.id_material === materialOriginal.id_material
-                    );
-                    if (materialSolicitado) {
-                        return {
-                            ...materialOriginal,
-                            cantidad: materialOriginal.cantidad - materialSolicitado.cantidad, // Restar la cantidad solicitada
-                        };
-                    }
-                    return materialOriginal; // Devolver sin cambios si no está en los filtrados
-                });
-    
-                // Enviar las solicitudes de actualización para cada material
-                for (const material of nuevosMateriales) {
-                    const data = await putMaterial(material);
-                    if (!data) {
-                        Alert.alert(
-                            "Error al enviar la solicitud",
-                            "Ha ocurrido un error al actualizar el material."
-                        );
+       // Solicitar fecha de entrega y aula usando Alert.prompt
+       Alert.prompt(
+        "Fecha de Entrega",
+        "Por favor, ingresa la fecha de entrega en formato YYYY-MM-DD:",
+        async (fechaEntrega) => {
+            // Validar que la fecha esté en el formato correcto
+            const regexFecha = /^\d{4}-\d{2}-\d{2}$/;
+            if (!regexFecha.test(fechaEntrega)) {
+                Alert.alert("Error", "Formato de fecha inválido. Usa YYYY-MM-DD.");
+                return;
+            }
+
+            // Solicitar el aula
+            Alert.prompt(
+                "Aula",
+                "Por favor, ingresa el nombre del aula:",
+                async (aula) => {
+                    if (!aula) {
+                        Alert.alert("Error", "Por favor, ingresa el nombre del aula.");
                         return;
                     }
-                }
-    
-                // Construir el cuerpo para la solicitud
-                const peticiones = materialesFiltrados.map((material) => ({
+
+                    // Crear una copia de los materiales originales con la cantidad actualizada
+                    const nuevosMateriales = materiales.map((materialOriginal) => {
+                        const materialSolicitado = materialesFiltrados.find(
+                            (material) => material.id_material === materialOriginal.id_material
+                        );
+                        if (materialSolicitado) {
+                            return {
+                                ...materialOriginal,
+                                cantidad: materialOriginal.cantidad - materialSolicitado.cantidad,
+                            };
+                        }
+                        return materialOriginal;
+                    });
+
+                    // Enviar las solicitudes de actualización para cada material
+                    for (const material of nuevosMateriales) {
+                        const data = await putMaterial(material);
+                        if (!data) {
+                            Alert.alert("Error", "Ha ocurrido un error al actualizar el material.");
+                            return;
+                        }
+                    }
+
+                    // Construir el cuerpo para la solicitud
+                    const peticiones = materialesFiltrados.map((material) => ({
                         id_material: material.id_material,
                         nombre: material.nombre_material,
-                        cantidad: material.cantidad, // Cantidad solicitada
-                }));
-                const reqData = {
-                    profesor_id: idProfesor,
-                    alumno_id : 1,
-                    material: peticiones,
-                    fecha_entrega: fechaEntrega, // Usar la fecha ingresada
-                };
-    
-                // Realizar el POST de la solicitud
-                const resp = await postPeticion(reqData);
-                if (resp) {
-                    Alert.alert("Solicitud enviada correctamente.");
-                    setMateriales(nuevosMateriales); // Actualizar el estado con las cantidades ajustadas
-                    navigation.goBack(); // Volver a la pantalla anterior
-                } else {
-                    Alert.alert("Error al enviar la solicitud", "Ha ocurrido un error.");
-                }
-            },
-            "plain-text", // Tipo de entrada
-            null,         // Valor por defecto
-            "default"     // Tipo de teclado
+                        cantidad: material.cantidad,
+                    }));
+
+                    const reqData = {
+                        profesor_id: idProfesor,
+                        aula: aula,
+                        material: peticiones,
+                        fecha_entrega: fechaEntrega,
+                    };
+
+                    // Realizar el POST de la solicitud
+                    const resp = await postPeticion(reqData);
+                    console.log(resp)
+                    if (resp) {
+                        Alert.alert("Solicitud enviada correctamente.");
+                        setMateriales(nuevosMateriales); // Actualizar las cantidades
+                        navigation.goBack(); // Volver a la pantalla anterior
+                    } else {
+                        Alert.alert("Error al enviar la solicitud", "Ha ocurrido un error.");
+                    }
+                },
+                "plain-text",
+                null,
+                "default"
+            );
+        },
+        "plain-text", // Tipo de entrada para fecha
+        null,         // Valor por defecto
+        "default"     // Tipo de teclado
         );
     };
     

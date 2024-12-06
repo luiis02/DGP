@@ -229,3 +229,363 @@ def borrar_juego(id):
             return jsonify({}), 404
     except Exception as e:
         return jsonify({"error": "Error interno del servidor"}), 500
+    
+@tareasBP.route('/solicitud', methods=['GET'])
+def obtener_solicitudes():
+    """
+    Endpoint para obtener todas las solicitudes con sus detalles.
+    Incluye el nombre del profesor, el aula, la lista de materiales y las cantidades solicitadas.
+    """
+    try:
+        # Consulta para obtener la información de las solicitudes, el profesor y los materiales
+        query = """
+            SELECT sm.id AS solicitud_id, 
+                   u.nombre AS profesor_nombre,  
+                   sm.aula,
+                   sm.fecha_entrega,
+                   ma.nombre_material, 
+                   smd.cantidad_solicitada
+            FROM SOLICITUD_MATERIAL sm
+            JOIN USUARIO u ON sm.profesor_id = u.id
+            JOIN SOLICITUD_MATERIAL_DETALLE smd ON sm.id = smd.solicitud_id
+            JOIN MATERIALES_ALMACEN ma ON smd.id_material = ma.id_material
+        """
+        solicitudes = db.fetch_query(query)
+        print(solicitudes)
+        if not solicitudes:
+            return jsonify({"message": "No hay solicitudes registradas"}), 200
+
+        # Organizar los resultados en un formato estructurado
+        solicitudes_dict = {}
+        for solicitud in solicitudes:
+            solicitud_id, profesor_nombre, aula, fecha_entrega, nombre_material, cantidad_solicitada = solicitud
+            if solicitud_id not in solicitudes_dict:
+                solicitudes_dict[solicitud_id] = {
+                    "id": solicitud_id,
+                    "profesor_nombre": profesor_nombre,
+                    "aula": aula,
+                    "fecha_entrega": fecha_entrega,
+                    "materiales": []
+                }
+            solicitudes_dict[solicitud_id]["materiales"].append({
+                "nombre_material": nombre_material,
+                "cantidad_solicitada": cantidad_solicitada
+            })
+
+        # Convertir a una lista de solicitudes
+        solicitudes_list = list(solicitudes_dict.values())
+        print(solicitudes_list)
+
+        return jsonify(solicitudes_list), 200
+
+    except Exception as e:
+        return jsonify({"error": "Error al obtener las solicitudes", "details": str(e)}), 500
+
+    
+@tareasBP.route('/solicitud', methods=['POST'])
+def crear_solicitud():
+    """
+    Endpoint para crear una nueva solicitud con materiales.
+    También actualiza la tabla MATERIALES_ALMACEN al restar las cantidades solicitadas.
+    """
+    data = request.get_json()
+    # Validar datos
+    if not data:
+        return jsonify({"error": "No se proporcionaron datos"}), 400
+
+    profesor_id = data.get('profesor_id')
+    fecha_entrega = data.get('fecha_entrega')
+    aula = data.get('aula')
+    materiales = data.get('material')
+
+    if not profesor_id or not fecha_entrega or not materiales:
+        return jsonify({"error": "Faltan campos obligatorios"}), 400
+
+    try:
+        # Crear la solicitud principal
+        crear_solicitud_query = """
+            INSERT INTO SOLICITUD_MATERIAL (profesor_id, fecha_entrega, aula)
+            VALUES (%s, %s, %s)
+        """
+        print("SOLICITUD_MATERIAL Inserta")
+        db.execute_query(crear_solicitud_query, (profesor_id, fecha_entrega, aula))
+        print("SOLICITUD_MATERIAL insertada")
+
+        # Obtener el ID de la solicitud recién creada
+        solicitud_id_query = "SELECT LAST_INSERT_ID()"
+
+        solicitud_id = db.fetch_query(solicitud_id_query)[0][0]
+
+        # Insertar los detalles de la solicitud y actualizar el almacén
+        insertar_detalle_query = """
+            INSERT INTO SOLICITUD_MATERIAL_DETALLE (solicitud_id, id_material, cantidad_solicitada)
+            VALUES (%s, %s, %s)
+        """
+        actualizar_almacen_query = """
+            UPDATE MATERIALES_ALMACEN
+            SET cantidad = cantidad - %s
+            WHERE id_material = %s
+        """
+        for material in materiales:
+            id_material = material.get('id_material')
+            cantidad = material.get('cantidad')
+            if id_material is None or cantidad is None:
+                return jsonify({"error": "Datos de material incompletos"}), 400
+            if cantidad > 0: 
+                # Insertar detalle
+                print("Insertar SOLICITUD_MATERIAL_DETALLE ")
+                db.execute_query(insertar_detalle_query, (solicitud_id, id_material, cantidad))
+                print("SOLICITUD_MATERIAL_DETALLE insertado")
+                # Actualizar almacén
+                print("Actualizar MATERIALES_ALMACEN ")
+                db.execute_query(actualizar_almacen_query, (cantidad, id_material))
+                print("MATERIALES_ALMACEN actualizado")
+        return jsonify({"message": "Solicitud creada correctamente", "solicitud_id": solicitud_id}), 201
+
+    except Exception as e:
+        return jsonify({"error": "Error al crear la solicitud", "details": str(e)}), 500
+
+@tareasBP.route('/solicitud/<int:solicitud_id>', methods=['PUT'])
+def actualizar_solicitud(solicitud_id):
+    """
+    Endpoint para actualizar una solicitud existente y sus detalles.
+    También actualiza los valores de la tabla MATERIALES_ALMACEN.
+    """
+    data = request.get_json()
+
+    # Validar datos
+    if not data:
+        return jsonify({"error": "No se proporcionaron datos"}), 400
+
+    fecha_entrega = data.get('fecha_entrega')
+    materiales = data.get('material')
+
+    if not fecha_entrega or not materiales:
+        return jsonify({"error": "Faltan campos obligatorios"}), 400
+
+    try:
+        # Actualizar la solicitud principal
+        actualizar_solicitud_query = """
+            UPDATE SOLICITUD_MATERIAL
+            SET fecha_entrega = %s
+            WHERE id = %s
+        """
+        db.execute_query(actualizar_solicitud_query, (fecha_entrega, solicitud_id))
+
+        # Eliminar los detalles existentes
+        eliminar_detalle_query = """
+            DELETE FROM SOLICITUD_MATERIAL_DETALLE
+            WHERE solicitud_id = %s
+        """
+        db.execute_query(eliminar_detalle_query, (solicitud_id,))
+
+        # Insertar los nuevos detalles
+        insertar_detalle_query = """
+            INSERT INTO SOLICITUD_MATERIAL_DETALLE (solicitud_id, id_material, cantidad_solicitada)
+            VALUES (%s, %s, %s)
+        """
+        for material in materiales:
+            id_material = material.get('id_material')
+            cantidad_solicitada = material.get('cantidad')
+
+            if not id_material or not cantidad_solicitada:
+                return jsonify({"error": "Datos de material incompletos"}), 400
+
+            # Insertar detalle
+            db.execute_query(insertar_detalle_query, (solicitud_id, id_material, cantidad_solicitada))
+
+            # Actualizar los valores en MATERIALES_ALMACEN
+            actualizar_almacen_query = """
+                UPDATE MATERIALES_ALMACEN
+                SET cantidad = cantidad - %s
+                WHERE id_material = %s
+            """
+            db.execute_query(actualizar_almacen_query, (cantidad_solicitada, id_material))
+
+        return jsonify({"message": "Solicitud actualizada correctamente"}), 200
+
+    except Exception as e:
+        return jsonify({"error": "Error al actualizar la solicitud", "details": str(e)}), 500
+
+@tareasBP.route('/solicitud/<int:solicitud_id>', methods=['DELETE'])
+def eliminar_solicitud(solicitud_id):
+    """
+    Endpoint para eliminar una solicitud y sus detalles.
+    """
+    try:
+        # Recuperar los materiales de la solicitud antes de eliminarla
+        recuperar_materiales_query = """
+            SELECT id_material, cantidad_solicitada
+            FROM SOLICITUD_MATERIAL_DETALLE
+            WHERE solicitud_id = %s
+        """
+        materiales = db.fetch_query(recuperar_materiales_query, (solicitud_id,))
+
+        # Actualizar el almacén antes de eliminar los detalles
+        for material in materiales:
+            id_material, cantidad_solicitada = material
+            actualizar_almacen_query = """
+                UPDATE MATERIALES_ALMACEN
+                SET cantidad = cantidad + %s
+                WHERE id_material = %s
+            """
+            db.execute_query(actualizar_almacen_query, (cantidad_solicitada, id_material))
+
+        # Eliminar los detalles de la solicitud
+        eliminar_detalle_query = """
+            DELETE FROM SOLICITUD_MATERIAL_DETALLE
+            WHERE solicitud_id = %s
+        """
+        db.execute_query(eliminar_detalle_query, (solicitud_id,))
+
+        # Eliminar la solicitud principal
+        eliminar_solicitud_query = """
+            DELETE FROM SOLICITUD_MATERIAL
+            WHERE id = %s
+        """
+        db.execute_query(eliminar_solicitud_query, (solicitud_id,))
+
+        return jsonify({"message": "Solicitud eliminada correctamente"}), 200
+
+    except Exception as e:
+        return jsonify({"error": "Error al eliminar la solicitud", "details": str(e)}), 500
+
+
+@tareasBP.route('/inventario', methods=['GET'])
+def obtener_tareas_inventario():
+    """
+    Endpoint para obtener todas las tareas de inventario.
+    """
+    try:
+        query = "SELECT * FROM TAREA_INVENTARIO"
+        tareas_inventario = db.fetch_query(query)
+
+        if not tareas_inventario:
+            return jsonify({"message": "No hay tareas de inventario registradas."}), 200
+
+        # Convertir las tuplas en una lista de diccionarios
+        tareas_inventario_list = [
+            {
+                "id": tarea[0], 
+                "fecha_inicio": tarea[1],
+                "fecha_fin": tarea[2], 
+                "estado": tarea[3], 
+                "prioridad": tarea[4], 
+                "es_creada_por": tarea[5],
+                "id_estudiante": tarea[6]
+            } for tarea in tareas_inventario
+        ]
+
+        return jsonify({"tareas_inventario": tareas_inventario_list}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error al obtener las tareas de inventario: {str(e)}"}), 500
+
+@tareasBP.route('/inventario', methods=['POST'])
+def crear_tarea_inventario():
+    """
+    Endpoint para crear una nueva tarea de inventario.
+    """
+    data = request.get_json()
+
+    # Validar los campos necesarios
+    required_fields = ['fecha_inicio', 'fecha_fin', 'prioridad', 'id_estudiante']
+    if not all(field in data for field in required_fields):
+        missing_fields = [field for field in required_fields if field not in data]
+        return jsonify({"error": f"Faltan los siguientes campos: {', '.join(missing_fields)}"}), 400
+    print(data)
+    # Asignar valores de los campos recibidos
+    fecha_inicio = data.get('fecha_inicio')
+    fecha_fin = data.get('fecha_fin')
+    estado = 'PENDIENTE'
+    prioridad = data.get('prioridad')
+    id_estudiante = data.get('id_estudiante')
+    aula = data.get('aula')
+    url = data.get('url')
+    screen = data.get('screen')
+
+    # Crear la tarea de inventario
+    crear_tarea_inventario_query = """
+        INSERT INTO TAREA_INVENTARIO (fecha_inicio, fecha_fin, estado, prioridad, estudiante_id, aula, url_imagen, screen)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    """
+
+    try:
+        db.execute_query(crear_tarea_inventario_query, (fecha_inicio, fecha_fin, estado, prioridad, id_estudiante, aula, url, screen))
+        return jsonify({"message": "Tarea de inventario creada exitosamente"}), 201
+    except Exception as e:
+        return jsonify({"message": f"Error al crear la tarea de inventario: {str(e)}"}), 500
+
+@tareasBP.route('/inventario/<int:tarea_id>', methods=['PUT'])
+def actualizar_tarea_inventario(tarea_id):
+    """
+    Endpoint para actualizar una tarea de inventario existente.
+    """
+    data = request.get_json()
+
+    # Validar los campos necesarios
+    estado = data.get('estado')
+    if not estado:
+        return jsonify({"error": "El campo 'estado' es obligatorio."}), 400
+
+    try:
+        # Actualizar la tarea de inventario
+        actualizar_query = """
+            UPDATE TAREA_INVENTARIO
+            SET estado = %s
+            WHERE id = %s
+        """
+        db.execute_query(actualizar_query, (estado, tarea_id))
+
+        return jsonify({"message": "Tarea de inventario actualizada exitosamente"}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error al actualizar la tarea de inventario: {str(e)}"}), 500
+
+@tareasBP.route('/inventario/<int:tarea_id>', methods=['DELETE'])
+def eliminar_tarea_inventario(tarea_id):
+    """
+    Endpoint para eliminar una tarea de inventario.
+    """
+    try:
+        # Eliminar la tarea de inventario
+        eliminar_query = """
+            DELETE FROM TAREA_INVENTARIO WHERE id = %s
+        """
+        result = db.execute_query(eliminar_query, (tarea_id,))
+
+        if result:
+            return jsonify({"message": "Tarea de inventario eliminada correctamente"}), 200
+        else:
+            return jsonify({"error": "No se encontró la tarea de inventario."}), 404
+
+    except Exception as e:
+        return jsonify({"error": f"Error al eliminar la tarea de inventario: {str(e)}"}), 500
+
+
+@tareasBP.route('/allTareas/<int:id>', methods=['GET'])
+def obtener_tareas(id):
+    """
+    Endpoint para obtener todas las tareas de inventario filtradas por un estudiante específico.
+    """
+    try:
+        # Consulta para obtener todas las tareas de inventario asociadas al estudiante
+        queryTareaInventario = """
+            SELECT ti.id AS tarea_inventario_id, ti.aula, ti.url_imagen,
+                   ti.screen, ti.fecha_inicio AS fecha_inicio_inventario, 
+                   ti.fecha_fin AS fecha_fin_inventario, ti.estado AS estado_inventario, 
+                   ti.prioridad AS prioridad_inventario, ti.estudiante_id
+            FROM TAREA_INVENTARIO ti
+            WHERE ti.estudiante_id = %s
+        """
+        tareas_inventario = db.fetch_query(queryTareaInventario, (id,))
+        print(tareas_inventario)
+        
+        if not tareas_inventario:
+            return jsonify({"message": "No hay tareas de inventario registradas para este estudiante."}), 200
+        
+        # Formatear la respuesta para las tareas de inventario
+        return jsonify({"tareas": tareas_inventario}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error al obtener las tareas de inventario: {str(e)}"}), 500

@@ -178,10 +178,8 @@ CREATE TABLE `USUARIO` (
 --
 
 INSERT INTO `USUARIO` (`id`, `nombre`, `apellidos`, `nombre_usuario`, `contraseña`, `color_fondo`, `tamaño_letra`, `rol`) VALUES
-(1, 'juan', 'martinez', 'juan_martinez', '1', 'azul', '12', 'ESTUDIANTE'),
-(2, 'paco', 'garcia', 'paco_garcia', '1', 'rojo', '18', 'ESTUDIANTE'),
-(3, 'Julia', 'Hurtado', 'julia_hurtado', '1', 'azul', '12', 'PROFESOR'),
-(5, 'Alberto', 'Gracian', 'alberto_gracian', '1', 'azul', '12', 'ADMINISTRADOR');
+(1, 'Alberto', 'Gracian', 'a', '1', 'azul', '12', 'ADMINISTRADOR'),
+(2, 'Julia', 'Hurtado', 'p', '1', 'azul', '12', 'PROFESOR');
 
 --
 -- Índices para tablas volcadas
@@ -361,12 +359,12 @@ COMMIT;
 CREATE TABLE SOLICITUD_MATERIAL (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `profesor_id` INT NOT NULL,
-    `alumno_id` INT NOT NULL,
-    `material` VARCHAR(255) NOT NULL,
     `fecha_entrega` DATE NOT NULL,
-    FOREIGN KEY (profesor_id) REFERENCES USUARIO(id),
-    FOREIGN KEY (alumno_id) REFERENCES USUARIO(id)
+    `aula` VARCHAR(255) NOT NULL,
+    FOREIGN KEY (profesor_id) REFERENCES USUARIO(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
 
 ALTER TABLE TAREA ADD COLUMN id_solicitud INT, ADD FOREIGN KEY (id_solicitud) REFERENCES SOLICITUD_MATERIAL(id);
 -- --------------------------------------------------------
@@ -388,22 +386,58 @@ CREATE TABLE MATERIALES_ALMACEN (
     FOREIGN KEY (id_administrador) REFERENCES USUARIO(id)
 );
 
+
+CREATE TABLE SOLICITUD_MATERIAL_DETALLE (
+    id INT AUTO_INCREMENT PRIMARY KEY, -- Identificador único para cada fila de la relación
+    solicitud_id INT NOT NULL,          -- Relaciona con la tabla SOLICITUD_MATERIAL
+    id_material INT NOT NULL,           -- Relaciona con la tabla MATERIALES_ALMACEN
+    cantidad_solicitada INT NOT NULL,   -- Cantidad solicitada de cada material
+    FOREIGN KEY (solicitud_id) REFERENCES SOLICITUD_MATERIAL(id),
+    FOREIGN KEY (id_material) REFERENCES MATERIALES_ALMACEN(id_material)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 --
 -- Volcado de datos para la tabla `MATERIALES_ALMACEN`
 --
 INSERT INTO MATERIALES_ALMACEN (nombre_material, descripcion, categoria, cantidad, fecha_ingreso, estado, id_administrador
 ) VALUES
-    ('Cuaderno A4', 'Cuaderno de 80 hojas, tamaño A4', 'Papelería', 50, '2024-11-15', 'Disponible', 5),
-    ('Lápiz HB', 'Lápiz para escritura general', 'Papelería', 200, '2024-11-16', 'Disponible', 5),
-    ('Marcadores', 'Marcadores de colores surtidos', 'Papelería', 30, '2024-11-12', 'Disponible', 5),
-    ('Borradores', 'Borradores de goma para lápiz', 'Papelería', 100, '2024-11-10', 'Disponible', 5),
-    ('Rotuladores', 'Rotuladores de colores', 'Papelería', 80, '2024-11-08', 'Disponible', 5);
+    ('Cuaderno A4', 'Cuaderno de 80 hojas, tamaño A4', 'Papelería', 50, '2024-11-15', 'Disponible', 1),
+    ('Lápiz HB', 'Lápiz para escritura general', 'Papelería', 200, '2024-11-16', 'Disponible', 1),
+    ('Marcadores', 'Marcadores de colores surtidos', 'Papelería', 30, '2024-11-12', 'Disponible', 1),
+    ('Borradores', 'Borradores de goma para lápiz', 'Papelería', 100, '2024-11-10', 'Disponible', 1),
+    ('Rotuladores', 'Rotuladores de colores', 'Papelería', 80, '2024-11-08', 'Disponible', 1);
 
 
 CREATE TABLE TAREA_JUEGO(
   `id` INT AUTO_INCREMENT PRIMARY KEY, 
   `url` VARCHAR(255) 
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE TAREA_INVENTARIO (
+    id INT AUTO_INCREMENT PRIMARY KEY,         -- Identificador único de la tarea
+    aula VARCHAR(50),                          -- Aula solicitante (por ejemplo, "A")
+    estudiante_id INT,                         -- ID del estudiante (relación con otra tabla de estudiantes)
+    url_imagen VARCHAR(255),                   -- URL donde se guarda la imagen asociada a la tarea
+    screen VARCHAR(255),                       -- Información adicional o campo de texto para "screen"
+    fecha_inicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Fecha de creación de la tarea
+    fecha_fin TIMESTAMP,                        -- Fecha de culminación de la tarea
+    estado ENUM('Pendiente', 'En progreso', 'Finalizada') DEFAULT 'Pendiente', -- Estado de la tarea
+    prioridad ENUM('ALTA', 'MEDIA', 'BAJA') DEFAULT 'MEDIA', 
+    CONSTRAINT fk_estudiante FOREIGN KEY (estudiante_id) REFERENCES USUARIO(id), -- Relación con tabla de estudiantes
+    CONSTRAINT fk_tarea FOREIGN KEY (tarea_id) REFERENCES TAREA(id) -- Relación con tabla
+);
+
+CREATE TABLE MATERIAL_TAREA (
+    id INT AUTO_INCREMENT PRIMARY KEY,           -- Identificador único de la entrada
+    tarea_id INT NOT NULL,                       -- ID de la tarea en la que se usan los materiales
+    id_material INT NOT NULL,                    -- ID del material del almacén
+    cantidad_solicitada INT NOT NULL,            -- Cantidad solicitada de este material
+    FOREIGN KEY (tarea_id) REFERENCES TAREA_INVENTARIO(id), -- Relación con TAREA_INVENTARIO
+    FOREIGN KEY (id_material) REFERENCES MATERIALES_ALMACEN(id_material) -- Relación con MATERIALES_ALMACÉN
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -89,6 +89,21 @@ export const postPeticion = async (datosSolicitud) => {
       return await response.json();
   } catch (error) {
     throw new Error('Error:', error.message);
-    return null;
+  }
+}
+
+export const postTareaInventario = async (dataSolicitud) => { 
+  try{
+    const response = await fetch(`http://${ipAddress}:5000/inventario`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dataSolicitud),
+    });
+    if(response)
+      return await response.json();
+  } catch (error) {
+    throw new Error('Error:', error.message);
   }
 }

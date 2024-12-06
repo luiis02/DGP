@@ -14,7 +14,7 @@ const HomeAdmin = ({route}) => {
         tareas: "36347/36347_2500.png",
         gestionInformacion: "39172/39172_2500.png",
         gestionComedor: "5970/5970_2500.png",
-        chat: "36398/36398_2500.png",
+        gestionProfesores: "6556/6556_2500.png",
         tarea_juego:"27399/27399_2500.png",
     }
     const navigation = useNavigation();
@@ -23,7 +23,7 @@ const HomeAdmin = ({route}) => {
     const [urlTareas, setUrlTareas] = useState(null);
     const [urlGestionInformaes, setUrlGestionInformaes] = useState(null);
     const [urlGestionComedor, setUrlGestionComedor] = useState(null);
-    const [urlChat, setUrlChat] = useState(null);
+    const [urlProfesores, setUrlProfesores] = useState(null);
     const [urlTareaJuego, setUrlTareaJuego] = useState(null);
     const fetchPictograma = async () => {
         const compañero = await obtenerPictograma(pictogramas.compañero);  // Usamos la función modularizada
@@ -56,9 +56,9 @@ const HomeAdmin = ({route}) => {
         } else {
             Alert.alert("Error al obtener el pictograma.");
         }
-        const chat = await obtenerPictograma(pictogramas.chat);  // Usamos la función modularizada
-        if (chat) {
-            setUrlChat(chat);
+        const profesores = await obtenerPictograma(pictogramas.gestionProfesores);  // Usamos la función modularizada
+        if (profesores) {
+            setUrlProfesores(profesores);
         } else {
             Alert.alert("Error al obtener el pictograma.");
         }
@@ -75,7 +75,7 @@ const HomeAdmin = ({route}) => {
         {title: 'Gestion de Tareas por Pasos', icon: urlTareas, screen: 'GestionTareas'},
         {title: 'Gestion de Información', icon: urlGestionInformaes, screen: 'GestionInformacion'},
         {title: 'Gestion de Comedor', icon: urlGestionComedor, screen: 'GestionComedor'},
-        {title: 'Chat', icon: urlChat, screen: 'Chat'},
+        {title: 'Gestion de Profesores', icon: urlProfesores, screen: 'GestionProfesores'},
         {title: 'Tarea de Juego', icon: urlTareaJuego, screen: 'TareaJuego'},
     ]
       useEffect(() => {

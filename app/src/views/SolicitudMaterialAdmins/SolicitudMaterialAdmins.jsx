@@ -17,13 +17,13 @@ const SolicitudMaterialAdmins = ({ route }) => {
             setUrlAtras(respuesta);
         }
     }
+
     useEffect(() => {
         if (route.params?.solicitudes) {
             setSolicitudes(route.params.solicitudes);
         }
         fetcPictogramas();
     }, [route.params]);
-
 
     return (
         <Layaout>
@@ -45,7 +45,7 @@ const SolicitudMaterialAdmins = ({ route }) => {
                         <View key={solicitud.id} style={styles.solicitud}>
                             <View style={styles.solicitudHeader}>
                                 <View style={styles.solicitudInfo}>
-                                    <Text style={styles.profesor}>Profesor: {solicitud.profesor}</Text>
+                                    <Text style={styles.profesor}>Profesor: {solicitud.profesor_nombre}</Text>
                                     <Text style={styles.aula}>Aula: {solicitud.aula}</Text>
                                 </View>
                                 <TouchableOpacity
@@ -56,11 +56,12 @@ const SolicitudMaterialAdmins = ({ route }) => {
                                 </TouchableOpacity>
                             </View>
                             <Text style={styles.materialesTitle}>Materiales:</Text>
-                            {solicitud.materiales.map((material, index) => (
-                                <Text key={index} style={styles.material}>
-                                    - {material.nombre}: {material.cantidad}
-                                </Text>
-                            ))}
+                               { solicitud.materiales.map((material, index) => (
+                                    <Text key={index} style={styles.material}>
+                                        - {material.nombre_material}: {material.cantidad_solicitada}
+                                    </Text>
+                                ))}
+                            
                         </View>
                     ))}
                 </ScrollView>
