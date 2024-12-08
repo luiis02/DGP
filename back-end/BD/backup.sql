@@ -163,13 +163,9 @@ CREATE TABLE `USUARIO` (
   `contraseña` varchar(255) DEFAULT NULL,
   `color_fondo` varchar(20) DEFAULT NULL,
   `tamaño_letra` varchar(20) DEFAULT NULL,
-  `rol` enum('ADMINISTRADOR','ESTUDIANTE','PROFESOR') NOT NULL
+  `rol` enum('ADMINISTRADOR','ESTUDIANTE','PROFESOR') NOT NULL,
+  `pref_contenido` enum('TEXTO', 'AUDIO', 'VIDEO', 'PICTOGRAMAS') DEFAULT 'PICTOGRAMAS' NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-
---
--- Estructura de tabla para la tabla `SOLICITUD_MATERIAL`
---
 
 
 
@@ -177,9 +173,12 @@ CREATE TABLE `USUARIO` (
 -- Volcado de datos para la tabla `USUARIO`
 --
 
-INSERT INTO `USUARIO` (`id`, `nombre`, `apellidos`, `nombre_usuario`, `contraseña`, `color_fondo`, `tamaño_letra`, `rol`) VALUES
+INSERT INTO `USUARIO` (`id`, `nombre`, `apellidos`, `nombre_usuario`, `contraseña`, `color_fondo`, `tamaño_letra`, `rol`) 
+VALUES
 (1, 'Alberto', 'Gracian', 'a', '1', 'azul', '12', 'ADMINISTRADOR'),
-(2, 'Julia', 'Hurtado', 'p', '1', 'azul', '12', 'PROFESOR');
+(2, 'Julia', 'Hurtado', 'p', '1', 'azul', '12', 'PROFESOR'),
+(3, 'Pablo', 'López', 's1', '1', 'azul', '12', 'ESTUDIANTE'),
+(4, 'María', 'Pérez', 's2', '1', 'azul', '12', 'ESTUDIANTE');
 
 --
 -- Índices para tablas volcadas
@@ -355,7 +354,9 @@ COMMIT;
 
 
 
-
+--
+-- Estructura de tabla para la tabla `SOLICITUD_MATERIAL`
+--
 CREATE TABLE SOLICITUD_MATERIAL (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `profesor_id` INT NOT NULL,
@@ -435,6 +436,61 @@ CREATE TABLE MATERIAL_TAREA (
     FOREIGN KEY (tarea_id) REFERENCES TAREA_INVENTARIO(id), -- Relación con TAREA_INVENTARIO
     FOREIGN KEY (id_material) REFERENCES MATERIALES_ALMACEN(id_material) -- Relación con MATERIALES_ALMACÉN
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+--
+-- Tablas nuevas necesarias para las tareas de comandas de comedor:
+--
+CREATE TABLE AULAS (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE MENUS (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    imagen_url VARCHAR(255)
+);
+
+CREATE TABLE TAREA_COMANDAS (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    aula_id INT NOT NULL,
+    menu_id INT NOT NULL,
+    alumno_id INT NOT NULL,
+    cantidad INT NOT NULL DEFAULT 1,
+    screen VARCHAR(255),
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (aula_id) REFERENCES AULAS(id),
+    FOREIGN KEY (menu_id) REFERENCES MENUS(id),
+    FOREIGN KEY (alumno_id) REFERENCES USUARIO(id)
+);
+
+--
+-- Añadir algunas tuplas de las tablas anteriores para poder hacer pruebas:
+--
+INSERT INTO AULAS (nombre)
+VALUES 
+('A'),
+('B'),
+('C');
+
+INSERT INTO MENUS (nombre, descripcion, imagen_url)
+VALUES 
+('Menú vegetal', 'Menú vegetal estándar con verdura variada', 'https://content-cocina.lecturas.com/medio/2022/04/27/ensalada-de-garbanzos-con-vegetales-frescos_162a00b3_900x900.jpg'),
+('Menú especial carne', 'Menú especial de carne para personas con celiaquía', 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/77/be/07/para-los-mas-carnivoros.jpg?w=900&h=500&s=1'),
+('Menú pasta', 'Menú de pasta básica', 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg7GXzkcta4h19yO7T1dWIl778cqQaEM4bYcj_Xdb1LPA6Gxxqv9o5s4YEJnSHwUXRJAvI_1tJHkftUzj9OlOBOIH0zggrwFJiniTUl8k_otBbdifHSpZweacjgYM8LX7m018WVa1fhTMo/s1600/DSCF2863.JPG');
+
+INSERT INTO TAREA_COMANDAS (aula_id, menu_id, alumno_id, cantidad)
+VALUES 
+(1, 1, 3, 3),
+(2, 2, 3, 1),
+(3, 3, 4, 2);
+
+
+
+
 
 
 
