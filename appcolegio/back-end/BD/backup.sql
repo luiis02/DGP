@@ -156,18 +156,22 @@ CREATE TABLE `USUARIO` (
   `contraseña` varchar(255) DEFAULT NULL,
   `color_fondo` varchar(20) DEFAULT NULL,
   `tamaño_letra` varchar(20) DEFAULT NULL,
-  `rol` enum('ADMINISTRADOR','ESTUDIANTE','PROFESOR') NOT NULL
+  `rol` enum('ADMINISTRADOR','ESTUDIANTE','PROFESOR') NOT NULL,
+  `pref_contenido` enum('TEXTO', 'AUDIO', 'VIDEO', 'PICTOGRAMAS') DEFAULT 'PICTOGRAMAS' NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
 
 --
 -- Volcado de datos para la tabla `USUARIO`
 --
 
-INSERT INTO `USUARIO` (`id`, `nombre`, `apellidos`, `nombre_usuario`, `contraseña`, `color_fondo`, `tamaño_letra`, `rol`) VALUES
-(1, 'juan', 'martinez', 'juan_martinez', '1', 'azul', '12', 'ESTUDIANTE'),
-(2, 'paco', 'garcia', 'paco_garcia', '1', 'rojo', '18', 'ESTUDIANTE'),
-(3, 'Julia', 'Hurtado', 'julia_hurtado', '1', 'azul', '12', 'PROFESOR'),
-(5, 'Alberto', 'Gracian', 'alberto_gracian', '1', 'azul', '12', 'ADMINISTRADOR');
+INSERT INTO `USUARIO` (`id`, `nombre`, `apellidos`, `nombre_usuario`, `contraseña`, `color_fondo`, `tamaño_letra`, `rol`) 
+VALUES
+(1, 'Alberto', 'Gracian', 'a', '1', 'azul', '12', 'ADMINISTRADOR'),
+(2, 'Julia', 'Hurtado', 'p', '1', 'azul', '12', 'PROFESOR'),
+(3, 'Pablo', 'López', 's1', '1', 'azul', '12', 'ESTUDIANTE'),
+(4, 'María', 'Pérez', 's2', '1', 'azul', '12', 'ESTUDIANTE');
 
 --
 -- Índices para tablas volcadas
@@ -340,6 +344,23 @@ ALTER TABLE `TIENE`
 COMMIT;
 
 
+
+
+
+--
+-- Estructura de tabla para la tabla `SOLICITUD_MATERIAL`
+--
+CREATE TABLE SOLICITUD_MATERIAL (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `profesor_id` INT NOT NULL,
+    `fecha_entrega` DATE NOT NULL,
+    `aula` VARCHAR(255) NOT NULL,
+    FOREIGN KEY (profesor_id) REFERENCES USUARIO(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+ALTER TABLE TAREA ADD COLUMN id_solicitud INT, ADD FOREIGN KEY (id_solicitud) REFERENCES SOLICITUD_MATERIAL(id);
 -- --------------------------------------------------------
 
 --
@@ -359,48 +380,113 @@ CREATE TABLE MATERIALES_ALMACEN (
     FOREIGN KEY (id_administrador) REFERENCES USUARIO(id)
 );
 
+
+CREATE TABLE SOLICITUD_MATERIAL_DETALLE (
+    id INT AUTO_INCREMENT PRIMARY KEY, -- Identificador único para cada fila de la relación
+    solicitud_id INT NOT NULL,          -- Relaciona con la tabla SOLICITUD_MATERIAL
+    id_material INT NOT NULL,           -- Relaciona con la tabla MATERIALES_ALMACEN
+    cantidad_solicitada INT NOT NULL,   -- Cantidad solicitada de cada material
+    FOREIGN KEY (solicitud_id) REFERENCES SOLICITUD_MATERIAL(id),
+    FOREIGN KEY (id_material) REFERENCES MATERIALES_ALMACEN(id_material)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 --
 -- Volcado de datos para la tabla `MATERIALES_ALMACEN`
 --
 INSERT INTO MATERIALES_ALMACEN (nombre_material, descripcion, categoria, cantidad, fecha_ingreso, estado, id_administrador
 ) VALUES
-    ('Cuaderno A4', 'Cuaderno de 80 hojas, tamaño A4', 'Papelería', 50, '2024-11-15', 'Disponible', 5),
-    ('Lápiz HB', 'Lápiz para escritura general', 'Papelería', 200, '2024-11-16', 'Disponible', 5),
-    ('Marcadores', 'Marcadores de colores surtidos', 'Papelería', 30, '2024-11-12', 'Disponible', 5),
-    ('Borradores', 'Borradores de goma para lápiz', 'Papelería', 100, '2024-11-10', 'Disponible', 5),
-    ('Rotuladores', 'Rotuladores de colores', 'Papelería', 80, '2024-11-08', 'Disponible', 5);
+    ('Cuaderno A4', 'Cuaderno de 80 hojas, tamaño A4', 'Papelería', 50, '2024-11-15', 'Disponible', 1),
+    ('Lápiz HB', 'Lápiz para escritura general', 'Papelería', 200, '2024-11-16', 'Disponible', 1),
+    ('Marcadores', 'Marcadores de colores surtidos', 'Papelería', 30, '2024-11-12', 'Disponible', 1),
+    ('Borradores', 'Borradores de goma para lápiz', 'Papelería', 100, '2024-11-10', 'Disponible', 1),
+    ('Rotuladores', 'Rotuladores de colores', 'Papelería', 80, '2024-11-08', 'Disponible', 1);
 
 
+CREATE TABLE TAREA_JUEGO(
+  `id` INT AUTO_INCREMENT PRIMARY KEY, 
+  `url` VARCHAR(255) 
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE TAREA_POR_PASOS (
-  id_paso INT AUTO_INCREMENT PRIMARY KEY,
-  num_pasos INT NOT NULL,
-  tipo ENUM('texto', 'audio', 'video', 'imagen') NOT NULL
+CREATE TABLE TAREA_INVENTARIO (
+    id INT AUTO_INCREMENT PRIMARY KEY,         -- Identificador único de la tarea
+    aula VARCHAR(50),                          -- Aula solicitante (por ejemplo, "A")
+    estudiante_id INT,                         -- ID del estudiante (relación con otra tabla de estudiantes)
+    url_imagen VARCHAR(255),                   -- URL donde se guarda la imagen asociada a la tarea
+    screen VARCHAR(255),                       -- Información adicional o campo de texto para "screen"
+    fecha_inicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Fecha de creación de la tarea
+    fecha_fin TIMESTAMP,                        -- Fecha de culminación de la tarea
+    estado ENUM('Pendiente', 'En progreso', 'Finalizada') DEFAULT 'Pendiente', -- Estado de la tarea
+    prioridad ENUM('ALTA', 'MEDIA', 'BAJA') DEFAULT 'MEDIA', 
+    CONSTRAINT fk_estudiante FOREIGN KEY (estudiante_id) REFERENCES USUARIO(id), -- Relación con tabla de estudiantes
+    CONSTRAINT fk_tarea FOREIGN KEY (id) REFERENCES TAREA(id) -- Relación con tabla
+);
+
+CREATE TABLE MATERIAL_TAREA (
+    id INT AUTO_INCREMENT PRIMARY KEY,           -- Identificador único de la entrada
+    tarea_id INT NOT NULL,                       -- ID de la tarea en la que se usan los materiales
+    id_material INT NOT NULL,                    -- ID del material del almacén
+    cantidad_solicitada INT NOT NULL,            -- Cantidad solicitada de este material
+    FOREIGN KEY (tarea_id) REFERENCES TAREA_INVENTARIO(id), -- Relación con TAREA_INVENTARIO
+    FOREIGN KEY (id_material) REFERENCES MATERIALES_ALMACEN(id_material) -- Relación con MATERIALES_ALMACÉN
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE PASO(
-  id_paso INT AUTO_INCREMENT PRIMARY KEY, 
-  texto VARCHAR(255)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE CONTIENE (
-  `id` INT NOT NULL,
-  `id_paso` INT NOT NULL,
-  PRIMARY KEY (`id`, `id_paso`),
-  FOREIGN KEY (`id_paso`) REFERENCES PASO(`id_paso`),
-  FOREIGN KEY (`id`) REFERENCES TAREA(`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE ES_SUBIDO_POR(
-  `id` INT NOT NULL,
-  `id_paso` INT NOT NULL,
-  FOREIGN KEY (`id_paso`) REFERENCES TAREA_POR_PASOS(`id_paso`),
-  FOREIGN KEY (`id`) REFERENCES TAREA(`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+--
+-- Tablas nuevas necesarias para las tareas de comandas de comedor:
+--
+CREATE TABLE AULAS (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL
+);
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+CREATE TABLE MENUS (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    imagen_url VARCHAR(255)
+);
+
+CREATE TABLE TAREA_COMANDAS (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    aula_id INT NOT NULL,
+    menu_id INT NOT NULL,
+    alumno_id INT NOT NULL,
+    cantidad INT NOT NULL DEFAULT 1,
+    screen VARCHAR(255),
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (aula_id) REFERENCES AULAS(id),
+    FOREIGN KEY (menu_id) REFERENCES MENUS(id),
+    FOREIGN KEY (alumno_id) REFERENCES USUARIO(id)
+);
+
+--
+-- Añadir algunas tuplas de las tablas anteriores para poder hacer pruebas:
+--
+INSERT INTO AULAS (nombre)
+VALUES 
+('A'),
+('B'),
+('C');
+
+INSERT INTO MENUS (nombre, descripcion, imagen_url)
+VALUES 
+('Menú vegetal', 'Menú vegetal estándar con verdura variada', 'https://content-cocina.lecturas.com/medio/2022/04/27/ensalada-de-garbanzos-con-vegetales-frescos_162a00b3_900x900.jpg'),
+('Menú especial carne', 'Menú especial de carne para personas con celiaquía', 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/77/be/07/para-los-mas-carnivoros.jpg?w=900&h=500&s=1'),
+('Menú pasta', 'Menú de pasta básica', 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg7GXzkcta4h19yO7T1dWIl778cqQaEM4bYcj_Xdb1LPA6Gxxqv9o5s4YEJnSHwUXRJAvI_1tJHkftUzj9OlOBOIH0zggrwFJiniTUl8k_otBbdifHSpZweacjgYM8LX7m018WVa1fhTMo/s1600/DSCF2863.JPG');
+
+INSERT INTO TAREA_COMANDAS (aula_id, menu_id, alumno_id, cantidad)
+VALUES 
+(1, 1, 3, 3),
+(2, 2, 3, 1),
+(3, 3, 4, 2);
+
+
+
+
+
+
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

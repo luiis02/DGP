@@ -60,6 +60,64 @@ def profesores():
     """Obtener lista de profesores"""
     profesores = obtener_usuarios_por_rol('PROFESOR')
     return jsonify(profesores)  # Siempre retornamos la lista (vacía si no hay profesores)
+@userBP.route('/profesores', methods=['POST'])
+def create_profesor():
+    """Crear un nuevo profesor"""
+    data = request.get_json()
+    
+    # Verifica que todos los campos necesarios estén presentes
+    required_fields = ['nombre', 'apellido', 'nombre_usuario', 'contraseña', 'tipo_usuario']
+    if not all(field in data for field in required_fields):
+        missing_fields = [field for field in required_fields if field not in data]
+        return jsonify({"error": f"Faltan los siguientes campos: {', '.join(missing_fields)}"}), 400
+    
+    nombre = data.get('nombre')
+    apellido = data.get('apellido')
+    nombre_usuario = data.get('nombre_usuario')
+    contraseña = data.get('contraseña')
+    tipo_usuario = data.get('tipo_usuario')
+    color_tema = data.get('color_tema', '#FFFFFF')
+    tamaño_letra = data.get('tamaño_letra', '14px')
+    
+    # Consultar si ya existe un usuario con el mismo nombre de usuario
+    query_check = "SELECT COUNT(*) FROM USUARIO WHERE nombre_usuario = %s"
+    result = db_controller.fetch_query(query_check, (nombre_usuario,))
+    if result and result[0][0] > 0:
+        return jsonify({"error": "El nombre de usuario ya está registrado"}), 400
+    
+    # Insertar los datos del profesor en la base de datos
+    query_insert = """
+        INSERT INTO USUARIO (nombre, apellidos, nombre_usuario, contraseña, rol, color_fondo, tamaño_letra)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """
+    
+    try:
+        db_controller.execute_query(query_insert, (nombre, apellido, nombre_usuario, contraseña, tipo_usuario, color_tema, tamaño_letra))
+        # Después de insertar, obtener la lista completa de profesores
+        profesores = obtener_usuarios_por_rol("PROFESOR")
+        return jsonify(profesores), 201  # Devolver la lista de profesores
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    # Construir la consulta para insertar los datos del nuevo profesor
+@userBP.route('/profesores/<int:id>', methods=['PUT'])
+def update_profesor(id):
+    """Actualizar la contraseña de un profesor"""
+    data = request.get_json()
+    # Verifica que el campo contraseña esté presente
+    if 'contraseña' not in data:
+        return jsonify({"error": "No hay datos válidos para actualizar"}), 400
+    
+    print(data['contraseña'])
+    # Construir la consulta para actualizar la contraseña
+    update_query = "UPDATE USUARIO SET contraseña = %s WHERE id = %s"
+    values = (data['contraseña'], id)
+    
+    try:
+        db_controller.execute_query(update_query, values)
+        return jsonify({"success": "Contraseña actualizada exitosamente"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @userBP.route('/admins', methods=['GET'])
@@ -92,7 +150,6 @@ def put_estudiante(id):
     # Construir la consulta dinámica para actualizar solo los campos necesarios
     campos_a_actualizar = []
     valores = []
-    print(data)
     if data.get('apellidos'): 
         campos_a_actualizar.append("apellidos = %s")
         valores.append(data['apellidos'])

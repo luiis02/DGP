@@ -24,6 +24,7 @@ import GestionInventario from './src/views/GestionInventario/GestionInventario';
 import GestionAlumnos from './src/views/GestionAlumnos/GestionAlumnos';
 import GestionInformacion from './src/views/GestionInformacion/GestionInformacion';
 import GestionComedor from './src/views/GestionComedor/GestionComedor';
+import GestionProfesores from './src/views/GestionProfesores/GestionProfesores';
 
 import SolicitudMaterial from './src/views/SolicitudMaterialProfesor/SolicitudMaterialProfesor';
 import SolicitudMaterialAdmins from './src/views/SolicitudMaterialAdmins/SolicitudMaterialAdmins';
@@ -40,16 +41,20 @@ import Chat from './src/views/Chat/Chat';
 import HistorialTareas from './src/views/HistorialTareas/HistorialTareas';
 
 import InformeAlumno from './src/views/InformeAlumno/InformeAlumno';
+import DetallesProfesor from './src/views/DetallesProfesor/DetallesProfesor';
+import ResetContraseña from './src/views/ResetContraseña/ResetContraseña';
+import AgregarProfesor from './src/views/AgregarProfesor/AgregarProfesor';
 
 import SeleccionarIcono from './src/views/SeleccionarIcono/SeleccionarIcono';
 
 import TareaJuego from './src/views/TareaJuego/TareaJuego';
+import Inventario from './src/task/Inventario/Inventario';
 
 import Menu from './src/views/Menu/Menu';
 
 import Juego from './src/views/Juego/Juego';
 
-import Comanda from './src/components/Comanda/Comanda';
+
 
 import { Platform } from 'react-native';
 
@@ -80,6 +85,8 @@ const App = () => {
         <Stack.Screen name="Alumnos" component={Alumnos} options={{headerShown: false}} />
         <Stack.Screen name="InformacionUsuario" component={InformacionUsuario} options={{headerShown: false}} />
 
+        <Stack.Screen name="DetallesProfesor" component={DetallesProfesor} options={{headerShown: false}} />
+
 
         <Stack.Screen name="AgregarMaterial" component={AgregarMaterial} options={{headerShown: false}} />
         <Stack.Screen name="InformacionMaterial" component={InformacionMaterial} options={{headerShown: false}} />
@@ -90,7 +97,11 @@ const App = () => {
         <Stack.Screen name="GestionTareas" component={GestionTareas} options={{headerShown: false}} />
         <Stack.Screen name="GestionInformacion" component={GestionInformacion} options={{headerShown: false}} />
         <Stack.Screen name="GestionComedor" component={GestionComedor} options={{headerShown: false}} />
+        <Stack.Screen name="GestionProfesores" component={GestionProfesores} options={{headerShown: false}} />
+        <Stack.Screen name="ResetContraseña" component={ResetContraseña} options={{headerShown: false}} />
+        <Stack.Screen name="AgregarProfesor" component={AgregarProfesor} options={{headerShown: false}} />
 
+        
         <Stack.Screen name="SolicitudMaterial" component={SolicitudMaterial} options={{headerShown: false}} />
         <Stack.Screen name="SolicitudMaterialAdmins" component={SolicitudMaterialAdmins} options={{headerShown: false}} />
 
@@ -108,12 +119,13 @@ const App = () => {
         <Stack.Screen name="SeleccionarIcono" component={SeleccionarIcono} options={{headerShown: false}} />
 
         <Stack.Screen name="TareaJuego" component={TareaJuego} options={{headerShown: false}} />
+        <Stack.Screen name="Inventario" component={Inventario} options={{headerShown: false}} />
 
         <Stack.Screen name="Menu" component={Menu} options={{headerShown: false}} />
 
         <Stack.Screen name="Juego" component={Juego} options={{headerShown: false}} />
 
-        <Stack.Screen name="Comanda" component={Comanda} options={{headerShown: false}} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   )

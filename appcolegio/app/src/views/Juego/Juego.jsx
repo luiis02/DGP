@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity, Platform } from "react-native";
 import { obtenerPictograma } from "../../api/apiArasaac";
 import { useNavigation } from "@react-navigation/native";
 import WebView from "react-native-webview";
@@ -31,6 +31,9 @@ const Juego = ({route}) => {
         fetchJuego();
         fetchPictograma();
     },[])
+    useEffect(()=>{
+        console.log("Juego" + urlJuego)
+    }, [urlJuego])
     return(
         <SafeAreaView style={[{backgroundColor: alumno.color_tema}, styles.container]}>
             { urlJuego ? (
@@ -44,9 +47,16 @@ const Juego = ({route}) => {
                 </View> 
                 }
                 <View style={[styles.body]}>
+                    {Platform.OS !== "web" ? (
                     <WebView
                         source={{uri: urlJuego}}
-                    />
+                    />):(
+                        <iframe
+                        style={{ flex: 1, width: '100%', height: '100%' }}
+                        src={urlJuego}
+                        allowFullScreen
+                        />
+                    )}
                 </View>
             </>):(
             <>

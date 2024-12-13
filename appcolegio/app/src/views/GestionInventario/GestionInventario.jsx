@@ -7,7 +7,6 @@ import { Icon, Button } from "@rneui/themed";
 import { Input } from "@rneui/base";
 import { getMateriales/*, getSolicitud*/ } from "../../api/apiInventario";
 import { getPeticion } from "../../api/apiInventario";
-import { getSolicitud } from "../../test/SolicitudMaterial";
 
 const GestionInventario = ({route}) => {
     const { idAdmin } = route.params || {};
@@ -45,8 +44,8 @@ const GestionInventario = ({route}) => {
         }
     };
 
-    const existeSolicitud =  () => { 
-        const data =  getSolicitud(true) //await getPeticion(); 
+    const existeSolicitud = async () => { 
+        const data =  await getPeticion()
         if (data) {
             setSolucitud(data);
         }

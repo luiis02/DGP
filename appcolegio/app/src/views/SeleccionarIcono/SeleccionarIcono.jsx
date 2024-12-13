@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layaout from "../../components/Layaout/Layaout";
-import { StyleSheet, Text, View, Image, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { obtenerPictograma } from "../../api/apiArasaac";
 import WebView from "react-native-webview";
@@ -48,6 +48,7 @@ const SeleccionarIcono = () => {
                 <Text style={styles.titleHeader}>Seleccionar icono</Text>
             </View>
             <View style={styles.bodyContainer}>
+                {Platform.OS !== "web" ? (
                 <WebView 
                     source={{ uri: 'https://arasaac.org/pictograms/search' }} 
                     style={styles.webview} 
@@ -58,7 +59,22 @@ const SeleccionarIcono = () => {
                         }
                         return true;
                     }}
-                />
+                />) : (
+                    <iframe
+                        style={{ flex: 1 }}
+                        src="https://arasaac.org/pictograms/search"
+                        allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        onShouldStartLoadWithRequest={(event) => {
+                            if (event.url.endsWith('.png') || event.url.endsWith('.jpg')) {
+                                handleDownload(event.url);
+                                return false; // Cancela la carga en el WebView
+                            }
+                            return true;
+                        }}
+                    />
+                )
+                }
                 {downloadedImage && (
                     <Image source={{ uri: downloadedImage }} style={styles.downloadedImage} />
                 )}

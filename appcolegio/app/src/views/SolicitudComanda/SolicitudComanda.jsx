@@ -5,7 +5,7 @@ import { obtenerPictograma } from "../../api/apiArasaac";
 import { useNavigation } from "@react-navigation/native";
 import { getEstudiantes } from "../../api/apiUsuario";
 import { CheckBox } from "@rneui/base";
-import { postTareaComanda, getTareaComanda, putTareaComanda, deleteTareaComanda } from "../../api/apiTarea";
+import * as Comanda from "../../api/apiTarea";
 
 const SolicitudComanda = () => { 
     const pictograma = {
@@ -81,16 +81,14 @@ const SolicitudComanda = () => {
             return;
         }
 
-        // Aquí podrías enviar la información a un servidor o manejarla localmente
-        const fechaActual = new Date();
-        const fechaFormateada = fechaActual.toISOString().split('T')[0];
+        // LOS DATOS QUE NECESITA EL SERVIDOR POR AHORA SON LOS SIGUIENTES:
         const requestData = {
-            descripcion: pictogramaCheck ? "Comanda pictograma" : "Comanda sin pictograma",  
-            fecha_inicio: fechaFormateada,
-            fecha_entrega: fechaFormateada,
-            estudiantes: alumnoReq.id,
-            
+            aula_id: aulaID, // Hace falta una variable "aulaID"
+            menu_id: menuID, // Hace falta una variable "menuID"
+            alumno_id: alumnoReq.id,
+            cantidad: cantidad, // Hace falta una variable "cantidad"
         };
+
         const resp = await postTareaComanda(requestData);
         if (resp){
             Alert.alert("Datos enviados", `Alumno: ${alumnoReq.nombre} ${alumnoReq.apellido}\nCon pictograma: ${pictogramaCheck ? "Sí" : "No"}`);

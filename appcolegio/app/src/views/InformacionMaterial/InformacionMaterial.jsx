@@ -46,13 +46,13 @@ const InformacionMaterial = ({ route }) => {
             nombre_material: nombre,
             descripcion: descripcion,
             categoria: categoria,
-            cantidad: cantidad,
-            estado: estado,
-            ultima_actualizacion: fechaActualizacion
+            cantidad: parseInt(cantidad, 10),
+            estado: estado
         };
-        const dato = await putMaterial(datosMaterial);
 
-        if (dato) {
+        const resultado = await putMaterial(datosMaterial);
+
+        if (resultado) {
             Alert.alert("Material modificado correctamente.");
             navigation.navigate('GestionInventario', {idAdmin: material.id_administrador});
         } else {
@@ -62,8 +62,9 @@ const InformacionMaterial = ({ route }) => {
     };
 
     const handleEliminarPress = async () => {
-        const material = await deleteMaterial(material)
-        if (material) {
+        const response = await deleteMaterial(material.id_material);
+
+        if (response) {
             Alert.alert("Material eliminado correctamente.");
             navigation.navigate('GestionInventario', {idAdmin: material.id_administrador});
         } else{

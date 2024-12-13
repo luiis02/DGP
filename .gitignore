@@ -38,3 +38,6 @@ out/
 .env
 .env.local
 .env.*.local
+
+#ignorar archivos de configuración
+config.js
