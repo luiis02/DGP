@@ -178,7 +178,10 @@ VALUES
 (1, 'Alberto', 'Gracian', 'a', '1', 'azul', '12', 'ADMINISTRADOR'),
 (2, 'Julia', 'Hurtado', 'p', '1', 'azul', '12', 'PROFESOR'),
 (3, 'Pablo', 'López', 's1', '1', 'azul', '12', 'ESTUDIANTE'),
-(4, 'María', 'Pérez', 's2', '1', 'azul', '12', 'ESTUDIANTE');
+(4, 'María', 'Pérez', 's2', '1', 'azul', '12', 'ESTUDIANTE'),
+(5, 'Prueba', 'TP', 's3', 'a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-', '#F8F8F8', '12', 'ESTUDIANTE');
+
+UPDATE `USUARIO` SET pref_contenido = "VIDEO" WHERE id = 5;
 
 --
 -- Índices para tablas volcadas
@@ -490,8 +493,159 @@ VALUES
 
 
 
+--
+-- Tablas necesarias para las tareas por pasos:
+--
+
+-- Tasks: contiene las tareas (he creado esta otra porque la tabla 'Tarea' y 
+-- esta no van a tener los mismos atributos y saldrán errores).
+CREATE TABLE Tasks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    due_date DATE, -- Fecha límite para completar la tarea
+    priority ENUM('low', 'medium', 'high') DEFAULT 'medium', -- Prioridad de la tarea
+    status ENUM('in_progress', 'completed', 'not_started') DEFAULT 'not_started', -- Estado de la tarea
+    student_id INT NOT NULL, -- Identificador del estudiante asociado a la tarea
+    image_url VARCHAR(2083), -- Campo para almacenar la URL de la imagen representativa
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Steps: contiene los pasos de cada tarea.
+CREATE TABLE Steps (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    task_id INT NOT NULL,
+    `order` INT NOT NULL,
+    content TEXT NOT NULL,
+    status ENUM('completed', 'not_started') DEFAULT 'not_started',
+    audio_url VARCHAR(2083) DEFAULT NULL,
+    video_url VARCHAR(2083) DEFAULT NULL,
+    pictogram_url VARCHAR(2083) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (task_id) REFERENCES Tasks(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
+-- Insertar algunas tareas por pasos variadas:
+INSERT INTO Tasks (name, description, due_date, priority, status, student_id, image_url)
+VALUES
+-- Tarea 1: Calentar comida en el microondas
+('Calentar comida en el microondas', 
+ 'Selecciona un recipiente adecuado, colócalo en el microondas, ajusta el tiempo y espera hasta que esté caliente', 
+ '2024-12-20', 
+ 'medium', 
+ 'in_progress', 
+ 5, 
+ 'microondas.png'),
+
+-- Tarea 2: Doblar una camiseta
+('Doblar una camiseta', 
+ 'Coloca la camiseta en una superficie plana y sigue los pasos para doblarla correctamente', 
+ '2024-12-21', 
+ 'low', 
+ 'not_started', 
+ 5, 
+ 'camiseta_manga_larga.png'),
+
+-- Tarea 3: Llenar un vaso de agua
+('Llenar un vaso de agua', 
+ 'Toma un vaso limpio, acércalo al grifo, ábrelo con cuidado y llena el vaso sin derramar', 
+ '2024-12-22', 
+ 'low', 
+ 'not_started', 
+ 5, 
+ 'vaso_agua.png'),
+
+-- Tarea 4: Organizar la mochila
+('Organizar la mochila', 
+ 'Revisa la lista de materiales necesarios y coloca cada objeto en el lugar correcto dentro de la mochila', 
+ '2024-12-23', 
+ 'medium', 
+ 'not_started', 
+ 5, 
+ 'mochila.png'),
+
+-- Tarea 5: Recoger la mesa después de comer
+('Recoger la mesa después de comer', 
+ 'Recoge los platos, cubiertos y vasos usados. Llévalos a la cocina y colócalos en el fregadero', 
+ '2024-12-24', 
+ 'medium', 
+ 'not_started', 
+ 5, 
+ 'sentado_en_la_mesa.png'),
+
+-- Tarea 6: Regar una planta
+('Regar una planta', 
+ 'Toma la regadera, llénala con agua y vierte la cantidad adecuada en la maceta de la planta', 
+ '2024-12-25', 
+ 'low', 
+ 'not_started', 
+ 5, 
+ 'regar.png'),
+
+-- Tarea 7: Lavar los platos
+('Lavar los platos', 
+ 'Recoge los platos sucios, lávalos con esponja y jabón, y enjuágalos bajo el grifo', 
+ '2024-12-26', 
+ 'high', 
+ 'not_started', 
+ 5, 
+ 'lavar_platos.png');
+
+
+
+
+-- Insertar los pasos de las tareas anteriores:
+-- Pasos para "Calentar comida en el microondas" (task_id = 1)
+INSERT INTO Steps (task_id, `order`, content, status, audio_url, video_url, pictogram_url)
+VALUES
+(1, 1, 'Abre la puerta del microondas', 'in_progress', 'audio_example.mp3', 'https://www.youtube.com/shorts/BW1tMNI4C5U?feature=share', 'microondas.png'),
+(1, 2, 'Coloca el recipiente en el centro del microondas', 'not_started', 'audio_example.mp3', 'https://www.youtube.com/shorts/BW1tMNI4C5U?feature=share', 'microondas.png'),
+(1, 3, 'Cierra la puerta del microondas', 'not_started', 'audio_example.mp3', 'https://www.youtube.com/shorts/BW1tMNI4C5U?feature=share', 'microondas.png'),
+(1, 4, 'Selecciona el tiempo y pulsa el botón de inicio', 'not_started', 'audio_example.mp3', 'https://www.youtube.com/shorts/BW1tMNI4C5U?feature=share', 'microondas.png'),
+(1, 5, 'Espera a que termine el tiempo y abre la puerta', 'not_started', 'audio_example.mp3', 'https://www.youtube.com/shorts/BW1tMNI4C5U?feature=share', 'microondas.png'),
+(1, 6, 'Saca el recipiente con cuidado', 'not_started', 'audio_example.mp3', 'https://www.youtube.com/shorts/BW1tMNI4C5U?feature=share', 'microondas.png'),
+
+-- Pasos para "Doblar una camiseta" (task_id = 2)
+(2, 1, 'Extiende la camiseta sobre una superficie plana', 'not_started', 'audio_example.mp3', 'https://youtu.be/fyO19ONc1SA', 'camiseta_manga_larga.png'),
+(2, 2, 'Dobla una de las mangas hacia el centro', 'not_started', 'audio_example.mp3', 'https://youtu.be/fyO19ONc1SA', 'camiseta_manga_larga.png'),
+(2, 3, 'Dobla la otra manga hacia el centro', 'not_started', 'audio_example.mp3', 'https://youtu.be/fyO19ONc1SA', 'camiseta_manga_larga.png'),
+(2, 4, 'Dobla la parte inferior hacia arriba hasta el cuello', 'not_started', 'audio_example.mp3', 'https://youtu.be/fyO19ONc1SA', 'camiseta_manga_larga.png'),
+(2, 5, 'Acomoda la camiseta para que quede uniforme', 'not_started', 'audio_example.mp3', 'https://youtu.be/fyO19ONc1SA', 'camiseta_manga_larga.png'),
+
+-- Pasos para "Llenar un vaso de agua" (task_id = 3)
+(3, 1, 'Toma un vaso limpio de la alacena', 'not_started', 'audio_example.mp3', 'https://youtu.be/l-xtmCqouG4', 'vaso_agua.png'),
+(3, 2, 'Llévalo hasta el fregadero', 'not_started', 'audio_example.mp3', 'https://youtu.be/l-xtmCqouG4', 'vaso_agua.png'),
+(3, 3, 'Abre el grifo de agua con cuidado', 'not_started', 'audio_example.mp3', 'https://youtu.be/l-xtmCqouG4', 'vaso_agua.png'),
+(3, 4, 'Llena el vaso hasta la mitad o tres cuartos', 'not_started', 'audio_example.mp3', 'https://youtu.be/l-xtmCqouG4', 'vaso_agua.png'),
+(3, 5, 'Cierra el grifo y coloca el vaso en la mesa', 'not_started', 'audio_example.mp3', 'https://youtu.be/l-xtmCqouG4', 'vaso_agua.png'),
+
+-- Pasos para "Organizar la mochila" (task_id = 4)
+(4, 1, 'Saca todos los objetos de la mochila', 'not_started', 'audio_example.mp3', 'https://www.youtube.com/shorts/IheOI1PuCBE?feature=share', 'mochila.png'),
+(4, 2, 'Organiza los útiles por categorías (libros, cuadernos, lápices)', 'not_started', 'audio_example.mp3', 'https://www.youtube.com/shorts/IheOI1PuCBE?feature=share', 'mochila.png'),
+(4, 3, 'Coloca los objetos más grandes primero', 'not_started', 'audio_example.mp3', 'https://www.youtube.com/shorts/IheOI1PuCBE?feature=share', 'mochila.png'),
+(4, 4, 'Añade los objetos más pequeños en los bolsillos', 'not_started', 'audio_example.mp3', 'https://www.youtube.com/shorts/IheOI1PuCBE?feature=share', 'mochila.png'),
+(4, 5, 'Revisa que todo lo necesario esté dentro', 'not_started', 'audio_example.mp3', 'https://www.youtube.com/shorts/IheOI1PuCBE?feature=share', 'mochila.png'),
+
+-- Pasos para "Recoger la mesa después de comer" (task_id = 5)
+(5, 1, 'Levanta los platos y cubiertos de la mesa', 'not_started', 'audio_example.mp3', 'https://www.youtube.com/shorts/juneGP2DC4k?feature=share', 'sentado_en_la_mesa.png'),
+(5, 2, 'Llévalos a la cocina', 'not_started', 'audio_example.mp3', 'https://www.youtube.com/shorts/juneGP2DC4k?feature=share', 'sentado_en_la_mesa.png'),
+(5, 4, 'Revisa si quedó algo en la mesa y recógelo', 'not_started', 'audio_example.mp3', 'https://www.youtube.com/shorts/juneGP2DC4k?feature=share', 'sentado_en_la_mesa.png'),
+
+-- Pasos para "Regar una planta" (task_id = 6)
+(6, 1, 'Toma la regadera y llénala con agua', 'not_started', 'audio_example.mp3', 'https://youtu.be/KQ3pJfF3ZiY', 'regar.png'),
+(6, 2, 'Lleva la regadera a la planta', 'not_started', 'audio_example.mp3', 'https://youtu.be/KQ3pJfF3ZiY', 'regar.png'),
+(6, 3, 'Vierte el agua lentamente sobre la maceta', 'not_started', 'audio_example.mp3', 'https://youtu.be/KQ3pJfF3ZiY', 'regar.png'),
+(6, 4, 'Revisa que la planta no esté encharcada', 'not_started', 'audio_example.mp3', 'https://youtu.be/KQ3pJfF3ZiY', 'regar.png'),
+
+-- Pasos para "Lavar los platos" (task_id = 7)
+(7, 1, 'Recoge todos los platos sucios de la mesa', 'not_started', 'audio_example.mp3', 'https://youtu.be/pvNv5aMYmDY', 'lavar_platos.png'),
+(7, 2, 'Llena el fregadero con agua tibia y un poco de jabón', 'not_started', 'audio_example.mp3', 'https://youtu.be/pvNv5aMYmDY', 'lavar_platos.png'),
+(7, 3, 'Toma una esponja y frota los platos con jabón', 'not_started', 'audio_example.mp3', 'https://youtu.be/pvNv5aMYmDY', 'lavar_platos.png'),
+(7, 4, 'Enjuaga los platos bajo el grifo hasta que no quede jabón', 'not_started', 'audio_example.mp3', 'https://youtu.be/pvNv5aMYmDY', 'lavar_platos.png'),
+(7, 5, 'Coloca los platos limpios en el escurridor para que se sequen', 'not_started', 'audio_example.mp3', 'https://youtu.be/pvNv5aMYmDY', 'lavar_platos.png');
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

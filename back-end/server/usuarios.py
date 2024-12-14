@@ -42,7 +42,8 @@ def obtener_usuarios_por_rol(rol):
                 'color_tema': result[5] if result[5] else "#FFFFFF",
                 'tamaño_letra': result[6] if result[6] else "14px",
                 'tipo_usuario': result[7],
-                'foto_perfil': foto_perfil
+                'foto_perfil': foto_perfil,
+                'pref_contenido': result[8]
             }
             usuarios.append(usuario)
     return usuarios
@@ -144,7 +145,7 @@ def put_estudiante(id):
     data = request.get_json()
 
     # Verifica que al menos uno de los campos sea válido para actualizar
-    if not any([data.get(key) for key in ['apellidos', 'color_fondo', 'contraseña', 'foto_perfil', 'id', 'nombre', 'nombre_usuario', 'supervisado_por', 'tamaño_letra', 'tipo_usuario']]):
+    if not any([data.get(key) for key in ['apellidos', 'color_fondo', 'contraseña', 'foto_perfil', 'id', 'nombre', 'nombre_usuario', 'supervisado_por', 'tamaño_letra', 'tipo_usuario', 'pref_contenido']]):
         return jsonify({"error": "No hay datos válidos para actualizar"}), 400
     
     # Construir la consulta dinámica para actualizar solo los campos necesarios
@@ -171,6 +172,9 @@ def put_estudiante(id):
     if data.get('rol'): 
         campos_a_actualizar.append("rol = %s")
         valores.append(data['rol'])
+    if data.get('rol'): 
+        campos_a_actualizar.append("pref_contenido = %s")
+        valores.append(data['pref_contenido'])
     
     # Siempre actualizamos la última actualización
     #ultima_actualizacion = "NOW()"

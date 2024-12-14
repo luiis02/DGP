@@ -8,6 +8,8 @@ from peticiones import peticionesBP
 from comanda import comandaBP
 from tareas import tareasBP
 from profesor import profesorBP
+from tareas_pasos import tasksStepsBP
+
 app = Flask(__name__)
 CORS(app)
 app.register_blueprint(userBP)
@@ -17,6 +19,7 @@ app.register_blueprint(peticionesBP)
 app.register_blueprint(comandaBP)
 app.register_blueprint(tareasBP)
 app.register_blueprint(profesorBP)
+app.register_blueprint(tasksStepsBP)
 
 # Instanciar el controlador de la base de datos
 db_controller = DatabaseController()
