@@ -38,6 +38,7 @@ const GenerarTareaMaterial = ({ route }) => {
     };
 
     useEffect(() => {
+        console.log("GenerarTAreaMaterial: " + solicitud)
         fetchPictogramas();
         fetchEstudiantes();
     }, []);
@@ -60,6 +61,7 @@ const GenerarTareaMaterial = ({ route }) => {
                 fecha_fin: fechaEntrega,
                 prioridad: "ALTA",
                 id_estudiante: alumno.id,
+                solicitud_id : solicitud.id,
                 aula: solicitud.aula,
                 screen: "Inventario",
                 url: urlInventario,

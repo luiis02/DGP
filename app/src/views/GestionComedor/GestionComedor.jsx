@@ -9,15 +9,18 @@ const GestionComedor = () => {
         atras: "38249/38249_2500.png",
         comanda: "37340/37340_2500.png",
         solicitudComanda: "2681/2681_2500.png",
+        añadirMenu: "5513/5513_2500.png",
     };
     const navigation = useNavigation();
     const [urlAtras, setUrlAtras] = useState(null);
     const [urlComanda, setUrlComanda] = useState(null);
     const [urlSolicitudComanda, setUrlSolicitudComanda] = useState(null);
+    const [urlMenu, setUrlMenu] = useState(null);
 
     const buttons = [
         { title: "Informe de Comanda", icon: urlComanda, screen: "ComandaPdf" },
         { title: "Tarea comanda", icon: urlSolicitudComanda, screen: "SolicitudComanda" },
+        {title: "Añadir Menú", icon: urlMenu, screen: "AñadirMenu"},
     ];
 
     const fetchPictograma = async () => {
@@ -30,6 +33,9 @@ const GestionComedor = () => {
 
             const solicitudComanda = await obtenerPictograma(pictograma.solicitudComanda);
             setUrlSolicitudComanda(solicitudComanda || null);
+            
+            const menu = await obtenerPictograma(pictograma.añadirMenu);
+            setUrlMenu(menu || null);
         } catch (error) {
             Alert.alert('Error', 'No se pudieron obtener los pictogramas.');
         }

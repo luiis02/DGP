@@ -503,15 +503,16 @@ def crear_tarea_inventario():
     aula = data.get('aula')
     url = data.get('url')
     screen = data.get('screen')
+    solicitud_id = data.get('solicitud_id')
 
     # Crear la tarea de inventario
     crear_tarea_inventario_query = """
-        INSERT INTO TAREA_INVENTARIO (fecha_inicio, fecha_fin, estado, prioridad, estudiante_id, aula, url_imagen, screen)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO TAREA_INVENTARIO (fecha_inicio, fecha_fin, estado, prioridad, estudiante_id, aula, url_imagen, screen, solicitud_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
 
     try:
-        db.execute_query(crear_tarea_inventario_query, (fecha_inicio, fecha_fin, estado, prioridad, id_estudiante, aula, url, screen))
+        db.execute_query(crear_tarea_inventario_query, (fecha_inicio, fecha_fin, estado, prioridad, id_estudiante, aula, url, screen, solicitud_id))
         return jsonify({"message": "Tarea de inventario creada exitosamente"}), 201
     except Exception as e:
         return jsonify({"message": f"Error al crear la tarea de inventario: {str(e)}"}), 500
@@ -566,10 +567,18 @@ def eliminar_tarea_inventario(tarea_id):
 @tareasBP.route('/allTareas/<int:id>', methods=['GET'])
 def obtener_tareas(id):
     """
-    Endpoint para obtener todas las tareas de inventario filtradas por un estudiante específico.
+    Endpoint para obtener todas las tareas de comanda y de inventario de un estudiante específico.
     """
     try:
-        # Consulta para obtener todas las tareas de inventario asociadas al estudiante
+        # Consultar las tareas de comanda asociadas al estudiante
+        queryComanda = """
+            SELECT tc.screen, tc.fecha, tc.url 
+            FROM TAREA_COMANDAS tc
+            WHERE tc.alumno_id = %s
+        """
+        tareas_comandas = db.fetch_query(queryComanda, (id,))
+
+        # Consultar las tareas de inventario asociadas al estudiante
         queryTareaInventario = """
             SELECT ti.id AS tarea_inventario_id, ti.aula, ti.url_imagen,
                    ti.screen, ti.fecha_inicio AS fecha_inicio_inventario, 
@@ -579,13 +588,90 @@ def obtener_tareas(id):
             WHERE ti.estudiante_id = %s
         """
         tareas_inventario = db.fetch_query(queryTareaInventario, (id,))
-        print(tareas_inventario)
+
+        # Combinar las tareas de comanda e inventario en una sola lista
+        tareas_totales = []
+
+        if tareas_comandas:
+            for tarea in tareas_comandas: 
+                screen, fecha, url = tarea
+                tareas_totales.append({
+                    "tipo": "comanda",
+                    "tareas": {
+                        "screen": screen,
+                        "url_imagen": url
+                    }
+                })
         
-        if not tareas_inventario:
-            return jsonify({"message": "No hay tareas de inventario registradas para este estudiante."}), 200
-        
-        # Formatear la respuesta para las tareas de inventario
-        return jsonify({"tareas": tareas_inventario}), 200
+        if tareas_inventario:
+            for tarea in tareas_inventario:
+                tarea_inventario_id, aula, url_imagen, screen, fecha_inicio_inventario, fecha_fin_inventario, estado_inventario, prioridad_inventario, estudiante_id = tarea
+                tareas_totales.append({
+                    "tipo": "inventario",
+                    "tareas": {
+                        "url_imagen": url_imagen,
+                        "screen": screen,
+                    }
+                })
+
+        print(tareas_totales)
+        # Verificar si se encontraron tareas
+        if not tareas_totales:
+            return jsonify({"message": "No se encontraron tareas para este estudiante."}), 200
+
+        return jsonify({"tareas": tareas_totales}), 200
 
     except Exception as e:
-        return jsonify({"error": f"Error al obtener las tareas de inventario: {str(e)}"}), 500
+        return jsonify({"error": f"Error al obtener las tareas: {str(e)}"}), 500
+
+@tareasBP.route("/materiales/<int:id>", methods=['GET'])
+
+def obtener_materiales(id):
+    """
+    Endpoint para obtener los materiales asociados a las tareas de inventario de un estudiante,
+    junto con la información del profesor y el aula de la solicitud.
+    """
+    try:
+        # Consulta para obtener los materiales asociados a las tareas de inventario del estudiante
+        query = """
+            SELECT t.aula,
+                    p.nombre AS profesor_nombre, 
+                    m.nombre_material, smd.cantidad_solicitada
+            FROM 
+                TAREA_INVENTARIO t 
+            JOIN SOLICITUD_MATERIAL sm ON sm.id =  t.solicitud_id
+            JOIN USUARIO p ON p.id = sm.profesor_id
+            JOIN SOLICITUD_MATERIAL_DETALLE smd ON smd.solicitud_id = sm.id
+            JOIN MATERIALES_ALMACEN m ON m.id_material = smd.id_material
+            WHERE 
+                estudiante_id = %s
+        """
+        
+        # Realizar la consulta para obtener los datos
+        materiales_estudiante = db.fetch_query(query, (id,))
+        
+        # Verificar si no hay materiales asociados a este estudiante
+        if not materiales_estudiante:
+            return jsonify({"message": "No hay materiales asociados a las tareas de este estudiante."}), 404
+        
+        # Organizar los resultados en un formato estructurado
+        materiales_dict = []
+        for material in materiales_estudiante:
+            aula, profesor_nombre, nombre_materila, cantidad_solicitada = material
+            materiales_dict.append({
+                "aula": aula,
+                "profesor": profesor_nombre,
+                "material": [{
+                    "nombre": nombre_materila,
+                    "cantidad": cantidad_solicitada
+                }]
+            })
+        
+        print(materiales_dict)
+        # Retornar los resultados en formato JSON
+        return jsonify({
+            "materiales": materiales_dict
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error al obtener los materiales: {str(e)}"}), 500

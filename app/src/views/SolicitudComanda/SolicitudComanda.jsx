@@ -10,8 +10,10 @@ import { postTareaComanda, getTareaComanda, putTareaComanda, deleteTareaComanda 
 const SolicitudComanda = () => { 
     const pictograma = {
         atras: "38249/38249_2500.png",
+        comanda: "4610/4610_2500.png", 
     };
     const [urlAtras, setUrlsAtras] = useState(null); 
+    const [urlComanda, setUrlsComanda] = useState(null); 
     const [alumnos, setAlumnos] = useState([]);
     const [filteredAlumnos, setFilteredAlumnos] = useState([]); // Alumnos filtrados
     const [searchQuery, setSearchQuery] = useState(""); // Término de búsqueda
@@ -23,6 +25,12 @@ const SolicitudComanda = () => {
         const atras = await obtenerPictograma(pictograma.atras); 
         if (atras) {
             setUrlsAtras(atras);
+        } else {
+            Alert.alert('Error', 'No se pudo obtener el pictograma.');
+        }
+        const comanda = await obtenerPictograma(pictograma.comanda);
+        if (comanda) {
+            setUrlsComanda(comanda);
         } else {
             Alert.alert('Error', 'No se pudo obtener el pictograma.');
         }
@@ -79,15 +87,14 @@ const SolicitudComanda = () => {
             Alert.alert("Error", "Por favor, selecciona una preferencia de pictograma.");
             return;
         }
-
         // Aquí podrías enviar la información a un servidor o manejarla localmente
         const fechaActual = new Date();
         const fechaFormateada = fechaActual.toISOString().split('T')[0];
         const requestData = {
-            descripcion: pictogramaCheck ? "Comanda pictograma" : "Comanda sin pictograma",  
-            fecha_inicio: fechaFormateada,
             fecha_entrega: fechaFormateada,
-            estudiantes: alumnoReq.id,
+            alumno_id: alumnoReq.id,
+            screen: "Comanda",
+            url: urlComanda, 
         };
         const resp = await postTareaComanda(requestData);
         if (resp){

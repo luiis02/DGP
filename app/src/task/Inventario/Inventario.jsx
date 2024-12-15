@@ -3,8 +3,12 @@ import { Text, Alert, View, Platform, StyleSheet, SafeAreaView, TouchableOpacity
 import { Image } from '@rneui/base';
 import { useNavigation } from "@react-navigation/native";
 import { obtenerPictograma } from "../../api/apiArasaac";
+import { getMateriales } from "../../api/apiTarea";
 const Inventario = ({route}) =>{
     const [urlAtras, setUrlAtras] = useState(null);
+    const [aula, setAula] = useState("");
+    const [profesor, setProfesor] = useState("");
+    const [materiales, setMateriales] = useState([]);
     const { tarea, alumno } = route.params;
     const pictogramas = { 
         atras: "38249/38249_2500.png",
@@ -18,8 +22,18 @@ const Inventario = ({route}) =>{
             Alert.alert('Error', 'No se pudo obtener el pictograma.');
         }
     }
+    const obtenerMateriales = async () => { 
+        const response = await getMateriales(alumno.id); 
+        if(response){
+            setAula(response.materiales[0].aula)
+            setProfesor(response.materiales[0].profesor)
+            setMateriales(response.materiales[0].material)
+        }
+
+    } 
     const navigation = useNavigation();
     useEffect(()=>{
+        obtenerMateriales();
         fetchPictograma();
     },[])
     return (
@@ -32,6 +46,17 @@ const Inventario = ({route}) =>{
                 </TouchableOpacity>
                 }
                 <Text style={[styles.titleHeader, {fontSize: alumno.tamaño_letra}]}>Inventario</Text>
+            </View>
+            <View style={styles.body}>
+                <Text style={[styles.infoHeader, {fontSize: alumno.tamaño_letra}]}>Aula: {aula}</Text>
+                <Text style={[styles.infoHeader, {fontSize: alumno.tamaño_letra}]}>Profesor: {profesor}</Text>
+                <View style={styles.materiales}>
+                    {materiales.map((material, index)=>(
+                        <View key={index} style={styles.material}>
+                            <Text style={[styles.infoHeader, {fontSize: alumno.tamaño_letra}]}>Material: {material.nombre} Cantidad: {material.cantidad}</Text>
+                        </View>
+                    ))}
+                </View>
             </View>
         </SafeAreaView>
     )
@@ -54,5 +79,23 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
     },
+    body:{
+        padding: 20,
+    },
+    infoHeader: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    materiales: {
+        marginTop: 20,
+        marginBottom: 20,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+    },
+    material: {
+        marginBottom: 10,
+    }
+    
 });
 export default Inventario;

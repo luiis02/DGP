@@ -30,15 +30,8 @@ const HomeAlumno = ({route}) => {
         if (response && response.tareas) {
             // Convertir las tareas en objetos
             const tareasFormateadas = response.tareas.map(tarea => ({
-                id: tarea[0],  // id de la tarea
-                descripcion: tarea[1],  // descripción
-                url_imagen: tarea[2],  // URL de la imagen
-                tipo: tarea[3],  // Tipo de tarea (Inventario)
-                fecha_inicio: new Date(tarea[4]),  // Fecha de inicio
-                fecha_fin: new Date(tarea[5]),  // Fecha de finalización
-                estado: tarea[6],  // Estado de la tarea
-                prioridad: tarea[7],  // Prioridad
-                estudiante_id: tarea[8],  // ID del estudiante
+                url_imagen: tarea.tareas.url_imagen,  // URL de la imagen
+                screen: tarea.tareas.screen,  // Tipo de tarea (Inventario)
             }));
             setTareas(tareasFormateadas);
         } else {
@@ -62,7 +55,6 @@ const HomeAlumno = ({route}) => {
     }, []);
 
     useEffect(()=>{
-        console.log(tareas)
         if (tareas.length > 0) {
             paginateTareas(tareas);  // Paginamos las tareas cuando se obtienen
         }
@@ -89,11 +81,10 @@ const HomeAlumno = ({route}) => {
                 <Text style={[{fontSize:alumno.tamaño_letra}, styles.titleBody]}>Tareas Pendientes</Text>
                 <FlatList
                     data={paginatedTareas[currentPage] || []}
-                    keyExtractor={(item) => item.id.toString()} // Utilizamos id como key
                     renderItem={({item}) => (
-                        <TouchableOpacity style={styles.taskItem} onPress={() => navigation.navigate(item.tipo, {tarea: item, alumno: alumno})}>
+                        <TouchableOpacity style={styles.taskItem} onPress={() => navigation.navigate(item.screen, {tarea: item, alumno: alumno})}>
                             <Image source={{ uri: item.url_imagen }} style={{width: 100, height: 100, borderRadius: 5}} /> 
-                            <Text style={{fontSize: alumno.tamaño_letra, marginTop: 10}}>{item.tipo}</Text>
+                            <Text style={{fontSize: alumno.tamaño_letra, marginTop: 10}}>{item.screen}</Text>
                         </TouchableOpacity>
                     )}
                 />
