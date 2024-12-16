@@ -22,7 +22,7 @@ def crear_tarea_comanda():
         INSERT INTO TAREA_COMANDAS (alumno_id, screen, fecha, url)
         VALUES (%s, %s, %s, %s)
     """
-    params = (alumno_id, screen, fecha)
+    params = (alumno_id, screen, fecha, url)
 
     try:
         result = db.execute_query(query, params)
