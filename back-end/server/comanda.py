@@ -32,9 +32,33 @@ def create_menu():
         return jsonify({"message": "Menú creado correctamente"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@comandaBP.route('/comanda', methods=['POST'])
+def crear_tarea_comanda():
+    data = request.json
+    alumno_id = data.get('alumno_id')
+    screen = data.get('screen')
+    fecha = data.get('fecha_entrega')
+    url = data.get('url')
+    print(data)
+    # Validaciones básicas
+    if  not alumno_id:
+        return jsonify({"error": "Datos insuficientes o inválidos"}), 400
+
+    query = """
+        INSERT INTO TAREA_COMANDAS (alumno_id, screen, fecha, url)
+        VALUES (%s, %s, %s, %s)
+    """
+    params = (alumno_id, screen, fecha, url)
+
+    try:
+        result = db.execute_query(query, params)
+        return jsonify({"message": "Tarea de comanda creada correctamente"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # Obtener todos los menús (READ):
-@comandaBP.route('/menus', methods=['GET'])
+""" @comandaBP.route('/menus', methods=['GET'])
 def get_menus():
     query = "SELECT * FROM MENUS"
 
@@ -42,10 +66,10 @@ def get_menus():
         menus = db.fetch_query(query)
         return jsonify(menus), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500 """
 
 # Obtener un menú por ID (READ):
-@comandaBP.route('/menus/<int:id>', methods=['GET'])
+""" @comandaBP.route('/menus/<int:id>', methods=['GET'])
 def get_menu(id):
     query = "SELECT * FROM MENUS WHERE id = %s"
     params = (id,)
@@ -57,7 +81,7 @@ def get_menu(id):
         else:
             return jsonify({"error": "Menú no encontrado"}), 404
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500 """
 
 # Actualizar un menú por ID (UPDATE):
 @comandaBP.route('/menus/<int:id>', methods=['PUT'])
@@ -150,6 +174,58 @@ def get_comandas():
         return jsonify(comandas), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+""" @comandaBP.route('/menu', methods=['POST'])
+def create_menu():
+    data = request.json
+    nombre = data.get('nombre')
+    cantidad = data.get('cantidad')
+    url = data.get('url', "http")
+    if not nombre:
+        return jsonify({"error": "El campo 'nombre' es obligatorio"}), 400
+
+    query = "INSERT INTO MENU (nombre, cantidad, url) VALUES (%s, %s, %s)"
+    params = (nombre, cantidad, url)
+
+    try:
+        print("Antes de la query")
+        result = db.execute_query(query, params)
+        print("Despues de la query")
+        return jsonify({"message": "Menú creado correctamente"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500 """
+
+# Obtener todos los menús (READ):
+@comandaBP.route('/menu', methods=['GET'])
+def get_menus():
+    query = "SELECT * FROM MENU"
+
+    try:
+        menus = db.fetch_query(query)
+        return jsonify(menus), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Obtener un menú por ID (READ):
+@comandaBP.route('/menus/<int:id>', methods=['GET'])
+def get_menu(id):
+    query = "SELECT * FROM MENUS WHERE id = %s"
+    params = (id,)
+
+    try:
+        menu = db.fetch_query(query, params)
+        if menu:
+            return jsonify(menu), 200
+        else:
+            return jsonify({"error": "Menú no encontrado"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+# CRUD para las tareas de comanda de comedor:
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
 
 # Obtener todas las tareas de comanda para un alumno por su ID (READ):
 @comandaBP.route('/comanda/<int:alumno_id>', methods=['GET'])

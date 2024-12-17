@@ -7,12 +7,14 @@ import WebView from "react-native-webview";
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 
-const SeleccionarIcono = () => { 
+const SeleccionarIcono = ({route}) => { 
+    const { name, cantidad } = route.params;
     const [urlAtras, setUrlAtras] = useState(null); 
     const [downloadedImage, setDownloadedImage] = useState(null);
     const navigation = useNavigation(); 
 
     useEffect(() => {
+        console.log(route.params)
         const fetchPictogramas = async () => {
             const respuesta = await obtenerPictograma("38249/38249_2500.png");
             if (respuesta) setUrlAtras(respuesta);
@@ -33,7 +35,7 @@ const SeleccionarIcono = () => {
             await MediaLibrary.saveToLibraryAsync(fileUri);
             setDownloadedImage(fileUri);
             Alert.alert("Descarga completa", "La imagen ha sido guardada en tu galería.");
-            navigation.goBack();
+            navigation.navigate("AñadirMenu", {urlImage: urlImage, nombre: name, cantidad: cantidad});
         } catch (error) {
             console.error("Error al descargar la imagen:", error);
         }
@@ -45,7 +47,7 @@ const SeleccionarIcono = () => {
                 <TouchableOpacity style={styles.iconoButton} onPress={() => navigation.goBack()}>
                     {urlAtras && <Image source={{ uri: urlAtras }} style={styles.iconoAtras} />}
                 </TouchableOpacity>
-                <Text style={styles.titleHeader}>Seleccionar icono</Text>
+                <Text style={styles.titleHeader}>Seleccionar Pictograma</Text>
             </View>
             <View style={styles.bodyContainer}>
                 {Platform.OS !== "web" ? (

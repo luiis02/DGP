@@ -50,6 +50,8 @@ import TareaJuego from "./src/views/TareaJuego/TareaJuego";
 import Inventario from "./src/task/Inventario/Inventario";
 
 import Menu from "./src/views/Menu/Menu";
+import AñadirMenu from "./src/views/Añadir Menu/AñadirMenu";
+import Comanda from "./src/task/Comanda/Comanda";
 
 import Juego from "./src/views/Juego/Juego";
 
@@ -238,10 +240,19 @@ const App = () => {
           component={Inventario}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="Menu"
           component={Menu}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="AñadirMenu"
+          component={AñadirMenu}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Comanda"
+          component={Comanda}
           options={{ headerShown: false }}
         />
 

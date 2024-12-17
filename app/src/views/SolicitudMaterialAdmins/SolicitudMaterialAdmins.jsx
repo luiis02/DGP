@@ -19,6 +19,7 @@ const SolicitudMaterialAdmins = ({ route }) => {
     }
 
     useEffect(() => {
+        console.log(route.params)
         if (route.params?.solicitudes) {
             setSolicitudes(route.params.solicitudes);
         }

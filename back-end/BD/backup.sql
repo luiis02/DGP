@@ -33,6 +33,11 @@ CREATE TABLE `CHAT` (
   `emisor` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `PETICION`(
+  `id` int NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+  `fecha_inicio` DATE DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 -- --------------------------------------------------------
 
 --
@@ -74,10 +79,6 @@ CREATE TABLE `MULTIMEDIA` (
 -- Estructura de tabla para la tabla `PETICION`
 --
 
-CREATE TABLE `PETICION` (
-  `id` int NOT NULL,
-  `tipo` enum('FOTOCOPIA','MATERIAL_ESCOLAR','COMANDA') DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -216,8 +217,6 @@ ALTER TABLE `MULTIMEDIA`
 --
 -- Indices de la tabla `PETICION`
 --
-ALTER TABLE `PETICION`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `RECIBE`
@@ -420,15 +419,18 @@ CREATE TABLE TAREA_JUEGO(
 CREATE TABLE TAREA_INVENTARIO (
     id INT AUTO_INCREMENT PRIMARY KEY,         -- Identificador único de la tarea
     aula VARCHAR(50),                          -- Aula solicitante (por ejemplo, "A")
-    estudiante_id INT,                         -- ID del estudiante (relación con otra tabla de estudiantes)
+    estudiante_id INT,   
+    solicitud_id INT,                       -- ID del estudiante (relación con otra tabla de estudiantes)
     url_imagen VARCHAR(255),                   -- URL donde se guarda la imagen asociada a la tarea
     screen VARCHAR(255),                       -- Información adicional o campo de texto para "screen"
-    fecha_inicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Fecha de creación de la tarea
+    fecha_inicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP(), -- Fecha de creación de la tarea
     fecha_fin TIMESTAMP,                        -- Fecha de culminación de la tarea
     estado ENUM('Pendiente', 'En progreso', 'Finalizada') DEFAULT 'Pendiente', -- Estado de la tarea
-    prioridad ENUM('ALTA', 'MEDIA', 'BAJA') DEFAULT 'MEDIA', 
-    CONSTRAINT fk_estudiante FOREIGN KEY (estudiante_id) REFERENCES USUARIO(id), -- Relación con tabla de estudiantes
-    CONSTRAINT fk_tarea FOREIGN KEY (id) REFERENCES TAREA(id) -- Relación con tabla
+    prioridad ENUM('ALTA', 'MEDIA', 'BAJA') DEFAULT 'MEDIA',   
+    /* CONSTRAINT fk_estudiante FOREIGN KEY (estudiante_id) REFERENCES USUARIO(id), -- Relación con tabla de estudiantes
+    CONSTRAINT fk_tarea FOREIGN KEY (id) REFERENCES TAREA(id) -- Relación con tabla */
+    FOREIGN KEY (estudiante_id) REFERENCES USUARIO(id), 
+    FOREIGN KEY (solicitud_id) REFERENCES SOLICITUD_MATERIAL(id) -- Relación con SOLICITUD_MATERIAL 
 );
 
 CREATE TABLE MATERIAL_TAREA (
@@ -436,8 +438,10 @@ CREATE TABLE MATERIAL_TAREA (
     tarea_id INT NOT NULL,                       -- ID de la tarea en la que se usan los materiales
     id_material INT NOT NULL,                    -- ID del material del almacén
     cantidad_solicitada INT NOT NULL,            -- Cantidad solicitada de este material
+    solicitud_id INT,                            -- ID que referencia a la tabla SOLICITUD_MATERIAL
     FOREIGN KEY (tarea_id) REFERENCES TAREA_INVENTARIO(id), -- Relación con TAREA_INVENTARIO
-    FOREIGN KEY (id_material) REFERENCES MATERIALES_ALMACEN(id_material) -- Relación con MATERIALES_ALMACÉN
+    FOREIGN KEY (id_material) REFERENCES MATERIALES_ALMACEN(id_material), -- Relación con MATERIALES_ALMACÉN
+    FOREIGN KEY (solicitud_id) REFERENCES SOLICITUD_MATERIAL(id) -- Relación con SOLICITUD_MATERIAL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -457,7 +461,14 @@ CREATE TABLE MENUS (
     imagen_url VARCHAR(255)
 );
 
-CREATE TABLE TAREA_COMANDAS (
+CREATE TABLE MENU (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    url VARCHAR(100) NOT NULL,
+    cantidad INT NOT NULL
+);
+
+/* CREATE TABLE TAREA_COMANDAS (
     id INT AUTO_INCREMENT PRIMARY KEY,
     aula_id INT NOT NULL,
     menu_id INT NOT NULL,
@@ -467,6 +478,14 @@ CREATE TABLE TAREA_COMANDAS (
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (aula_id) REFERENCES AULAS(id),
     FOREIGN KEY (menu_id) REFERENCES MENUS(id),
+    FOREIGN KEY (alumno_id) REFERENCES USUARIO(id)
+); */
+
+CREATE TABLE TAREA_COMANDAS (
+    alumno_id INT NOT NULL,
+    screen VARCHAR(100) NOT NULL,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    url VARCHAR(100) NOT NULL, 
     FOREIGN KEY (alumno_id) REFERENCES USUARIO(id)
 );
 
@@ -485,11 +504,11 @@ VALUES
 ('Menú especial carne', 'Menú especial de carne para personas con celiaquía', 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/77/be/07/para-los-mas-carnivoros.jpg?w=900&h=500&s=1'),
 ('Menú pasta', 'Menú de pasta básica', 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg7GXzkcta4h19yO7T1dWIl778cqQaEM4bYcj_Xdb1LPA6Gxxqv9o5s4YEJnSHwUXRJAvI_1tJHkftUzj9OlOBOIH0zggrwFJiniTUl8k_otBbdifHSpZweacjgYM8LX7m018WVa1fhTMo/s1600/DSCF2863.JPG');
 
-INSERT INTO TAREA_COMANDAS (aula_id, menu_id, alumno_id, cantidad)
+/* INSERT INTO TAREA_COMANDAS (aula_id, menu_id, alumno_id, cantidad)
 VALUES 
 (1, 1, 3, 3),
 (2, 2, 3, 1),
-(3, 3, 4, 2);
+(3, 3, 4, 2); */
 
 
 
@@ -646,7 +665,6 @@ VALUES
 (7, 3, 'Toma una esponja y frota los platos con jabón', 'not_started', 'audio_example.mp3', 'https://youtu.be/pvNv5aMYmDY', 'lavar_platos.png'),
 (7, 4, 'Enjuaga los platos bajo el grifo hasta que no quede jabón', 'not_started', 'audio_example.mp3', 'https://youtu.be/pvNv5aMYmDY', 'lavar_platos.png'),
 (7, 5, 'Coloca los platos limpios en el escurridor para que se sequen', 'not_started', 'audio_example.mp3', 'https://youtu.be/pvNv5aMYmDY', 'lavar_platos.png');
-
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

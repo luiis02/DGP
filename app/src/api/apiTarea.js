@@ -105,6 +105,19 @@ export const getAllTareas = async (id) => {
   }
 };
 
+export const getMateriales = async (id) => {
+  try {
+    const response = await fetch(`http://${ipAddress}:5000/materiales/${id}`);
+    if (response.ok) {
+      return await response.json(); // Retorna la respuesta si es exitosa
+    } else {
+      throw new Error("Error al obtener los materiales");
+    }
+  } catch (error) {
+    throw new Error("Error al obtener los materiales:", error.message);
+  }
+};
+
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
 // Para las tareas de comanda de comedor:
@@ -221,6 +234,69 @@ export const deleteTareaComanda = async (id) => {
       error.message
     );
     throw error;
+  }
+};
+
+export const getTareaComanda = async () => {
+  try {
+    const response = await fetch(`http://${ipAddress}:5000/comanda`);
+    if (response.ok) {
+      return await response.json(); // Retorna la respuesta si es exitosa
+    } else {
+      throw new Error("Error al obtener las tareas de la comanda");
+    }
+  } catch (error) {
+    throw new Error(
+      "Error al obtener las tareas de la comanda:",
+      error.message
+    );
+    throw error;
+  }
+};
+
+export const postTareaComanda = async (requestData) => {
+  try {
+    const response = await fetch(`http://${ipAddress}:5000/comanda`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData), // Enviamos los datos de la tarea
+    });
+
+    if (response.ok) {
+      return await response.json(); // Retorna la respuesta si es exitosa
+    } else {
+      throw new Error("Error al actualizar la tarea de la comanda");
+    }
+  } catch (error) {
+    throw new Error(
+      "Error al actualizar la tarea de la comanda:",
+      error.message
+    );
+  }
+};
+
+export const putTareaComanda = async (id, requestData) => {
+  try {
+    const response = await fetch(`http://${ipAddress}:5000/comanda/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData), // Enviamos los datos de la tarea
+    });
+
+    if (response.ok) {
+      return await response.json(); // Retorna la respuesta si es exitosa
+    } else {
+      throw new Error("Error al actualizar la tarea de la comanda");
+    }
+  } catch (error) {
+    throw new Error(
+      "Error al actualizar la tarea de la comanda:",
+      error.message
+    );
   }
 };
 

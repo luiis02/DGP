@@ -11,3 +11,6 @@ GET {{api}}/estudiantes
 
 ###
 GET {{api}}/materiales
+
+###
+GET {{api}}/materiales/7
