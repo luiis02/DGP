@@ -38,7 +38,7 @@ const GenerarTareaMaterial = ({ route }) => {
     };
 
     useEffect(() => {
-        console.log("GenerarTAreaMaterial: " + solicitud)
+        console.log(solicitud)
         fetchPictogramas();
         fetchEstudiantes();
     }, []);

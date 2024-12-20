@@ -15,7 +15,6 @@ const Menu = ({ route }) => {
         inicio: "9861/9861_2500.png",
         cerrarSesion: "2806/2806_2500.png",
         juego: "37464/37464_2500.png",
-        chat: "36398/36398_2500.png",
     };
 
     const fetchPictograma = async () => {
@@ -47,7 +46,6 @@ const Menu = ({ route }) => {
     };
     const buttons = [
         {title: "Juego", icon: urlJuego, screen: "Juego"}, 
-        {title: "Chat", icon: urlChat, screen: "Chat"},
         {title: "Cerrar Sesión", icon: urlCerrarSesion, screen: "Home"},
     ]
     const navigation = useNavigation();

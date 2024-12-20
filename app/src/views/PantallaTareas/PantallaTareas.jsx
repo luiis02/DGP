@@ -10,9 +10,10 @@ import {
   Image,
   Platform,
   BackHandler,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { format } from "date-fns";
+
 
 import { obtenerPictograma } from "../../api/apiArasaac";
 import Layaout from "../../components/Layaout/Layaout";
@@ -32,7 +33,8 @@ function PantallaTareas({ route }) {
   const [urlAtras, setUrlAtras] = useState(null);
 
   function formatDate(dateString) {
-    return format(new Date(dateString), "dd/MM/yyyy");
+    // return format(new Date(dateString), "dd/MM/yyyy");
+    return dateString; // Si no necesitas formatearlo, devuelve la fecha tal cual
   }
 
   const fetchBackPictogram = async () => {
@@ -52,18 +54,19 @@ function PantallaTareas({ route }) {
         "not_started",
         true
       );
+      console.log(tasks);
 
       const transformedData = tasks.map((item) => ({
-        id: item[0],
-        name: item[1],
-        description: item[2],
-        due_date: item[3],
-        priority: item[4],
-        status: item[5],
-        student_id: item[6],
-        image_url: item[7],
-        created_at: item[8],
-        updated_at: item[9],
+        id: item['id'],
+        name: item['name'],
+        description: item['description'],
+        due_date: item['due_date'],
+        priority: item['priority'],
+        status: item['status'],
+        student_id: item['student_id'],
+        image_url: item['image_url'],
+        created_at: item['created_at'],
+        updated_at: item['updated_at'],
       }));
 
       const imageMap = {
@@ -109,6 +112,10 @@ function PantallaTareas({ route }) {
     </TouchableOpacity>
   );
 
+  const keyExtractor = (item) => {
+    return item.id ? item.id.toString() : String(item.name); // Usa `name` como fallback si `id` no está disponible
+  };
+
   useFocusEffect(
     useCallback(() => {
       fetchBackPictogram();
@@ -149,7 +156,7 @@ function PantallaTareas({ route }) {
   return (
     <Layaout>
       <View style={styles.header}>
-        {Platform.OS !== "android" && (
+        {Platform.OS !== "android" && 
           <TouchableOpacity
             onPress={() =>
               navigation.navigate("HomeAlumno", { alumno: student })
@@ -162,7 +169,7 @@ function PantallaTareas({ route }) {
               />
             )}
           </TouchableOpacity>
-        )}
+        }
         <Text style={styles.titleHeader}>Tareas por pasos</Text>
       </View>
 
@@ -171,7 +178,7 @@ function PantallaTareas({ route }) {
           <>
             <FlatList
               data={currentTasks}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={keyExtractor}
               renderItem={renderTaskItem}
               contentContainerStyle={styles.listContainer}
             />
@@ -286,27 +293,18 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   taskName: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: "bold",
-    textAlign: "center",
-    color: "#333",
-    marginBottom: 20,
+    marginBottom: 6,
   },
   taskDescription: {
-    fontSize: 18,
+    fontSize: 14,
     color: "#555",
-    textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 6,
   },
   taskDetails: {
-    fontSize: 18,
+    fontSize: 12,
     color: "#777",
-    textAlign: "center",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   pagination: {
     flexDirection: "row",
@@ -314,46 +312,36 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
   },
-  pageIndicator: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
-  },
   button: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#007bff",
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 30,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-    width: 150,
   },
   disabledButton: {
-    backgroundColor: "#d3d3d3",
-    shadowOpacity: 0,
-  },
-  buttonText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#fff",
-    marginLeft: 8,
-  },
-  disabledButtonText: {
-    color: "#a9a9a9",
-  },
-  image: {
-    width: 32,
-    height: 32,
-    resizeMode: "contain",
+    opacity: 0.4,
   },
   disabledImage: {
-    opacity: 0.5,
+    opacity: 0.4,
+  },
+  disabledButtonText: {
+    color: "gray",
+  },
+  image: {
+    width: 25,
+    height: 25,
+    marginRight: 10,
+  },
+  buttonText: {
+    fontSize: 16,
+    color: "black",
+  },
+  pageIndicator: {
+    fontSize: 16,
+    color: "#555",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

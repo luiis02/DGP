@@ -107,3 +107,12 @@ export const postTareaInventario = async (dataSolicitud) => {
     throw new Error('Error:', error.message);
   }
 }
+export const getTareaInventario = async (idAlumno) =>{
+  try{
+    const response = await fetch(`http://${ipAddress}:5000/inventario/${idAlumno}`);
+    if(response)
+      return await response.json();
+  } catch (error) {
+    throw new Error('Error:', error.message);
+  }
+}

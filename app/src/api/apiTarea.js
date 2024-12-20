@@ -331,8 +331,7 @@ export const createMenu = async (menu) => {
 
 export const getAllMenus = async () => {
   try {
-    const response = await fetch(`http://${ipAddress}:5000/menus`);
-
+    const response = await fetch(`http://${ipAddress}:5000/menu`);
     if (response.ok) {
       return await response.json(); // Devuelve todos los menús
     } else {

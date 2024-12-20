@@ -4,6 +4,7 @@ import { Image } from '@rneui/base';
 import { useNavigation } from "@react-navigation/native";
 import { obtenerPictograma } from "../../api/apiArasaac";
 import { getMateriales } from "../../api/apiTarea";
+import { getTareaInventario } from "../../api/apiInventario";
 const Inventario = ({route}) =>{
     const [urlAtras, setUrlAtras] = useState(null);
     const [aula, setAula] = useState("");

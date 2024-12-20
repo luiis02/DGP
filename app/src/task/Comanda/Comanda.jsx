@@ -2,46 +2,33 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity, Alert } from 'react-native';
 import { obtenerPictograma } from '../../api/apiArasaac';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { getAllMenus } from '../../api/apiTarea';
+import { getAllMenus, getTareasComandaPorAlumno } from '../../api/apiTarea';
 import { Input } from 'react-native-elements';
 
 const Comanda = ({ route }) => {
     const { alumno } = route.params;
     const [aula, setAula] = useState("A");
-    const [cantidad, setCantidad] = useState(0);
-    const [nombreMenu, setNombreMenu] = useState("");
-    const [cantidadComanda, setCantidadComanda] = useState(0);
+    const [menus, setMenus] = useState([]);
+    const [hayMenus, setHayMenus] = useState(false);
+    const [cantidad, setCantidad] = useState(0);  // Cantidad seleccionada
+    const [indiceMenu, setIndiceMenu] = useState(0);  // Estado para el índice del menú seleccionado
+
     const pictogramas = {
         atras: "38249/38249_2500.png", // Icono de atrás
     };
+
     const [urlAtras, setUrlAtras] = useState("");
-    const [menus, setMenus] = useState(null);
 
-    const fetchMenu = async () => {
-        try {
-            // Obtiene el pictograma del alumno
+    const consultaTarea = async () => {
+        const response = await getTareasComandaPorAlumno(alumno.id);
+        if (response.message !== "No se encontraron tareas para el alumno especificado") {
+            setHayMenus(true);
             const data = await getAllMenus();
-
-            // Verifica si los datos son un array y contienen al menos un elemento
-            if (Array.isArray(data) && data.length > 0) {
-                // Toma el primer elemento del array
-                const [id, nombre, url, cantidad] = data[0];
-
-                // Asigna los valores correspondientes
-                setCantidad(cantidad); // Último elemento
-                setNombreMenu(nombre); // Segundo elemento
-                setMenus(data); // Guarda la lista completa de menús, si es necesario
-            } else {
-                Alert.alert("Error", "No se encontraron datos de los menús.");
-            }
-        } catch (error) {
-            console.error(error);
-            Alert.alert("Error", "Hubo un problema al obtener los datos del menú.");
+            setMenus(data);
         }
-    };
+    }
 
     const fetchPictograma = async () => {
-        // Obtiene el pictograma del alumno
         const url = await obtenerPictograma(pictogramas.atras);
         setUrlAtras(url);
     };
@@ -50,30 +37,50 @@ const Comanda = ({ route }) => {
 
     useFocusEffect(
         useCallback(() => {
-            fetchMenu();
             fetchPictograma();
         }, [aula]) // Dependencia en "aula"
     );
 
     useEffect(() => {
-        console.log("Menus: " + menus);
-        console.log("Cantidad: " + cantidad);
-        console.log("Nombre del menú: " + nombreMenu);
-    }, [menus]);
+        consultaTarea(); // Este método debe ser llamado cada vez que se cambia el alumno o la comanda
+    }, [alumno]);
 
-    // Función para ir al siguiente aula
-    const handleSiguiente = () => {
+    // Función para actualizar la cantidad seleccionada
+    const handleCantidadChange = (value) => {
+        setCantidad(Number(value));
+    };
+
+    // Función para ir al siguiente menú
+    const handleSiguienteMenu = () => {
+        if (indiceMenu < menus.length - 1) {
+            setIndiceMenu(prevIndice => prevIndice + 1);
+        } else {
+            Alert.alert("Aviso", "Ya estás en el último menú.");
+        }
+    };
+
+    // Función para ir al menú anterior
+    const handleAnteriorMenu = () => {
+        if (indiceMenu > 0) {
+            setIndiceMenu(prevIndice => prevIndice - 1);
+        } else {
+            Alert.alert("Aviso", "Ya estás en el primer menú.");
+        }
+    };
+
+    // Función para ir a la siguiente aula
+    const handleSiguienteAula = () => {
         if (aula < "F") {
-            setAula((prevAula) => String.fromCharCode(prevAula.charCodeAt(0) + 1));
+            setAula(prevAula => String.fromCharCode(prevAula.charCodeAt(0) + 1));
         } else {
             Alert.alert("Aviso", "Ya estás en el último aula.");
         }
     };
 
     // Función para ir al aula anterior
-    const handleAnterior = () => {
+    const handleAnteriorAula = () => {
         if (aula > "A") {
-            setAula((prevAula) => String.fromCharCode(prevAula.charCodeAt(0) - 1));
+            setAula(prevAula => String.fromCharCode(prevAula.charCodeAt(0) - 1));
         } else {
             Alert.alert("Aviso", "Ya estás en el primer aula.");
         }
@@ -86,24 +93,44 @@ const Comanda = ({ route }) => {
                     <Image source={{ uri: urlAtras }} style={styles.imagenAtras} />
                     <Text style={[styles.textHeader, { fontSize: alumno.tamaño_letra }]}>Atrás</Text>
                 </TouchableOpacity>
-                <Text style={[styles.titleHeader, { fontSize: alumno.tamaño_letra }]}>Comanda Aula: {aula}</Text>
             </View>
-            <View style={styles.body}>
-                <Text style={[{ fontSize: alumno.tamaño_letra }, styles.menu]}>Menú: {nombreMenu}</Text>
-                <Text style={[{ fontSize: alumno.tamaño_letra }, styles.menu]}>Cantidad: {cantidad}</Text>
-                <Input
-                    placeholder='Cantidad'
-                    value={cantidadComanda}
-                    onChangeText={(value) => setCantidadComanda(Number(value))}
-                    keyboardType='numeric'
-                />
+            {hayMenus ? (
+                <View style={styles.body}>
+                    <Text style={[styles.titleHeader, { fontSize: alumno.tamaño_letra, alignItems: 'flex-end' }]}>Comanda Aula: {aula}</Text>
+                    <View style={styles.menu}>
+                        <Text>Menú: {menus[indiceMenu]?.nombre}</Text>
+                        <Image 
+                            source={{uri: menus[indiceMenu]?.imagen_url}}
+                            style={styles.image}/>
+                        <Input
+                            placeholder="Cantidad"
+                            value={String(cantidad)}
+                            onChangeText={handleCantidadChange}
+                            keyboardType="numeric"
+                        />
+                    </View>
+                </View>
+            ) : (
+                <View style={styles.boxNohayTarea}>
+                    <Text style={[{ fontSize: "50" }, styles.noHayTarea]}> 🎉</Text>
+                    <Text style={[{ fontSize: "50" }, styles.noHayTarea]}> No hay tarea </Text>
+                    <Text style={[{ fontSize: "50" }, styles.noHayTarea]}> 🎉</Text>
+                </View>
+            )}
+            <View style={styles.footer}>
+                <TouchableOpacity style={styles.button} onPress={handleAnteriorMenu}>
+                    <Text style={styles.buttonText}>Menú Anterior</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={handleSiguienteMenu}>
+                    <Text style={styles.buttonText}>Menú Siguiente</Text>
+                </TouchableOpacity>
             </View>
             <View style={styles.footer}>
-                <TouchableOpacity style={styles.button} onPress={handleAnterior}>
-                    <Text style={styles.buttonText}>Anterior</Text>
+                <TouchableOpacity style={styles.button} onPress={handleAnteriorAula}>
+                    <Text style={styles.buttonText}>Aula Anterior</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={handleSiguiente}>
-                    <Text style={styles.buttonText}>Siguiente</Text>
+                <TouchableOpacity style={styles.button} onPress={handleSiguienteAula}>
+                    <Text style={styles.buttonText}>Aula Siguiente</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -139,6 +166,7 @@ const styles = StyleSheet.create({
     },
     menu: {
         fontWeight: 'bold',
+        marginVertical: 10,
     },
     footer: {
         flexDirection: 'row',
@@ -151,10 +179,27 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 5,
         alignItems: 'center',
+        marginHorizontal: 5,
     },
     buttonText: {
         color: '#fff',
         fontSize: 16,
+    },
+    boxNohayTarea: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    noHayTarea: {
+        fontWeight: 'bold',
+        alignItems: 'center',
+    },
+    image: {
+        width: 150,
+        height: 150,
+        resizeMode: 'contain',
+        marginVertical: 10,
     },
 });
 

@@ -53,10 +53,6 @@ def get_tasks_exclude_completed(student_id):
         # Ordenar por prioridad si se solicita
         if sort:
             query += " ORDER BY FIELD(priority, 'high', 'medium', 'low')"
-            
-        # Debug de la consulta
-        print("Executing query (exclude completed):", query)
-        print("With parameters:", params)
 
         # Ejecutar la consulta
         result = db_controller.fetch_query(query, params)

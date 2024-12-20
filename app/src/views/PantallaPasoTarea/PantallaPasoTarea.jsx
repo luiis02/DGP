@@ -63,18 +63,18 @@ function PantallaPasoTarea({ route }) {
   const fetchTaskSteps = async () => {
     try {
       const data = await apiTasks.getTaskSteps(taskId);
-
+      console.log(data);
       const transformedData = data.map((item, index) => ({
-        id: item[0],
-        task_id: item[1],
+        id: item['id'],
+        task_id: item['task_id'],
         order: index + 1, // Orden de cada paso
-        content: `Paso ${index + 1}: ${item[3]}`,
-        status: item[4],
-        audio_url: item[5],
-        video_url: item[6],
-        pictogram_url: item[7],
-        created_at: item[8],
-        updated_at: item[9],
+        content: `Paso ${index + 1}: ${item['content']}`,
+        status: item['status'],
+        audio_url: item['audio_url'],
+        video_url: item['video_url'],
+        pictogram_url: item['pictogram_url'],
+        created_at: item['created_at'],
+        updated_at: item['updated_at'],
       }));
 
       setTaskSteps(transformedData);

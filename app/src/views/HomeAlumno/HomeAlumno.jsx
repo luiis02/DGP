@@ -8,6 +8,7 @@ import {
   Image,
   Platform,
   BackHandler,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { obtenerPictograma } from "../../api/apiArasaac";
@@ -15,73 +16,41 @@ import { obtenerPictograma } from "../../api/apiArasaac";
 const HomeAlumno = ({ route }) => {
   const { alumno } = route.params;
   const navigation = useNavigation();
-  const pictograma = {
-    atras: "38249/38249_2500.png",
-  };
   const [urlAtras, setUrlAtras] = useState(null);
 
-  const fetchBackPictogram = async () => {
-    const respuesta = await obtenerPictograma(pictograma.atras);
-    if (respuesta) {
-      setUrlAtras(respuesta);
-    } else {
-      Alert.alert("Error al obtener el pictograma.");
-    }
-  };
-
-  useEffect(() => {
-    fetchBackPictogram();
-  }, []);
 
   useEffect(() => {
     const backAction = () => {
-      // Redirige a la pantalla deseada
       navigation.navigate("Home");
-      return true; // Evita el comportamiento predeterminado del botón de atrás
+      return true;
     };
 
-    // Añade el listener al botón de atrás
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
     );
 
-    // Limpia el listener cuando el componente se desmonte
     return () => backHandler.remove();
   }, []);
 
   return (
-    <SafeAreaView style={{ backgroundColor: alumno.color_tema, flex: 1 }}>
+    <SafeAreaView style={[styles.container, { backgroundColor: alumno.color_tema }]}>
       <View style={styles.header}>
-        {Platform.OS !== "android" && (
-          <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-            {urlAtras && (
-              <Image
-                source={{ uri: urlAtras }}
-                style={{ width: 50, height: 50 }}
-              />
-            )}
-          </TouchableOpacity>
-        )}
         <Text style={styles.titleHeader}>Página principal</Text>
       </View>
 
       <View style={styles.body}>
-        <Text
-          style={[{ fontSize: Number(alumno.tamaño_letra) }, styles.titleBody]}
-        >
+        <Text style={[styles.titleBody, { fontSize: Number(alumno.tamaño_letra) }]}>
           Tipos de tareas
         </Text>
 
-        {/* Cajas como botones */}
         <View style={styles.boxContainer}>
-          {/* Caja 1 */}
-          <TouchableOpacity
+          <TouchableOpacity 
             style={styles.box}
-            /* onPress={() => navigation.navigate("TareasPendientes", { alumno })} */
+            onPress={()=> navigation.navigate("Comanda", {alumno: alumno})}
           >
             <Image
-              source={require("../../../assets/tareas_comandas_comedor.png")} // Reemplaza con tu imagen
+              source={require("../../../assets/tareas_comandas_comedor.png")}
               style={styles.boxImage}
             />
             <Text
@@ -94,10 +63,9 @@ const HomeAlumno = ({ route }) => {
             </Text>
           </TouchableOpacity>
 
-          {/* Caja 2 */}
-          <TouchableOpacity
+          <TouchableOpacity 
             style={styles.box}
-            /* onPress={() => navigation.navigate("HistorialTareas", { alumno })} */
+            onPress={()=> navigation.navigate("Inventario", {alumno: alumno})}
           >
             <Image
               source={require("../../../assets/tareas_inventario.png")}
@@ -113,7 +81,6 @@ const HomeAlumno = ({ route }) => {
             </Text>
           </TouchableOpacity>
 
-          {/* Caja 3 */}
           <TouchableOpacity
             style={styles.box}
             onPress={() => navigation.navigate("Tasks", { student: alumno })}
@@ -133,18 +100,37 @@ const HomeAlumno = ({ route }) => {
           </TouchableOpacity>
         </View>
       </View>
+
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={styles.menuButton}
+          onPress={() => navigation.navigate("Menu", {alumno: alumno})}
+        >
+          <Text style={styles.menuButtonText}>Menú</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   header: {
+    position: "relative",
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  backImage: {
+    width: 50,
+    height: 50,
   },
   titleHeader: {
+    fontSize: 20,
     fontWeight: "bold",
     color: "black",
   },
@@ -160,27 +146,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   boxContainer: {
-    flexDirection: "column",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+    flexDirection: "column", // Disposición en columna
+    alignItems: "center", // Centra las cajas horizontalmente
+    width: "100%",
   },
   box: {
-    width: "40%",
-    aspectRatio: 1, // Mantiene las cajas cuadradas
+    width: "90%", // Ocupa el 90% del ancho
+    aspectRatio: 3, // Relación de aspecto más horizontal
     backgroundColor: "#f0f0f0",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-    margin: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    marginVertical: 10, // Espaciado vertical entre cajas
     elevation: 3,
   },
   boxImage: {
-    width: "70%",
-    height: "50%",
+    width: "50%",
+    height: "60%",
     resizeMode: "contain",
     marginBottom: 10,
   },
@@ -189,16 +171,22 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
   },
-  header: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
+  footer: {
+    position: "relative",
+    borderTopWidth: 1,
+    borderColor: "#ddd",
+    paddingVertical: 10,
+    alignItems: "center",
   },
-  titleHeader: {
-    fontSize: 20,
+  menuButton: {
+    backgroundColor: "#007BFF",
+    borderRadius: 5,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  menuButtonText: {
+    color: "white",
     fontWeight: "bold",
-    color: "black",
   },
 });
 

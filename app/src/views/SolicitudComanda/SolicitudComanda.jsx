@@ -33,7 +33,6 @@ const SolicitudComanda = () => {
   const [alumnos, setAlumnos] = useState([]);
   const [filteredAlumnos, setFilteredAlumnos] = useState([]); // Alumnos filtrados
   const [searchQuery, setSearchQuery] = useState(""); // Término de búsqueda
-  const [pictogramaCheck, setPictogramaCheck] = useState(null); // Estado para el checkbox
   const [existeComanda, setExisteComanda] = useState(false);
   const [alumnoReq, setAlumnoReq] = useState(null); // Estado para el alumno seleccionado
   const [id, setId] = useState(null);
@@ -101,13 +100,6 @@ const SolicitudComanda = () => {
       Alert.alert("Error", "Por favor, selecciona un alumno.");
       return;
     }
-    if (pictogramaCheck === null) {
-      Alert.alert(
-        "Error",
-        "Por favor, selecciona una preferencia de pictograma."
-      );
-      return;
-    }
     // Aquí podrías enviar la información a un servidor o manejarla localmente
     const fechaActual = new Date();
     const fechaFormateada = fechaActual.toISOString().split("T")[0];
@@ -119,12 +111,7 @@ const SolicitudComanda = () => {
     };
     const resp = await postTareaComanda(requestData);
     if (resp) {
-      Alert.alert(
-        "Datos enviados",
-        `Alumno: ${alumnoReq.nombre} ${alumnoReq.apellido}\nCon pictograma: ${
-          pictogramaCheck ? "Sí" : "No"
-        }`
-      );
+      Alert.alert("Tarea asignada correctamente");
       navigation.goBack();
     } else {
       Alert.alert("Error", "No se pudo enviar los datos.");
@@ -134,9 +121,6 @@ const SolicitudComanda = () => {
     const fechaActual = new Date();
     const fechaFormateada = fechaActual.toISOString().split("T")[0];
     const requestData = {
-      descripcion: pictogramaCheck
-        ? "Comanda pictograma"
-        : "Comanda sin pictograma",
       fecha_inicio: fechaFormateada,
       fecha_entrega: fechaFormateada,
     };
@@ -168,6 +152,7 @@ const SolicitudComanda = () => {
         )}
         <Text style={styles.title}>Tarea Comanda</Text>
       </View>
+      <ScrollView>
       <View style={styles.body}>
         {!existeComanda && (
           <TextInput
@@ -206,27 +191,14 @@ const SolicitudComanda = () => {
           <Text style={{ fontSize: 18, marginBottom: 10 }}>
             No hay alumnos disponibles.
           </Text>
-        )}
-        <View style={styles.checkbox}>
-          <CheckBox
-            checked={pictogramaCheck === true}
-            onPress={() => handleCheckPress(true)}
-          />
-          <Text style={styles.item}>Con pictogramas</Text>
-        </View>
-        <View style={styles.checkbox}>
-          <CheckBox
-            checked={pictogramaCheck === false}
-            onPress={() => handleCheckPress(false)}
-          />
-          <Text style={styles.item}>Sin pictogramas</Text>
-        </View>
+        )} 
         {!existeComanda ? (
           <Button title="Enviar" onPress={handleSubmit} />
         ) : (
           <Button title="Modificar" onPress={handleModificar} />
         )}
       </View>
+      </ScrollView>
     </Layaout>
   );
 };

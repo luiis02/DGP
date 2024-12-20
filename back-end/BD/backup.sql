@@ -176,11 +176,39 @@ CREATE TABLE `USUARIO` (
 
 INSERT INTO `USUARIO` (`id`, `nombre`, `apellidos`, `nombre_usuario`, `contraseña`, `color_fondo`, `tamaño_letra`, `rol`) 
 VALUES
+
 (1, 'Alberto', 'Gracian', 'a', '1', 'azul', '12', 'ADMINISTRADOR'),
 (2, 'Julia', 'Hurtado', 'p', '1', 'azul', '12', 'PROFESOR'),
-(3, 'Pablo', 'López', 's1', '1', 'azul', '12', 'ESTUDIANTE'),
-(4, 'María', 'Pérez', 's2', '1', 'azul', '12', 'ESTUDIANTE'),
-(5, 'Prueba', 'TP', 's3', 'a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-', '#F8F8F8', '12', 'ESTUDIANTE');
+(5, 'Carlos', 'Sanchez', 's1', 'a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-', '#FF5733', '16', 'ESTUDIANTE'),
+(6, 'Marta', 'Lopez', 's2', 'a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-', '#33FF57', '17', 'ESTUDIANTE'),
+(7, 'Luis', 'Perez', 's3', 'a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-', '#3357FF', '18', 'ESTUDIANTE'),
+(8, 'Ana', 'Gomez', 's4', 'a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-', '#57FF33', '19', 'ESTUDIANTE'),
+(9, 'Pedro', 'Torres', 's5', 'a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-', '#FF33A1', '20', 'ESTUDIANTE'),
+(10, 'Sofia', 'Martinez', 's6', 'a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-', '#A133FF', '21', 'ESTUDIANTE'),
+(11, 'Rosa', 'Diaz', 's7', 'a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-a1b2c3-', '#33FFA1', '22', 'ESTUDIANTE'),
+(12, 'Diego', 'Castro', 's8', 'a1b2c3-008', '#FFA133', '23', 'ESTUDIANTE'),
+(13, 'Laura', 'Hernandez', 's9', 'a1b2c3-009', '#FF5733', '24', 'ESTUDIANTE'),
+(14, 'Jorge', 'Moreno', 's10', 'a1b2c3-010', '#33FF57', '25', 'ESTUDIANTE'),
+(15, 'Elena', 'Vazquez', 's11', 'a1b2c3-011', '#3357FF', '16', 'ESTUDIANTE'),
+(16, 'Raul', 'Navarro', 's12', 'a1b2c3-012', '#57FF33', '17', 'ESTUDIANTE'),
+(17, 'Isabel', 'Ruiz', 's13', 'a1b2c3-013', '#FF33A1', '18', 'ESTUDIANTE'),
+(18, 'Manuel', 'Ortega', 's14', 'a1b2c3-014', '#A133FF', '19', 'ESTUDIANTE'),
+(19, 'Teresa', 'Ramos', 's15', 'a1b2c3-015', '#33FFA1', '20', 'ESTUDIANTE'),
+(20, 'Pablo', 'Garrido', 's16', 'a1b2c3-016', '#FFA133', '21', 'ESTUDIANTE'),
+(21, 'Carmen', 'Silva', 's17', 'a1b2c3-017', '#FF5733', '22', 'ESTUDIANTE'),
+(22, 'Sergio', 'Mendoza', 's18', 'a1b2c3-018', '#33FF57', '23', 'ESTUDIANTE'),
+(23, 'Lucia', 'Flores', 's19', 'a1b2c3-019', '#3357FF', '24', 'ESTUDIANTE'),
+(24, 'Francisco', 'Campos', 's20', 'a1b2c3-020', '#57FF33', '25', 'ESTUDIANTE'),
+(25, 'Beatriz', 'Reyes', 's21', 'a1b2c3-021', '#FF33A1', '16', 'ESTUDIANTE'),
+(26, 'Hugo', 'Iglesias', 's22', 'a1b2c3-022', '#A133FF', '17', 'ESTUDIANTE'),
+(27, 'Clara', 'Santana', 's23', 'a1b2c3-023', '#33FFA1', '18', 'ESTUDIANTE'),
+(28, 'Juan', 'Blanco', 's24', 'a1b2c3-024', '#FFA133', '19', 'ESTUDIANTE'),
+(29, 'Alba', 'Luna', 's25', 'a1b2c3-025', '#FF5733', '20', 'ESTUDIANTE'),
+(30, 'Victor', 'Salas', 's26', 'a1b2c3-026', '#33FF57', '21', 'ESTUDIANTE'),
+(31, 'Noelia', 'Padilla', 's27', 'a1b2c3-027', '#3357FF', '22', 'ESTUDIANTE'),
+(32, 'Adrian', 'Gil', 's28', 'a1b2c3-028', '#57FF33', '23', 'ESTUDIANTE'),
+(33, 'Paula', 'Fuentes', 's29', 'a1b2c3-029', '#FF33A1', '24', 'ESTUDIANTE'),
+(34, 'Rafael', 'Lozano', 's30', 'a1b2c3-030', '#A133FF', '25', 'ESTUDIANTE');
 
 UPDATE `USUARIO` SET pref_contenido = "VIDEO" WHERE id = 5;
 
@@ -458,28 +486,11 @@ CREATE TABLE MENUS (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     descripcion TEXT,
+    cantidad INT NOT NULL,
     imagen_url VARCHAR(255)
 );
 
-CREATE TABLE MENU (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL,
-    url VARCHAR(100) NOT NULL,
-    cantidad INT NOT NULL
-);
 
-/* CREATE TABLE TAREA_COMANDAS (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    aula_id INT NOT NULL,
-    menu_id INT NOT NULL,
-    alumno_id INT NOT NULL,
-    cantidad INT NOT NULL DEFAULT 1,
-    screen VARCHAR(255),
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (aula_id) REFERENCES AULAS(id),
-    FOREIGN KEY (menu_id) REFERENCES MENUS(id),
-    FOREIGN KEY (alumno_id) REFERENCES USUARIO(id)
-); */
 
 CREATE TABLE TAREA_COMANDAS (
     alumno_id INT NOT NULL,

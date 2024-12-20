@@ -27,9 +27,10 @@ class DatabaseController:
             print("No hay conexión activa a la base de datos.")
             return False
         try:
-            with self.connection.cursor() as cursor:
-                cursor.execute(query, params)
-                self.connection.commit()
+            cursor = self.connection.cursor()
+            cursor.execute(query, params)
+            self.connection.commit()
+            cursor.close()  # Cierra el cursor explícitamente
             return True
         except Error as e:
             print(f"Error al ejecutar la consulta: {e}")
@@ -43,9 +44,10 @@ class DatabaseController:
             print("No hay conexión activa a la base de datos.")
             return None
         try:
-            with self.connection.cursor() as cursor:
-                cursor.execute(query, params)
-                results = cursor.fetchall()
+            cursor = self.connection.cursor(dictionary=True)  # Devuelve resultados como diccionarios
+            cursor.execute(query, params)
+            results = cursor.fetchall()
+            cursor.close()  # Cierra el cursor explícitamente
             return results
         except Error as e:
             print(f"Error al ejecutar la consulta: {e}")

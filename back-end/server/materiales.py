@@ -93,18 +93,17 @@ def materiales():
         materiales = []
         for result in results:
             material = {
-                'id_material': result[0] if result[0] else -1,
-                'nombre_material': result[1] if result[1] else "No disponible",
-                'descripcion': result[2] if result[2] else "No disponible",
-                'categoria': result[3] if result[3] else "No disponible",
-                'cantidad': result[4] if result[4] else 0,
-                'fecha_ingreso': result[5] if result[5] else "No disponible",
-                'estado': result[6] if result[6] else "No disponible",
-                'ultima_actualizacion': result[7] if result[7] else "No disponible",
-                'id_administrador': result[8] if result[8] else -1,
+                'id_material': result['id_material'] if result['id_material'] else -1,
+                'nombre_material': result['nombre_material'] if result['nombre_material'] else "No disponible",
+                'descripcion': result['descripcion'] if result['descripcion'] else "No disponible",
+                'categoria': result['categoria'] if result['categoria'] else "No disponible",
+                'cantidad': result['cantidad'] if result['cantidad'] else 0,
+                'fecha_ingreso': result['fecha_ingreso'] if result['fecha_ingreso'] else "No disponible",
+                'estado': result['estado'] if result['estado'] else "No disponible",
+                'ultima_actualizacion': result['ultima_actualizacion'] if result['ultima_actualizacion'] else "No disponible",
+                'id_administrador': result['id_administrador'] if result['id_administrador'] else -1,
             }
             materiales.append(material)
-
         return jsonify(materiales)
     
     return jsonify({"error": "No se encontraron resultados"}), 404

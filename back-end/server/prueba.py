@@ -113,11 +113,6 @@ def crear_comanda():
     # Realiza la solicitud POST
     response = requests.post(url, json=data)
     
-    # Imprime el código de estado y la respuesta
-    print("POST /comanda")
-    print(f"Estado: {response.status_code}")
-    print(f"Respuesta: {response.json()}")
-    
     return response
 
 def update_comanda():
